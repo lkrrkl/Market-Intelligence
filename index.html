@@ -117,7 +117,8 @@ html{background:#0a0d11;-webkit-text-size-adjust:100%}body{min-height:100vh;min-
 <div style="text-align:right"><span class="tag neu" id="tg">SIN ANÁLISIS</span><div class="sub" style="margin-top:8px" id="src">Fuente: —</div><button class="btn s sm" style="margin-top:8px" onclick="addW()">★ Seguimiento</button></div></div>
 <div class="g4"><div class="m"><div class="k">RSI (14)</div><div class="v" id="rsi">—</div><div class="h" id="rh">Fuerza relativa</div></div><div class="m"><div class="k">Caída vs máx. 52 sem.</div><div class="v" id="dd2">—</div><div class="h">Distancia al máximo</div></div><div class="m"><div class="k">Volatilidad anual</div><div class="v" id="vol">—</div><div class="h" id="rk">—</div></div><div class="m"><div class="k">Momentum 30D</div><div class="v" id="mo">—</div><div class="h" id="mc">MACD —</div></div></div></section>
 <section class="card"><div class="ch"><h2>Precio y proyección</h2><span class="mu" id="cr">—</span></div><div class="cw"><canvas id="cv"></canvas></div>
-<div class="lgd"><span><i style="background:#7db3e8"></i>Precio</span><span><i style="background:#e6b84a"></i>SMA 20</span><span><i style="background:#cd7f32"></i>SMA 50</span><span><i style="background:#2fd6a0"></i>Proyección base + banda 80%</span><span><i style="background:#ff5c6c"></i>Venta</span><span><i style="background:#f2c94c"></i>Precaución</span><span><i style="background:#4aa3ff"></i>Compra por rebote</span></div><div class="st" id="zs"></div></section>
+<div class="lgd"><span><i style="background:#7db3e8"></i>Precio</span><span><i style="background:#e6b84a"></i>SMA 20</span><span><i style="background:#cd7f32"></i>SMA 50</span><span><i style="background:#d3dae2"></i>SMA 200</span><span><i style="background:#2fd6a0"></i>Proyección base + banda 80%</span><span><i style="background:#ff5c6c"></i>Resistencia / venta</span><span><i style="background:#f2c94c"></i>Precaución</span><span><i style="background:#4aa3ff"></i>Soporte (rebote solo con giro)</span></div><div class="st" id="zs"></div></section>
+<section class="card" id="divbox" hidden><div class="ch"><h2>Dividendos y reinversión</h2><span class="mu" id="dvs">—</span></div><div class="g4" id="dvg"></div><div class="note" id="dvn"></div></section>
 <section class="card"><div class="ch"><h2>Diagnóstico combinado</h2><span class="mu">Técnico + noticias, ajustado por contexto</span></div>
 <div class="sc"><div class="gz"><div class="gauge" id="g1"><b id="n1">—</b></div><small>TÉCNICO</small></div><div class="gz"><div class="gauge" id="g2"><b id="n2">—</b></div><small id="nl">NOTICIAS</small></div><div class="gz"><div class="gauge" id="g3"><b id="n3">—</b></div><small>COMBINADO</small></div></div>
 <div class="g4" style="grid-template-columns:repeat(3,1fr)" id="pj"></div>
@@ -135,7 +136,7 @@ html{background:#0a0d11;-webkit-text-size-adjust:100%}body{min-height:100vh;min-
 </main>
 <aside class="col">
 <section class="card"><div class="ch"><h2 id="sct">Oportunidades: caídas con rebote</h2></div>
-<select id="sty" style="margin-bottom:8px"><option value="stock">Acciones (top 100)</option><option value="crypto">Criptomonedas (top 100)</option></select><div class="mu" id="scd" style="margin-bottom:8px">Caída fuerte + sobreventa + giro confirmado (MACD, EMA10, mínimos crecientes, divergencia RSI) + noticias y contexto.</div>
+<select id="sty" style="margin-bottom:8px"><option value="stock">xStocks (top 100)</option><option value="crypto">Criptomonedas (top 100)</option></select><div class="mu" id="scd" style="margin-bottom:8px">Caída fuerte + sobreventa + giro confirmado (MACD, EMA10, mínimos crecientes, divergencia RSI) + noticias y contexto.</div>
 <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center"><div><label class="mu">Caída mínima vs máx. 52 sem.: <b id="tv">20</b>%</label><input type="range" id="thr" min="10" max="60" value="20" oninput="tv.textContent=this.value" style="padding:0"></div><button class="btn" id="sb" onclick="scan()">Escanear</button></div>
 <div class="st" id="ss">Acciones: ~1–3 min. Cripto: preselecciona las 18 más castigadas (~40 s).</div><div id="rc" style="margin-top:8px"></div></section>
 <section class="card"><div class="ch"><h2>Top 100</h2><div style="display:flex;gap:6px;align-items:center"><button class="btn s sm" onclick="retryStocks()" title="Volver a consultar los precios de acciones">↻</button><div class="tabs" style="width:210px"><button class="btn s sm on" id="tc" onclick="tab('crypto')">Cripto</button><button class="btn s sm" id="ts" onclick="tab('stock')">Acciones</button></div></div></div>
@@ -150,7 +151,7 @@ html{background:#0a0d11;-webkit-text-size-adjust:100%}body{min-height:100vh;min-
 <script>
 const $=id=>document.getElementById(id),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(n,d=2)=>Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}),money=n=>n==null?'—':'$'+fmt(n,n<1?4:2),pct=(a,b)=>b?(a/b-1)*100:0,sg=n=>(n>=0?'+':'')+fmt(n)+'%';
-const SL="SPY:SPDR S&P 500 ETF*QQQ:Invesco QQQ ETF*NVDA:NVIDIA*AAPL:Apple*MSFT:Microsoft*GOOGL:Alphabet*AMZN:Amazon*AVGO:Broadcom*META:Meta Platforms*TSLA:Tesla*BRK-B:Berkshire Hathaway*LLY:Eli Lilly*WMT:Walmart*JPM:JPMorgan Chase*V:Visa*ORCL:Oracle*MA:Mastercard*XOM:Exxon Mobil*NFLX:Netflix*COST:Costco*JNJ:Johnson & Johnson*HD:Home Depot*PLTR:Palantir*PG:Procter & Gamble*BAC:Bank of America*ABBV:AbbVie*CVX:Chevron*KO:Coca-Cola*AMD:AMD*GE:GE Aerospace*CSCO:Cisco*TMUS:T-Mobile US*WFC:Wells Fargo*CRM:Salesforce*PM:Philip Morris*IBM:IBM*UNH:UnitedHealth*MS:Morgan Stanley*ABT:Abbott*GS:Goldman Sachs*LIN:Linde*AXP:American Express*MCD:McDonalds*INTU:Intuit*DIS:Disney*RTX:RTX*T:AT&T*NOW:ServiceNow*MRK:Merck*CAT:Caterpillar*PEP:PepsiCo*UBER:Uber*VZ:Verizon*BKNG:Booking*QCOM:Qualcomm*TMO:Thermo Fisher*SCHW:Charles Schwab*ISRG:Intuitive Surgical*C:Citigroup*BSX:Boston Scientific*BA:Boeing*ACN:Accenture*TXN:Texas Instruments*AMGN:Amgen*SPGI:S&P Global*ADBE:Adobe*BLK:BlackRock*NEE:NextEra Energy*SYK:Stryker*DHR:Danaher*HON:Honeywell*PGR:Progressive*GILD:Gilead*AMAT:Applied Materials*ANET:Arista Networks*TJX:TJX*DE:Deere*PFE:Pfizer*LOW:Lowes*UNP:Union Pacific*ETN:Eaton*CMCSA:Comcast*COP:ConocoPhillips*KKR:KKR*APH:Amphenol*LRCX:Lam Research*MU:Micron*ADI:Analog Devices*PANW:Palo Alto Networks*KLAC:KLA*CRWD:CrowdStrike*MDT:Medtronic*VRTX:Vertex*LMT:Lockheed Martin*BX:Blackstone*ADP:ADP*CB:Chubb*SBUX:Starbucks*NKE:Nike*MO:Altria*SO:Southern Company*ICE:Intercontinental Exchange";
+const SL="SPY:SPDR S&P 500 ETF*QQQ:Invesco QQQ ETF*NVDA:NVIDIA*AAPL:Apple*MSFT:Microsoft*GOOGL:Alphabet*AMZN:Amazon*AVGO:Broadcom*META:Meta Platforms*TSLA:Tesla*BRK-B:Berkshire Hathaway*LLY:Eli Lilly*WMT:Walmart*JPM:JPMorgan Chase*V:Visa*ORCL:Oracle*MA:Mastercard*XOM:Exxon Mobil*NFLX:Netflix*JNJ:Johnson & Johnson*HD:Home Depot*PLTR:Palantir*PG:Procter & Gamble*BAC:Bank of America*ABBV:AbbVie*CVX:Chevron*KO:Coca-Cola*AMD:AMD*GE:GE Aerospace*CSCO:Cisco*TMUS:T-Mobile US*WFC:Wells Fargo*CRM:Salesforce*PM:Philip Morris*IBM:IBM*UNH:UnitedHealth*MS:Morgan Stanley*ABT:Abbott*GS:Goldman Sachs*LIN:Linde*MCD:McDonalds*INTU:Intuit*DIS:Disney*RTX:RTX*NOW:ServiceNow*MRK:Merck*CAT:Caterpillar*PEP:PepsiCo*UBER:Uber*VZ:Verizon*QCOM:Qualcomm*TMO:Thermo Fisher*SCHW:Charles Schwab*ISRG:Intuitive Surgical*C:Citigroup*BSX:Boston Scientific*BA:Boeing*ACN:Accenture*TXN:Texas Instruments*AMGN:Amgen*ADBE:Adobe*NEE:NextEra Energy*SYK:Stryker*DHR:Danaher*HON:Honeywell*PGR:Progressive*GILD:Gilead*AMAT:Applied Materials*ANET:Arista Networks*TJX:TJX*DE:Deere*PFE:Pfizer*LOW:Lowes*UNP:Union Pacific*ETN:Eaton*CMCSA:Comcast*COP:ConocoPhillips*KKR:KKR*APH:Amphenol*LRCX:Lam Research*MU:Micron*ADI:Analog Devices*PANW:Palo Alto Networks*KLAC:KLA*CRWD:CrowdStrike*MDT:Medtronic*VRTX:Vertex*LMT:Lockheed Martin*BX:Blackstone*ADP:ADP*CB:Chubb*SBUX:Starbucks*NKE:Nike*MO:Altria*SO:Southern Company*ICE:Intercontinental Exchange*TSM:Taiwan Semiconductor*ASML:ASML*MSTR:Strategy (MicroStrategy)*COIN:Coinbase*HOOD:Robinhood*AZN:AstraZeneca";
 const CAT_CRYPTO=[
   {id:'pago',name:'1. Pago y transferencia'},
   {id:'smart',name:'2. Blockchain y contratos inteligentes'},
@@ -216,7 +217,8 @@ const MAP_STOCK={
   GE:'industrial',RTX:'industrial',CAT:'industrial',BA:'industrial',HON:'industrial',ETN:'industrial',LMT:'industrial',DE:'agri',APH:'industrial',ADP:'industrial',
   TMUS:'telecom',T:'telecom',VZ:'telecom',CMCSA:'media',
   NFLX:'media',DIS:'media',
-  UNP:'transport'
+  UNP:'transport',
+  TSM:'tech',ASML:'tech',MSTR:'tech',COIN:'finance',HOOD:'finance',AZN:'health'
 };
 function catOf(a){
   if(a.cat)return a.cat;
@@ -301,14 +303,42 @@ const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?quotesCou
 async function hCrypto(a){const s=a.symbol.toUpperCase();if(!STB.includes(a.symbol.toLowerCase()))try{const k=await jget(`https://api.binance.com/api/v3/klines?symbol=${s}USDT&interval=1d&limit=1000`,D);if(Array.isArray(k)&&k.length>=200){const v=k.map(x=>+x[4]);return{v,ts:k.map(x=>x[0]),vo:k.map(x=>+x[7]),q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'Binance'}}}catch(e){}return hCryptoCG(a)}
 async function hCryptoCG(a){const pv=+$('period')?.value||365;const days=pv>=99999?'max':(pv>=3650?3650:pv>=1825?1825:Math.max(365,pv));const j=await jget(CG+`coins/${a.id}/market_chart?vs_currency=usd&days=${days}&interval=daily`,D);const P=(j.prices||[]).map((p,i)=>[p[0],p[1],j.total_volumes&&j.total_volumes[i]?j.total_volumes[i][1]:null]).filter(p=>p[1]),v=P.map(p=>p[1]),ts=P.map(p=>p[0]),vo=P.map(p=>p[2]);if(v.length<30)throw new Error('CoinGecko no devolvió suficiente histórico (posible límite de consultas, reintenta en 1 min).');return{v,ts,vo,q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'CoinGecko'}}
 async function hStock(a,q){let er;const nd=+($('period')?$('period').value:90),ranges=q?['1y']:nd>=99999?['max','10y','5y']:nd>1825?['10y','5y']:['5y','2y','1y'];
-for(const r of ranges)for(const h of ['query1','query2']){try{const j=await jget(`https://${h}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=${r}&interval=1d`),r0=j.chart.result[0],q0=r0.indicators.quote[0],P=q0.close.map((x,i)=>[r0.timestamp[i]*1e3,x,q0.volume?q0.volume[i]:null]).filter(x=>x[1]!=null),v=P.map(x=>x[1]),ts=P.map(x=>x[0]),vo=P.map(x=>x[2]);if(v.length<30)throw new Error('Yahoo devolvió pocos datos');return{v,ts,vo,q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Yahoo Finance ('+r+')'}}catch(e){er=e}}
+for(const r of ranges)for(const h of ['query1','query2']){try{const j=await jget(`https://${h}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=${r}&interval=1d&events=div`),r0=j.chart.result[0],q0=r0.indicators.quote[0],P=q0.close.map((x,i)=>[r0.timestamp[i]*1e3,x,q0.volume?q0.volume[i]:null]).filter(x=>x[1]!=null),v=P.map(x=>x[1]),ts=P.map(x=>x[0]),vo=P.map(x=>x[2]);if(v.length<30)throw new Error('Yahoo devolvió pocos datos');return{v,ts,vo,dvs:Object.values((r0.events&&r0.events.dividends)||{}).map(d=>({t:d.date*1e3,a:d.amount})).sort((x,y)=>x.t-y.t),q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Yahoo Finance ('+r+')'}}catch(e){er=e}}
 if(!key)throw new Error('No se pudo leer Yahoo Finance ('+(er&&er.message||'sin respuesta')+'). Es fin de semana o hay bloqueo CORS: configura un proxy o API Key de Alpha Vantage en "Datos".');
 const j=await jget(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${a.symbol}&outputsize=full&apikey=${encodeURIComponent(key)}`,D),s=j['Time Series (Daily)'];if(!s)throw new Error(j.Note||j.Information||'Alpha Vantage sin datos.');const E0=Object.entries(s).sort((x,y)=>x[0]<y[0]?-1:1).slice(-1260),v=E0.map(x=>+x[1]['4. close']),ts=E0.map(x=>Date.parse(x[0])),vo=E0.map(x=>+x[1]['5. volume']);return{v,ts,vo,q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Alpha Vantage'}}
+/* ---- dividendos (Yahoo: events=div) y reinversión ---- */
+function divCalc(dvs,v,ts){
+ if(!Array.isArray(dvs)||!v.length)return null;
+ const last=v.at(-1),now=ts.at(-1),Y1=365*864e5,ttmL=dvs.filter(d=>d.t>now-Y1),prevL=dvs.filter(d=>d.t>now-2*Y1&&d.t<=now-Y1),
+ ttm=ttmL.reduce((q,d)=>q+d.a,0),prev=prevL.reduce((q,d)=>q+d.a,0),
+ o={n:dvs.length,ttm,yld:last?ttm/last*100:0,pay:ttmL.length,growth:prev>0&&ttm>0?(ttm/prev-1)*100:null,last:dvs.at(-1)||null,yrs:(now-ts[0])/Y1};
+ if(dvs.length>=2){const g=[];for(let i=Math.max(1,dvs.length-8);i<dvs.length;i++)g.push((dvs[i].t-dvs[i-1].t)/864e5);g.sort((a,b)=>a-b);const md=g[g.length>>1];o.gap=md;o.freq=md<45?'Mensual':md<135?'Trimestral':md<270?'Semestral':'Anual'}
+ else if(dvs.length===1)o.freq='Pago único en el período';
+ if(o.last&&o.gap){o.stopped=now-o.last.t>o.gap*1.6*864e5;let nx=o.last.t+o.gap*864e5,k=0;while(nx<Date.now()&&k++<40)nx+=o.gap*864e5;o.next=nx}
+ let sh=1,j=0;const p0=v[0];
+ for(const d of dvs){if(d.t<ts[0])continue;while(j<ts.length-1&&ts[j]<d.t)j++;sh+=sh*d.a/v[j]}
+ o.tr=(sh*last/p0-1)*100;o.pr=(last/p0-1)*100;return o}
+function renderDiv(a){
+ const bx=$('divbox');if(!bx)return;
+ if(a.type!=='stock'||!a.dvd){bx.hidden=true;return}
+ const d=a.dvd,m=(k,v,h)=>`<div class="m"><div class="k">${k}</div><div class="v">${v}</div><div class="h">${h}</div></div>`,dt=t=>new Date(t).toLocaleDateString('es-CR',{day:'2-digit',month:'short',year:'numeric'});
+ bx.hidden=false;
+ if(!d.n){$('dvs').textContent='Sin pagos';$('dvg').innerHTML='';$('dvn').textContent='Esta acción no pagó dividendos en los '+fmt(d.yrs,1)+' años cargados. Su retorno proviene solo del precio.';return}
+ $('dvs').textContent=(d.freq||'—')+' · '+fmt(d.yld,2)+'% anual';
+ $('dvg').innerHTML=m('Rendimiento (12 meses)',fmt(d.yld,2)+'%','$'+fmt(d.ttm,d.ttm<1?4:2)+' por acción')+
+ m('Frecuencia',d.freq||'—',d.pay+' pago'+(d.pay===1?'':'s')+' en 12 meses')+
+ m('Último pago',d.last?'$'+fmt(d.last.a,d.last.a<1?4:2):'—',d.last?'Ex-dividendo '+dt(d.last.t):'')+
+ m('Próximo (estimado)',d.stopped?'Sin pagos recientes':d.next?dt(d.next):'—',d.stopped?'Podría haber suspendido el dividendo':'Según el ritmo de pagos; no confirmado')+
+ m('Crecimiento del dividendo',d.growth!=null?sg(d.growth):'N/D','12 meses vs 12 meses previos')+
+ m('Ingreso por $1,000',d.yld>0?'$'+fmt(1000*d.yld/100,2)+'/año':'—',d.pay?'≈ $'+fmt(1000*d.yld/100/d.pay,2)+' por pago':'')+
+ m('Retorno por precio',sg(d.pr),'Últimos '+fmt(d.yrs,1)+' años')+
+ m('Con dividendos reinvertidos',sg(d.tr),(d.tr-d.pr>=0?'+':'')+fmt(d.tr-d.pr,1)+' pp aportados por dividendos');
+ $('dvn').innerHTML='En los xStocks los dividendos se reinvierten en la misma posición, así que el retorno «con dividendos reinvertidos» es el más parecido a lo que obtendría quien tenga el token (reinversión simulada al precio del día ex-dividendo). Montos brutos, antes de impuestos o retenciones; confirma el tratamiento exacto con el emisor. Datos de Yahoo Finance; no garantizan pagos futuros.'}
 /* ---- carga y render ---- */
 async function load(a){cur=a;$('go').disabled=true;st('Descargando histórico…');
 try{const C=a.type==='crypto',pN=news(a).catch(()=>null),pE=(C?deriv(a):fund(a)).catch(()=>null),pG=C?fg():Promise.resolve(null),pS=social(a).catch(()=>null);
 const h=await(C?hCrypto(a):hStock(a));if(cur!==a)return;
-a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;a.price=h.q.price;a.chg=h.q.chg;a.need=+$('period').value;
+a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;a.price=h.q.price;a.chg=h.q.chg;a.need=+$('period').value;a.dvd=a.type==='stock'?divCalc(h.dvs,h.v,h.ts):null;
 show(a,h);st(`Histórico listo (${h.v.length} observaciones). Cargando noticias y contexto…`);conn('Datos sincronizados','var(--gr)');$('lu').textContent='Actualizado '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});$('go').disabled=false;
 const[nw,ex,g,so]=await Promise.all([pN,pE,pG,pS]);if(cur!==a)return;
 if(C){a.dv=ex;a.fg=g}else a.fx=ex;a.so=so;a.nw=nw;a.ns=nw&&nw.length?sent(nw):null;
@@ -328,22 +358,26 @@ recommend(a);
 $('pj').innerHTML=[7,30,90].map(d=>{const p=m.pj(d);return`<div class="m"><div class="k">A ${d} días</div><div class="v" style="color:${p.b>=a.price?'var(--gr)':'var(--rd)'}">${money(p.b)}</div><div class="h">${money(p.lo)} – ${money(p.hi)}</div></div>`}).join('');
 $('nm').textContent=ns?`Sentimiento ${sg(ns.s/1)} (léxico simple, titulares en inglés)`:'No disponible';
 $('nw').innerHTML=a.nw&&a.nw.length?a.nw.map(x=>`<div class="ni"><a href="${E(x.url)}" target="_blank" rel="noopener">${E(x.title)}</a><p><span style="color:${x.s>0?'var(--gr)':x.s<0?'var(--rd)':'var(--au)'}">${x.s>0?'▲ positiva':x.s<0?'▼ negativa':'● neutral'}</span> · ${E(x.src)} · ${new Date(x.t).toLocaleDateString('es-CR')}</p></div>`).join(''):'<div class="mu">No se obtuvieron noticias verificables para este activo.</div>';
-chart();ctx(a);updW();extras(a,h)}
+chart();ctx(a);updW();extras(a,h);renderDiv(a)}
 function zones(m,v){const w=m.last*m.sd*Math.sqrt(10),res=Math.max(...v),sup=Math.min(...v);return[['rgba(74,163,255,.22)',sup-.3*w,sup+w],['rgba(242,201,76,.18)',Math.max(res-2*w,sup+w),res-.5*w],['rgba(255,92,108,.22)',res-.5*w,res+2*w]]}
 function zoneState(m,win){const v=m.v.slice(-win),[bz,yz,rz]=zones(m,v);
 if(m.last>=rz[1])return{k:'sell',d:-1,t:'🔴 Zona de venta: precio en la resistencia del período.'};
 if(m.last>=yz[1])return{k:'caut',d:-.5,t:'🟡 Precaución: zona de posible toma de ganancias.'};
 if(m.last<=bz[2]){const c=m.hist>m.hist1&&m.last>m.e10;return{k:'buy',d:c?1:.5,t:c?'🔵 Compra por rebote: soporte con giro confirmado (MACD y EMA10).':'🔵 Zona de soporte: espera confirmación de giro antes de comprar.'}}
 return{k:'mid',d:0,t:'⚪ Zona media: sin ventaja clara.'}}
-function chart(){if(!cur||!cur.m)return;const m=cur.m,H0=+$('period').value,/* proyección siempre corta (máx 90 días) */H=TD(Math.min(90,H0>365?30:H0>90?60:30),cur.type),Wd=Math.min(H0>=99999?m.v.length:H0,m.v.length),v=m.v.slice(-Wd),off=m.v.length-Wd,s20=m.s20.slice(off),s50=m.s50.slice(off),ts=(m.ts||[]).slice(off),c=$('cv'),r=c.getBoundingClientRect(),dp=devicePixelRatio||1;
+function chart(){if(!cur||!cur.m)return;const m=cur.m,H0=+$('period').value,/* proyección siempre corta (máx 90 días) */H=TD(Math.min(90,H0>365?30:H0>90?60:30),cur.type),Wd=Math.min(H0>=99999?m.v.length:H0,m.v.length),v=m.v.slice(-Wd),off=m.v.length-Wd,s20=m.s20.slice(off),s50=m.s50.slice(off),s200=m.s200.slice(off),ts=(m.ts||[]).slice(off),c=$('cv'),r=c.getBoundingClientRect(),dp=devicePixelRatio||1;
 c.width=r.width*dp;c.height=r.height*dp;const x=c.getContext('2d');x.scale(dp,dp);const w=r.width,h=r.height,P={l:58,r:14,t:12,b:38},N=v.length+H,pr=[];for(let t=1;t<=H;t++)pr.push(m.pb(t));
-const mn=Math.min(...v,...pr.map(p=>p.lo)),mx=Math.max(...v,...pr.map(p=>p.hi)),Rg=mx-mn||1,X=i=>P.l+i*(w-P.l-P.r)/(N-1),Y=q=>P.t+(mx-q)*(h-P.t-P.b)/Rg,zn=zones(m,v);
-window._ch={v,pr,ts,N,P,w,h,mn,mx,Rg,X,Y,H,Wd,last:v.at(-1),type:cur.type,H0};
+const mn0=Math.min(...v,...pr.map(p=>p.lo)),mx0=Math.max(...v,...pr.map(p=>p.hi)),s2v=s200.filter(q=>q!=null),s2lo=s2v.length?Math.min(...s2v):null,s2hi=s2v.length?Math.max(...s2v):null,ext=s2v.length>0&&(Math.max(mx0,s2hi)-Math.min(mn0,s2lo))<=1.6*(mx0-mn0||1),mn=ext?Math.min(mn0,s2lo):mn0,mx=ext?Math.max(mx0,s2hi):mx0,Rg=mx-mn||1,X=i=>P.l+i*(w-P.l-P.r)/(N-1),Y=q=>P.t+(mx-q)*(h-P.t-P.b)/Rg,zn=zones(m,v);
+window._ch={v,pr,ts,s200,N,P,w,h,mn,mx,Rg,X,Y,H,Wd,last:v.at(-1),type:cur.type,H0};
 x.font='10px Segoe UI';x.fillStyle='#98a2ad';x.strokeStyle='#2c353e';
 for(let j=0;j<5;j++){const yy=P.t+j*(h-P.t-P.b)/4;x.beginPath();x.moveTo(P.l,yy);x.lineTo(w-P.r,yy);x.stroke();x.fillText(fmt(mx-j*Rg/4,mx<10?3:0),3,yy+3)}
-zn.forEach(([col,lo,hi])=>{if(hi<mn||lo>mx)return;const y1=Y(Math.min(hi,mx)),y2=Y(Math.max(lo,mn));x.fillStyle=col;x.fillRect(P.l,y1,w-P.l-P.r,y2-y1)});
+const zst=zoneState(m,Wd),zc=zst.k==='buy'&&zst.d===1,zlab=['SOPORTE'+(zc?' · REBOTE CONFIRMADO ✔':''),'PRECAUCIÓN','RESISTENCIA / VENTA'];
+zn.forEach(([col,lo,hi],zi)=>{if(hi<mn||lo>mx)return;const y1=Y(Math.min(hi,mx)),y2=Y(Math.max(lo,mn));x.fillStyle=zi===0&&zc?'rgba(74,163,255,.36)':col;x.fillRect(P.l,y1,w-P.l-P.r,y2-y1);if(y2-y1>13){x.fillStyle=['#7db3e8','#f2c94c','#ff8a96'][zi];x.font='bold 9px Segoe UI';x.fillText(zlab[zi],P.l+6,y1+10);x.font='10px Segoe UI'}});
+const sup0=Math.min(...v);x.beginPath();x.moveTo(P.l,Y(sup0));x.lineTo(w-P.r,Y(sup0));x.strokeStyle='#4aa3ffaa';x.lineWidth=1;x.setLineDash([2,3]);x.stroke();x.setLineDash([]);x.fillStyle='#7db3e8';x.textAlign='right';x.fillText('soporte $'+fmt(sup0,sup0<10?3:2),w-P.r-4,Y(sup0)-3);x.textAlign='left';
 x.beginPath();pr.forEach((p,i)=>x[i?'lineTo':'moveTo'](X(v.length+i),Y(p.hi)));for(let i=H-1;i>=0;i--)x.lineTo(X(v.length+i),Y(pr[i].lo));x.closePath();x.fillStyle='rgba(47,214,160,.14)';x.fill();
 const L=(a,col,lw,dash)=>{x.beginPath();let s=0;a.forEach((q,i)=>{if(q==null)return;s?x.lineTo(X(i),Y(q)):x.moveTo(X(i),Y(q));s=1});x.strokeStyle=col;x.lineWidth=lw;x.setLineDash(dash||[]);x.stroke();x.setLineDash([])};
+x.save();x.beginPath();x.rect(P.l,P.t,w-P.l-P.r,h-P.t-P.b);x.clip();L(s200,'#d3dae2',1.6,[6,3]);x.restore();
+if(s2v.length&&!ext){const q=s2v.at(-1),up=q>mx;x.fillStyle='#d3dae2';x.textAlign='right';x.fillText('SMA 200: $'+fmt(q,q<10?3:2)+(up?' ▲ fuera de escala':' ▼ fuera de escala'),w-P.r-4,up?P.t+11:h-P.b-20);x.textAlign='left'}
 L(s50,'#cd7f32',1.5);L(s20,'#e6b84a',1.5);L(v,'#7db3e8',2);
 x.beginPath();x.moveTo(X(v.length-1),Y(v.at(-1)));pr.forEach((p,i)=>x.lineTo(X(v.length+i),Y(p.b)));x.strokeStyle='#2fd6a0';x.lineWidth=2;x.setLineDash([5,4]);x.stroke();x.setLineDash([]);
 x.beginPath();x.moveTo(X(v.length-1),P.t);x.lineTo(X(v.length-1),h-P.b);x.strokeStyle='#4a5560';x.lineWidth=1;x.setLineDash([3,3]);x.stroke();x.setLineDash([]);
@@ -361,7 +395,7 @@ for(let i=futStep;i<=H;i+=futStep){const fut=lastTs+i*864e5*(cur.type==='crypto'
 x.beginPath();x.moveTo(xi,h-P.b);x.lineTo(xi,h-P.b+4);x.strokeStyle='#2fd6a055';x.stroke();
 x.fillStyle='#2fd6a0';x.fillText(fmtD(fut),xi,h-P.b+16)}}
 x.textAlign='left';
-$('zs').textContent=zoneState(m,Wd).t+' (Zonas = soporte/resistencia del período ± volatilidad; no son garantía.)';
+$('zs').textContent=zoneState(m,Wd).t+' · La zona azul es el SOPORTE del período; «compra por rebote» exige además giro confirmado (MACD subiendo y precio sobre la EMA10). Zonas = soporte/resistencia ± volatilidad; no son garantía.';
 const histLabel=H0>=99999?'Vida completa':(H0>=3650?'10 años':(H0>=1825?'5 años':(H0+' días')));
 $('cr').textContent=`Histórico: ${Wd} sesiones (${histLabel}) · Proyección corta: ${H} sesiones`}
 
@@ -403,7 +437,8 @@ $('cr').textContent=`Histórico: ${Wd} sesiones (${histLabel}) · Proyección co
     ctx.setLineDash([]);
     ctx.beginPath();ctx.arc(xi,yi,4,0,Math.PI*2);ctx.fillStyle='#e6b84a';ctx.fill();
     ctx.restore();
-    tip.innerHTML=`<b style="color:#e6b84a">${dateStr}</b><br>Precio: <b>${price!=null?'$'+Number(price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:price<1?4:2}):'—'}</b>${isFut?' <span style="color:#2fd6a0">proyección</span>':''}`;
+    const q2=st.s200&&clamped<Wd?st.s200[clamped]:null;
+    tip.innerHTML=`<b style="color:#e6b84a">${dateStr}</b><br>Precio: <b>${price!=null?'$'+Number(price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:price<1?4:2}):'—'}</b>${isFut?' <span style="color:#2fd6a0">proyección</span>':''}${q2!=null?'<br>SMA 200: <b>$'+Number(q2).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:q2<1?4:2})+'</b>':''}`;
     tip.style.display='block';
     tip.style.left=(e.clientX+14)+'px';
     tip.style.top=(e.clientY-36)+'px';
@@ -447,8 +482,23 @@ const PHIL={
 };
 const prof=()=>PROF[PRF]?PRF:'mod',phil=()=>PHIL[PHL]?PHL:'value';
 /* ETFs indexados (se agregan a la lista de acciones) */
-[['SPY','SPDR S&P 500 ETF','broad'],['VOO','Vanguard S&P 500 ETF','broad'],['VTI','Vanguard Total Stock Market ETF','broad'],['VT','Vanguard Total World Stock ETF','broad'],['QQQ','Invesco QQQ (Nasdaq 100)','growth'],['VUG','Vanguard Growth ETF','growth'],['VTV','Vanguard Value ETF','value'],['SCHD','Schwab US Dividend Equity ETF','income'],['VYM','Vanguard High Dividend Yield ETF','income']]
+[['SPY','SPDR S&P 500 ETF','broad'],['VOO','Vanguard S&P 500 ETF','broad'],['VTI','Vanguard Total Stock Market ETF','broad'],['VT','Vanguard Total World Stock ETF','broad'],['QQQ','Invesco QQQ (Nasdaq 100)','growth'],['VUG','Vanguard Growth ETF','growth'],['VXUS','Vanguard Total International Stock ETF','broad']]
  .forEach(([s,n,k])=>{if(!U.stock.some(a=>a.symbol===s))U.stock.push({type:'stock',id:s,symbol:s,name:n,idx:true,sub:k,cat:'etf'})});
+/* xStocks (acciones/ETF tokenizados de Backed en Kraken; lista de EE. UU. verificada el 11-nov-2026) */
+const XS=new Set('HD HON HRL ETSY ESS EVR EG EVRG EEFT ESAB WTRG BITX MMM AOS ABT ABBV ACN AYI ADBE ADT WMS AEIS AMD ACM AVAV AMG AFRM AFL AGCO A AGNC ADC APD ABNB AKAM ALK ALB ACI AA ARE ALGN ALLE ALGM LNT ALSN ALLY ALNY GOOGL MO AMZN AMBR AMCR AMTM AS AEE AAL AEP AFG AHR AMH AIG AMT AWK COLD AMP AME AMGN AMKR APH ADI NLY AM ANT AON APA APG APO APPF AAPL APLD AIT AMAT AAOI APP ATR APTV ARMK MT ACGL ADM ARES ANET ARM AWI ARW ARWR AJG ASML AIZ AGO ASTS ALAB AZN ATI TEAM ATO AUR ADSK ADP AN AZO AVTR AVY CAR AVT AXTA AXS AXON AXSM BKR BALL BAC BNY OZK BBWI BAX BDX BSY BRK.B BBY BETR BILL BIO BIIB BMRN BTBT BTGO BMNR BJ BX XYZ BE OWL BA BOKF BAH BWA BSX BYD BBIO BFAM BHF BMY BRX AVGO BR BAM BRO BF.B BRKR BC BLDR BG BURL BWXT BXP CHRW AI CACI CDNS CZR CPT COF CAH CAI CSL KMX CCL CRS CARR CVNA CASY CAT CAVA CBRE CCC CDW CE CELH COR CNC CNP CBRS CF CHTR LNG CVX CHWY CHYM CMG CHH CHRD CB CHD CHDN CIEN CINF CTAS CRCL CRUS CSCO C CFG CLH CLSK CWEN CLF CLX NET CME CMS CNA KO CDE CGNX CTSH COHR COIN CL COLB COLM CMCSA FIX CBSH CAG COP ED STZ CEG CPRT CORT CNM CORZ CRBG CRWV GLW CPAY CTVA CSGP CPNG CUZ CR CACC CRDO CRH CROX CRWD CCI CCK CSX CUBE CFR CMI CW CVS DHI DHR DRI DAR DDOG DVA DECK DE DFDV DELL DAL DVN DXCM FANG DKS DLR DOCN DDS SOXL DOCU DLB DG DLTR D DPZ DCI DASH DOV DOW DOCS DKNG DBX DTM DTE DUK BROS DY DT ELF EXP EWBC EGP EMN ETN ECL EIX EW ELAN ESTC ESI ELV LLY EME EMR EHC UUUU ENHA ENPH ENTG ETR NVST EOG EPAM EPR EQT EFX EQIX EQH ELS P ES ECG EXEL EXC EXLS EXE EXPD EXR XOM FNB FFIV FN FDS FICO FAST FRT FDX FDXF FERG FRMI FAAA FNF FIS FITB FIGR FAF FCNCA FHB FHN FSLR FE FISV FIVE FLEX FND FLS FLNC FLUT F FPS FORM FTNT FTV FBIN IQM FLBL FSML BEN USPX FLQM FRHC FCX FRPT FTAI FCN VCX GLXY GME GLPI GRMN IT GTES GE GEHC GEV GEN WGS GNRC GD GIS GM G GNTX GPC GILD GTLB GPN COPX DAX URA GFS GSAT GL GMED GDDY GS GGG LOPE GPK GH GWRE GXO HRB HAL HALO HLNE HAS HAYW HCA HR DOC HL HEI HSIC HPE HXL DINO HLT HIMS HST HLI HHH HWM HPQ HUBB HUBS HUM HBAN HII HUT H IDA IEX IDXX IESC ITW ILMN INCY INDI IR INGM INGR INSM PODD INTC IBKR ICE IBM IFF IP INTU ISRG IVZ QQQ TBLL INVH IONS IONQ IPGP IQV IREN IRDM IRM SGOV IEMG IJR EWQ EWG EWY EWU IWM SOXX SLV ITA ITT JBHT JBL JKHY J JAAA JAN JAZZ JEF JMKE JNJ JCI JLL JPM JPST KRMN KBR KVUE KDP KEY KEYS KRC KMB KIM KMI KNSL KEX KKR KLAC KVYO KNX KTOS KD LHX LRCX LAMR LW LSTR LVS LSCC LAZ LEA YLDE LDOS LEN LII DRS LBTYA LLYVK FWONK LECO LNC LIN LINE LAD LFUS LYV LKQ LOAR LMT L LPX LOW LPLA LITE LYFT LYB MTB MTSI M MDGL MANH CART MARA MPC MKL MKTX MAR MLM MRVL MAS MTZ MA MTDR MTCH MAT MKC MCD MCK MDU MPT MEDP MDT MRK META MET MTD MTG MGM MCHP MU MSFT MAA MIDD MFP MRP MSA MKSI MRNA MOD MHK TAP MDLZ MDB MPWR MCO MS MORN MSI MP MSM MSCI MSGS MLI MUSA NDAQ NTRA NBIS NTAP NFLX NBIX NYT NEU NEM NWS NXST NEE NXT NKE NI NNN NDSN NSC NTRS NOC NCLH NOV NRG NUE SMR NTNX NVT NVDA NVR ORLY OXY OGE OKLO OKTA ODFL ORI OLN OLLI OHI OMC ON ONDS OMF OKE ONTO OPEN ORCL OGN OSK OTIS OVV OC PCAR PKG PLTR PANW PH PSN PAYX PAYC PCTY PYPL PEGA PAG PNR PEN PEP PFGC PR PFE PCG PM PSX PPC PNFP PNW PINS PLNT PL PNC POOL BPOP POST POWL PPG PPL PRI PRMB PRIM PFG PCOR PG PGR PLD TQQQ PB PRU PTC PEG PSA PHM PCT PVH Q QCOM PWR QNT QUBT QS DGX RAL RL METC RMBS RRC RJF RYN RBA RBC O RCAT RDDT RRX REG REGN RF RGA RS RNR RGEN RSG RMD QSR RVMD RVTY REXR REYN RNG RIOT RITM RIVN RLI RHI HOOD RBLX BOT RKT ROK ROIV ROKU ROL ROP ROST RCL RGLD RPRX RPM RTX RBRK RYAN R SAIA SAIL CRM SNDK SANM SBAC SNDR SCHF SAIC SEB SEIC SRE SMTC S SCI NOW SHAZ SBET FOUR SPG SSD SIRI SITE SITM SKHY SLB SLM SFD SW SNA SNOW SOFI SOLS MWH SGI SON SHC SCCO SSB LUV SPCX GLD SFM SPXC SSNC STAG SAR SWK SBUX STWD STT XLE FEZ SPY XOP STLD STE STRL SF MSTR STRC SATA SYK SMMT SUI SMCI SYF SNPS SYY TMUS TROW TE TSM TTWO TLN TPR TRGP SNX FTI TDY TFX THC TER WULF TSLA TTEK TXN TPL TXRH TXT TFSL ALL CPB CG SCHW CI COO ENSG EL GAP THG HIG HSY SJM KHC KR MOS SMG SHW SO TKR TTD TRV DIS WU TMO THO TJX TKO TOST TOL TONX TTC TPG TSCO TW TT TDG TRU TNL TREX TRMB TFC TTMI TWLO TWST TYL TSN UHAL USB UBER UI UDR UGI PATH ULS ULTA UNP QURE UAL UPS URI UTHR UNH U OLED UHS UNM USFD USAR VFC MTN VLO VMI VVV MOO GDX SMH NLR VGK VUG VTI VOO VXUS VT VEEV VTR VLTO VRSN VRSK VZ VSNT VRTX VRT VTRS VIAV VICI VICR VIDA VIK VKTX VNOM SPCE VIRT V EQR VNT VNO VOYA VMC WPC WRB GWW WAB WMT WM WAT WSO WTS W WEC WFC WELL WEN WCC WST WAL WDC WLK WEX WY WHR WTM WYFI WMB WSM WTW WSC WING WTFC WWD WDAY WRLD WH WYNN XE XEL XRX XPO XYL YETI YUM ZBRA Z ZBH ZION ZTS ZM ZS'.split(' '));
+let XSI='';
+/* catálogo xStocks en vivo (Kraken: AssetPairs con aclass_base=tokenized_asset). Solo AMPLÍA la lista local; si falla, se usa la local */
+function xsParse(j){
+  const r=j&&j.result;if(!r||typeof r!=='object')throw new Error('sin resultado');
+  const L=new Set();
+  Object.values(r).forEach(e=>{if(!e||(e.aclass_base&&e.aclass_base!=='tokenized_asset'))return;const b=String(e.wsname||'').split('/')[0]||String(e.base||'');if(b.length>2&&b.endsWith('x'))L.add(b.slice(0,-1))});
+  if(L.size<50)throw new Error('catálogo incompleto');
+  return[...L]}
+async function xsSync(){
+  const done=(l,src)=>{const n0=XS.size;l.forEach(t=>XS.add(t));XSI=' ('+src+': '+l.length+' en Kraken'+(XS.size>n0?', +'+(XS.size-n0)+' nuevos':'')+')';if(tb==='stock'&&$('ul'))$('ul').innerHTML=rows('stock')};
+  try{const c=JSON.parse(LS('mi_xs')||'null');if(c&&Array.isArray(c.l)&&c.l.length>=50&&Date.now()-c.t<432e5){done(c.l,'catálogo guardado');return}}catch(e){}
+  try{const l=xsParse(await jget('https://api.kraken.com/0/public/AssetPairs?aclass_base=tokenized_asset'));LS('mi_xs',JSON.stringify({t:Date.now(),l}));done(l,'catálogo en vivo')}
+  catch(e){XSI=' (catálogo local: sin conexión con Kraken)';if(tb==='stock'&&$('ul'))$('ul').innerHTML=rows('stock')}}
 const DIVS=new Set('KO PEP PG JNJ XOM CVX PM MO VZ T SO NEE ABBV MRK MCD HD LOW WMT JPM BLK CSCO IBM TXN ADP LMT CAT BX MS GS BAC WFC C PFE AMGN GILD UNP LIN ETN HON DE ICE AXP SBUX NKE ABT MDT COP SPGI MA V CB QCOM ADI APH CMCSA RTX GE KKR COST'.split(' '));
 const NODIV=new Set('TSLA AMZN PLTR UBER CRWD NFLX PANW NOW ANET AMD ISRG BRK-B'.split(' '));
 const LOWDIV=new Set('AAPL MSFT GOOGL META NVDA AVGO ORCL MU LRCX KLAC AMAT DIS CRM'.split(' '));
@@ -497,7 +547,7 @@ function philEval(a){
   if(cr){if(isStable(a)){fit=.3;add('Stablecoin','Rinde en plataformas (con riesgo de contraparte) pero no se compra por precio',0)}else if(STAKE.has(sl)){fit=.5;add('Staking','Genera rendimiento por staking (variable; no es un dividendo y el precio puede caer)',.3)}else{fit=.05;no('No genera flujo periódico: ni dividendos ni staking')}}
   else if(a.idx){const k=a.sub;fit=k==='income'?1:k==='broad'?.5:.2;add('ETF',k==='income'?'ETF de dividendos: encaja':k==='broad'?'ETF amplio: rendimiento por dividendo bajo':'ETF de otro estilo: poco alineado con ingresos',k==='income'?1:k==='broad'?0:-.5)}
   else{
-   const dy=f&&f.dy!=null?f.dy:null;
+   const dy=f&&f.dy!=null?f.dy:(a.dvd?a.dvd.yld:null);
    if(dy!=null){has=true;const v=dy>=4?1:dy>=2.5?.8:dy>=1.5?.4:dy>0?-.2:-1;vs.push(v);income=dy>=2;add('Dividendo '+fmt(dy,2)+'%',dy>=2.5?'Rendimiento atractivo':dy>=1.5?'Rendimiento moderado':dy>0?'Rendimiento bajo':'No paga dividendo',v)}
    else{const v=NODIV.has(sy)?-1:LOWDIV.has(sy)?-.4:DIVS.has(sy)?.6:INCC.includes(c)?.3:-.2;vs.push(v);income=DIVS.has(sy);add('Dividendo (estimado)',NODIV.has(sy)?'No paga dividendo':LOWDIV.has(sy)?'Dividendo marginal (menos de ~1%)':DIVS.has(sy)?'Pagador histórico de dividendos (rendimiento exacto con Finnhub)':'Sin dato de dividendo: cárgalo con la clave Finnhub',v)}
    if(f){if(f.de>2.5){vs.push(-.5);sellF=true;add('Deuda/capital '+fmt(f.de),'Deuda alta: el dividendo puede estar en riesgo',-.6)}if(f.rg<-5){vs.push(-.5);sellF=true;add('Ingresos '+sg(f.rg),'Ingresos cayendo: riesgo de recorte del dividendo',-.6)}}
@@ -525,7 +575,7 @@ function overlay(a,V,x){
  NZ=(sh,title,text,miss,cls)=>({sh,cls:cls||'neu',dir:0,rg:-1,na:true,title,text,miss}),
  buy=V.dir>0,sell=V.dir<0,{last,s20,s50,s200,rsi,dd,earn}=x,
  up=s200!=null?last>s200:(s50!=null?last>s50:true),
- alt=ph==='index'?(cr?'BTC y ETH (ponderados por capitalización)':'ETFs amplios como SPY, VOO, VTI o VT'):ph==='income'?(cr?'activos con staking (ETH, SOL, ADA…)':'acciones pagadoras de dividendos o ETFs como SCHD o VYM'):ph==='value'?'acciones con múltiplos bajos y balance sano, o el ETF VTV':'empresas con ingresos creciendo y tendencia alcista, o ETFs como QQQ o VUG';
+ alt=ph==='index'?(cr?'BTC y ETH (ponderados por capitalización)':'ETFs amplios como SPY, VOO, VTI o VT'):ph==='income'?(cr?'activos con staking (ETH, SOL, ADA…)':'acciones pagadoras de dividendos (KO, PG, JNJ, XOM…)'):ph==='value'?'acciones con múltiplos bajos y balance sano':'empresas con ingresos creciendo y tendencia alcista, o ETFs como QQQ o VUG';
  a.phe=pe;a.pfe=pf;
  if(buy)V.rg=V.sh==='REBOTE'?PR.rgReb:V.sh==='COMPRA'?PR.rg:V.rg;
  if(buy&&pf.f<.4)return NZ('NO ENCAJA','NO ENCAJA CON TU PERFIL '+PR.n.toUpperCase(),'⛔ <b>La señal técnica es de compra, pero este activo no encaja con tu perfil '+PR.n.toLowerCase()+'.</b> '+E(pf.why),'Elegir un activo más acorde a tu perfil o cambiar el perfil en «Tu perfil de inversor».');
@@ -677,7 +727,7 @@ function fillCat(){
 }
 function rows(t){
   const f=$('catf')?$('catf').value:'';
-  const onlyRec=($('fitf')?$('fitf').value:'rec')==='rec';let list=U[t].map((a,i)=>({a,i,sf:staticFit(a)})).filter(({a})=>!(a.etf)&&(!f||catOf(a)===f));const tot=list.length;if(onlyRec)list=list.filter(z=>z.sf.f>=.22);list.sort((p,q)=>Math.round(q.sf.f*10)-Math.round(p.sf.f*10)||p.i-q.i);if($('fitn'))$('fitn').textContent=onlyRec?`Mostrando ${list.length} de ${tot} que encajan con ${PROF[prof()].n} · ${PHIL[phil()].n}`:`Mostrando todos (${tot}) con su nivel de encaje`;
+  const onlyRec=($('fitf')?$('fitf').value:'rec')==='rec';let list=U[t].map((a,i)=>({a,i,sf:staticFit(a)})).filter(({a})=>!(a.etf)&&(!f||catOf(a)===f));const tot=list.length;if(onlyRec)list=list.filter(z=>z.sf.f>=.22);list.sort((p,q)=>Math.round(q.sf.f*10)-Math.round(p.sf.f*10)||p.i-q.i);if($('fitn'))$('fitn').textContent=onlyRec?`Mostrando ${list.length} de ${tot} que encajan con ${PROF[prof()].n} · ${PHIL[phil()].n}${t==='stock'?' · solo xStocks'+XSI:''}`:`Mostrando todos (${tot}) con su nivel de encaje${t==='stock'?' · solo xStocks'+XSI:''}`;
   if(!list.length)return '<div class="mu" style="padding:8px">'+(tot?'Ningún activo de esta lista encaja con tu perfil y filosofía. Elige «Todos los activos del Top» o cambia tu perfil.':'Ningún activo en esta categoría dentro del Top cargado.')+'</div>';
   return list.map(({a,i,sf})=>{
     const catName=((t==='crypto'?CAT_CRYPTO:CAT_STOCK).find(c=>c.id===(a.cat||catOf(a)))||{}).name||'';
@@ -758,9 +808,9 @@ function retryStocks(){
 $('q').addEventListener('input',()=>{clearTimeout(dt);const q=$('q').value.trim().toLowerCase();if(!q){$('dd').hidden=true;return}
 const loc=[...U.crypto,...U.stock].filter(a=>a.symbol.toLowerCase().startsWith(q)||a.name.toLowerCase().startsWith(q)||a.name.toLowerCase().includes(' '+q)).slice(0,6);ddr(loc);
 dt=setTimeout(async()=>{let on=[];try{const j=await jget(CG+'search?query='+encodeURIComponent(q),D);on.push(...(j.coins||[]).slice(0,5).map(c=>({type:'crypto',id:c.id,symbol:c.symbol,name:c.name,img:c.large||c.thumb,rank:c.market_cap_rank})))}catch(e){}
-try{const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?newsCount=0&quotesCount=8&q='+encodeURIComponent(q));on.push(...(j.quotes||[]).filter(z=>['EQUITY','ETF'].includes(z.quoteType)&&z.symbol.indexOf('.')<0).slice(0,5).map(z=>({type:'stock',id:z.symbol,symbol:z.symbol,name:z.shortname||z.longname||z.symbol})))}catch(e){}
+try{const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?newsCount=0&quotesCount=8&q='+encodeURIComponent(q));on.push(...(j.quotes||[]).filter(z=>['EQUITY','ETF'].includes(z.quoteType)&&z.symbol.indexOf('.')<0&&XS.has(z.symbol.replace('-','.'))).slice(0,5).map(z=>({type:'stock',id:z.symbol,symbol:z.symbol,name:z.shortname||z.longname||z.symbol})))}catch(e){}
 const seen=new Set(loc.map(a=>a.type+a.id));ddr([...loc,...on.filter(a=>!seen.has(a.type+a.id))].slice(0,10))},350)});
-let ddl=[];function ddr(l){ddl=l;ddi=-1;$('dd').hidden=!l.length;$('dd').innerHTML=l.map((a,i)=>`<div class="it" onclick="ddp(${i})">${im(a)}<b>${E(a.symbol.toUpperCase())}</b><span class="mu">${E(a.name)}</span><small>${a.type==='crypto'?'CRIPTO':'ACCIÓN/ETF'}</small></div>`).join('')}
+let ddl=[];function ddr(l){ddl=l;ddi=-1;$('dd').hidden=!l.length;$('dd').innerHTML=l.map((a,i)=>`<div class="it" onclick="ddp(${i})">${im(a)}<b>${E(a.symbol.toUpperCase())}</b><span class="mu">${E(a.name)}</span><small>${a.type==='crypto'?'CRIPTO':'xStock'}</small></div>`).join('')}
 function ddp(i){const a=ddl[i],f=U[a.type].find(z=>z.id===a.id);$('dd').hidden=true;$('q').value='';load(f||a)}
 let ddi=-1;$('q').addEventListener('keydown',e=>{const n=ddl.length;if(!n||$('dd').hidden)return;if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();ddi=(ddi+(e.key==='ArrowDown'?1:-1)+n)%n;[...$('dd').children].forEach((c,k)=>c.classList.toggle('on',k===ddi));$('dd').children[ddi].scrollIntoView({block:'nearest'})}else if(e.key==='Enter'){ddp(ddi>=0?ddi:0)}else if(e.key==='Escape'){$('dd').hidden=true}});
 document.addEventListener('click',e=>{if(!e.target.closest('#dd,#q'))$('dd').hidden=true});
@@ -786,7 +836,7 @@ if(so){if(so.s!=null)x+=so.s>20?2:so.s<-20?-2:0;if(so.tw!=null)x+=so.tw>30?3:so.
 function ctx(a){const c=(k,v,h,col)=>`<div class="m"><div class="k">${k}</div><div class="v" style="color:${col||''}">${v}</div><div class="h">${h}</div></div>`,f=a.fx,d=a.dv,so=a.so,N='N/D';let o='';
 if(a.type==='stock'){const an=f&&f.an,t=an?an.b+an.h+an.s:0,w=f&&f.dte!=null&&f.dte<=7;o=c('P/E',f&&f.pe!=null?fmt(f.pe,1):N,f?'Múltiplo de ganancias':'Requiere clave Finnhub')+c('Crec. ingresos',f&&f.rg!=null?sg(f.rg):N,'Interanual TTM',f&&f.rg<0?'var(--rd)':'')+c('Deuda/Capital',f&&f.de!=null?fmt(f.de):N,'>2.5 = alto',f&&f.de>2.5?'var(--rd)':'')+c('Analistas',t?`${an.b}C/${an.h}M/${an.s}V`:N,'Compra/Mantener/Venta')+c('Próx. resultados',f&&f.ed?f.ed:N,f&&f.dte!=null?(w?'⚠ en '+f.dte+' días: riesgo alto':'en '+f.dte+' días'):'',w?'var(--rd)':'')}
 else o=c('Fear & Greed',a.fg?a.fg.v:N,a.fg?a.fg.c:'Mercado cripto')+c('Funding',d&&d.fr!=null?fmt(d.fr,4)+'%':N,'Perpetuos Binance')+c('Open interest 7D',d&&d.oi!=null?sg(d.oi):N,'Apalancamiento')+c('Largos/Cortos',d&&d.ls!=null?fmt(d.ls):N,'Ratio de cuentas')+c('Flujos a exchanges',N,'Requiere Glassnode/CryptoQuant');
-if(a.type==='stock')o+=c('Dividendo',f&&f.dy!=null?fmt(f.dy,2)+'%':N,'Rendimiento anual')+c('P/B',f&&f.pb!=null?fmt(f.pb,1):N,'Precio / valor en libros');o+=c('Reddit',so&&so.s!=null?sg(so.s):N,so?so.n+' posts/semana':'Sin datos')+c('StockTwits',so&&so.tw!=null?sg(so.tw):N,'Bull vs Bear')+c('X / Twitter',N,'API de pago');$('fx').innerHTML=o;$('fxt').textContent=a.type==='stock'?'Fundamentales y contexto':'Derivados y contexto'}
+if(a.type==='stock')o+=c('Dividendo',f&&f.dy!=null?fmt(f.dy,2)+'%':(a.dvd?fmt(a.dvd.yld,2)+'%':N),'Rendimiento anual')+c('P/B',f&&f.pb!=null?fmt(f.pb,1):N,'Precio / valor en libros');o+=c('Reddit',so&&so.s!=null?sg(so.s):N,so?so.n+' posts/semana':'Sin datos')+c('StockTwits',so&&so.tw!=null?sg(so.tw):N,'Bull vs Bear')+c('X / Twitter',N,'API de pago');$('fx').innerHTML=o;$('fxt').textContent=a.type==='stock'?'Fundamentales y contexto':'Derivados y contexto'}
 /* ---- estrategia de rebote ---- */
 const opp=(m,ty)=>{let s=Math.min(30,-m.dd*(ty==='crypto'?.45:.8))+(m.rsi<30?20:m.rsi<40?12:m.rsi<50?4:0)+(m.hist>m.hist1?10:0)+(m.last>m.e10?8:0)+(m.hl?8:0)+(m.div?12:0);if(m.mom<-25&&m.hist<m.hist1&&m.last<m.e10)s-=15;if(pct(m.last,m.v.at(-2))<-5)s-=8;if(ty==='crypto'&&m.dd<-85)s-=15;return Math.max(0,Math.min(100,s))};
 async function scan(){const ty=$('sty').value,thr=+$('thr').value,res=[];$('sb').disabled=true;$('rc').innerHTML='';if(phil()==='index'){try{await scanIdx(ty)}catch(e){$('ss').textContent='Error: '+e.message}$('sb').disabled=false;return}
@@ -870,7 +920,7 @@ sh.push(sheet('Activo',['Dato','Valor'],[['Activo',a.symbol.toUpperCase()+' · '
 if(a&&a.rcm)sh.push(sheet('Senales',['Grupo','Senal','Lectura','Voto (-1 a +1)','Peso'],[['VEREDICTO',a.rcm.title,'Confianza '+a.rcm.cf,Math.round(a.rcm.net*100)/100,'']].concat(a.rcm.S.map(s=>[s.g,s.k,s.t,Math.round(s.d*100)/100,s.w]))));
 if(W.length)sh.push(sheet('Seguimiento',['Tipo','Simbolo','Nombre','Puntaje'],W.map(w=>[w.type,w.symbol.toUpperCase(),w.name,Math.round(w.comb||0)])));
 if(PF.length)sh.push(sheet('Portafolio',['Tipo','Simbolo','Cantidad','Entrada','Stop'],PF.map(x=>[x.type,x.symbol.toUpperCase(),x.qty,x.entry,x.stop])));
-if(sh.length)sh.push(sheet('Perfil',['Dato','Valor'],[['Perfil de riesgo',PROF[prof()].n],['Filosofia',PHIL[phil()].n],['Horizonte',PROF[prof()].hz]].concat(a&&a.rcm?[['Lectura tecnica (corto plazo)',a.rcm.base],['Veredicto segun tu estrategia',a.rcm.title]]:[])));if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
+if(sh.length)sh.push(sheet('Perfil',['Dato','Valor'],[['Perfil de riesgo',PROF[prof()].n],['Filosofia',PHIL[phil()].n],['Horizonte',PROF[prof()].hz]].concat(a&&a.rcm?[['Lectura tecnica (corto plazo)',a.rcm.base],['Veredicto segun tu estrategia',a.rcm.title]]:[]).concat(a&&a.dvd&&a.dvd.n?[['Dividendo TTM por accion (USD)',+a.dvd.ttm.toFixed(4)],['Rendimiento por dividendo TTM (%)',+a.dvd.yld.toFixed(2)],['Frecuencia de pago',a.dvd.freq||''],['Retorno por precio en el periodo (%)',+a.dvd.pr.toFixed(2)],['Retorno con dividendos reinvertidos (%)',+a.dvd.tr.toFixed(2)]]:[])));if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
 const x=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#E6B84A" ss:Pattern="Solid"/></Style></Styles>${sh.join('')}</Workbook>`,l=document.createElement('a');
 l.href=URL.createObjectURL(new Blob([x],{type:'application/vnd.ms-excel'}));l.download='market_intelligence_'+new Date().toISOString().slice(0,10)+'.xls';l.click();st('Excel descargado ('+sh.length+' hojas).')}
 addEventListener('resize',chart);$('period').addEventListener('change',()=>{
@@ -878,7 +928,7 @@ addEventListener('resize',chart);$('period').addEventListener('change',()=>{
   if(cur&&cur.m&&(need>(cur.need||0)&&(need>=99999||TD(need,cur.type)>cur.m.v.length+10))){st('Cargando más historial…');load(cur)}
   else chart();
 });
-prefInit();$('ak').value=key;$('fk').value=fk;sbLoad();tab('crypto');initCrypto().then(()=>{if(!cur&&U.crypto[0])load(U.crypto[0])});
+prefInit();xsSync();$('ak').value=key;$('fk').value=fk;sbLoad();tab('crypto');initCrypto().then(()=>{if(!cur&&U.crypto[0])load(U.crypto[0])});
 </script>
 <script>
 /* ---- v8: pantalla completa / acceso directo (PWA) ---- */
