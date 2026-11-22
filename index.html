@@ -233,27 +233,36 @@ let cur=null,key=LS('mi_ak')||'',fk=LS('mi_fk')||'',tb='crypto',W=[],dt,SC=[],LG
 const CFG={pay:'',codes:[],proxy:LS('mi_px')||''}; // codes vacío = acceso libre
 const PX=[...(CFG.proxy?[u=>CFG.proxy+encodeURIComponent(u)]:[]),u=>u,u=>'https://corsproxy.io/?'+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)];
 const JC=new Map();
+const HS={},INF=new Map(),SOFT=/reddit\.com|stocktwits\.com/;
 async function jget(u,px=PX){
-  const t=/ticker\/price|range=1d|premiumIndex|openInterest/.test(u)?6e4:/klines|range=5y|market_chart/.test(u)?18e5:6e5;
+  const t=/ticker\/price|range=1d|premiumIndex|openInterest/.test(u)?6e4:/klines|range=(max|10y|5y|2y)|market_chart/.test(u)?18e5:6e5;
   const c=JC.get(u);
   if(c&&Date.now()-c.t<t)return c.v;
+  if(INF.has(u))return INF.get(u);
+  const p=jget0(u,px);INF.set(u,p);
+  try{return await p}catch(e){if(c)return c.v;throw e}finally{INF.delete(u)}
+}
+async function jget0(u,px){
+  let host='';try{host=new URL(u).hostname}catch(e){}
+  const hs=HS[host]||(HS[host]={});
+  if(hs.bad&&Date.now()<hs.bad)throw new Error('Fuente temporalmente no disponible ('+host+')');
+  const soft=SOFT.test(host),order=px.map((f,i)=>i);
+  if(px===PX&&hs.ok!=null&&order.includes(hs.ok)){order.splice(order.indexOf(hs.ok),1);order.unshift(hs.ok)}
   BR.t++;bar();
   try{
-    let er;
-    for(const p of px){
-      const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),10000);
+    let er,net=false,stop=false;
+    for(const i of order){
+      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),soft?4000:10000);
       try{
-        const r=await fetch(p(u),{signal:controller.signal});
-        if(r.ok){
-          const v=await r.json();
-          JC.set(u,{t:Date.now(),v});
-          return v;
-        }
+        const r=await fetch(px[i](u),{signal:controller.signal});
+        if(r.ok){const v=await r.json();JC.set(u,{t:Date.now(),v});if(px===PX)hs.ok=i;hs.bad=0;return v}
         er=new Error('HTTP '+r.status);
-      }catch(e){er=e}
+        if(r.status===400||r.status===404){stop=true;break}
+        net=true;
+      }catch(e){er=e;net=true}
       finally{clearTimeout(timer)}
     }
+    if(net&&!stop)hs.bad=Date.now()+(soft?6e5:5e3);
     throw er||new Error('No se pudo obtener respuesta');
   }finally{BR.d++;bar()}
 }
@@ -272,7 +281,7 @@ t+=mom>3?8:mom<-3?-8:0;
 t+=hs[i]>0?5:-5;t+=i>0&&hs[i]>hs[i-1]?3:-3;
 t+=R[i]>=75?0:R[i]>55?8:R[i]<45?-8:0;
 return Math.max(0,Math.min(100,t))}
-const ema=(d,p)=>{const k=2/(p+1),o=[];d.forEach((v,i)=>o.push(i?v*k+o[i-1]*(1-k):v));return o},sma=(d,p)=>d.map((_,i)=>i<p-1?null:d.slice(i-p+1,i+1).reduce((a,b)=>a+b,0)/p);
+const ema=(d,p)=>{const k=2/(p+1),o=[];d.forEach((v,i)=>o.push(i?v*k+o[i-1]*(1-k):v));return o},sma=(d,p)=>{let t=0;return d.map((v,i)=>{t+=v;if(i>=p)t-=d[i-p];return i<p-1?null:t/p})};
 function rsiF(d,p=14){if(d.length<=p)return 50;let g=0,l=0;for(let i=1;i<=p;i++){const x=d[i]-d[i-1];x>0?g+=x:l-=x}let ag=g/p,al=l/p;for(let i=p+1;i<d.length;i++){const x=d[i]-d[i-1];ag=(ag*(p-1)+Math.max(x,0))/p;al=(al*(p-1)+Math.max(-x,0))/p}return al===0?100:100-100/(1+ag/al)}
 function A(v,type,vo){const n=v.length,last=v[n-1],rsi=rsiF(v),s20=sma(v,20),s50=sma(v,50),s200=sma(v,200),e12=ema(v,12),e26=ema(v,26),ml=e12.map((x,i)=>x-e26[i]),sig=ema(ml,9),hs=ml.map((x,i)=>x-sig[i]);
 const mom=pct(last,v[Math.max(0,n-31)]),r=[];for(let i=1;i<n;i++)r.push(Math.log(v[i]/v[i-1]));
@@ -291,14 +300,22 @@ const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?quotesCou
 /* ---- históricos ---- */
 async function hCrypto(a){const s=a.symbol.toUpperCase();if(!STB.includes(a.symbol.toLowerCase()))try{const k=await jget(`https://api.binance.com/api/v3/klines?symbol=${s}USDT&interval=1d&limit=1000`,D);if(Array.isArray(k)&&k.length>=200){const v=k.map(x=>+x[4]);return{v,ts:k.map(x=>x[0]),vo:k.map(x=>+x[7]),q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'Binance'}}}catch(e){}return hCryptoCG(a)}
 async function hCryptoCG(a){const pv=+$('period')?.value||365;const days=pv>=99999?'max':(pv>=3650?3650:pv>=1825?1825:Math.max(365,pv));const j=await jget(CG+`coins/${a.id}/market_chart?vs_currency=usd&days=${days}&interval=daily`,D);const P=(j.prices||[]).map((p,i)=>[p[0],p[1],j.total_volumes&&j.total_volumes[i]?j.total_volumes[i][1]:null]).filter(p=>p[1]),v=P.map(p=>p[1]),ts=P.map(p=>p[0]),vo=P.map(p=>p[2]);if(v.length<30)throw new Error('CoinGecko no devolvió suficiente histórico (posible límite de consultas, reintenta en 1 min).');return{v,ts,vo,q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'CoinGecko'}}
-async function hStock(a,q){let er;const ranges=q?['1y']:['max','10y','5y','2y','1y'];
+async function hStock(a,q){let er;const nd=+($('period')?$('period').value:90),ranges=q?['1y']:nd>=99999?['max','10y','5y']:nd>1825?['10y','5y']:['5y','2y','1y'];
 for(const r of ranges)for(const h of ['query1','query2']){try{const j=await jget(`https://${h}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=${r}&interval=1d`),r0=j.chart.result[0],q0=r0.indicators.quote[0],P=q0.close.map((x,i)=>[r0.timestamp[i]*1e3,x,q0.volume?q0.volume[i]:null]).filter(x=>x[1]!=null),v=P.map(x=>x[1]),ts=P.map(x=>x[0]),vo=P.map(x=>x[2]);if(v.length<30)throw new Error('Yahoo devolvió pocos datos');return{v,ts,vo,q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Yahoo Finance ('+r+')'}}catch(e){er=e}}
 if(!key)throw new Error('No se pudo leer Yahoo Finance ('+(er&&er.message||'sin respuesta')+'). Es fin de semana o hay bloqueo CORS: configura un proxy o API Key de Alpha Vantage en "Datos".');
 const j=await jget(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${a.symbol}&outputsize=full&apikey=${encodeURIComponent(key)}`,D),s=j['Time Series (Daily)'];if(!s)throw new Error(j.Note||j.Information||'Alpha Vantage sin datos.');const E0=Object.entries(s).sort((x,y)=>x[0]<y[0]?-1:1).slice(-1260),v=E0.map(x=>+x[1]['4. close']),ts=E0.map(x=>Date.parse(x[0])),vo=E0.map(x=>+x[1]['5. volume']);return{v,ts,vo,q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Alpha Vantage'}}
 /* ---- carga y render ---- */
-async function load(a){cur=a;$('go').disabled=true;st('Descargando histórico y noticias…');
-try{const[h,nw,ex,g,so]=await Promise.all([a.type==='crypto'?hCrypto(a):hStock(a),news(a).catch(()=>null),(a.type==='stock'?fund(a):deriv(a)).catch(()=>null),a.type==='crypto'?fg():null,social(a).catch(()=>null)]);if(a.type==='stock')a.fx=ex;else{a.dv=ex;a.fg=g}a.so=so;a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;if(a.type==='stock'&&a.fx&&a.fx.dte!=null&&a.fx.dte>=0)a.m.ev={k:TD(a.fx.dte,'stock'),j:Math.max(.05,3*a.m.sd)};a.price=h.q.price;a.chg=h.q.chg;a.nw=nw;a.ns=nw&&nw.length?sent(nw):null;show(a,h);st(`Listo: ${h.v.length} observaciones${nw&&nw.length?` y ${nw.length} noticias`:'; sin noticias disponibles (puntaje solo técnico)'}.`);conn('Datos sincronizados','var(--gr)');$('lu').textContent='Actualizado '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})}
-catch(e){st(e.message);conn('Error de sincronización','var(--rd)')}$('go').disabled=false}
+async function load(a){cur=a;$('go').disabled=true;st('Descargando histórico…');
+try{const C=a.type==='crypto',pN=news(a).catch(()=>null),pE=(C?deriv(a):fund(a)).catch(()=>null),pG=C?fg():Promise.resolve(null),pS=social(a).catch(()=>null);
+const h=await(C?hCrypto(a):hStock(a));if(cur!==a)return;
+a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;a.price=h.q.price;a.chg=h.q.chg;a.need=+$('period').value;
+show(a,h);st(`Histórico listo (${h.v.length} observaciones). Cargando noticias y contexto…`);conn('Datos sincronizados','var(--gr)');$('lu').textContent='Actualizado '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});$('go').disabled=false;
+const[nw,ex,g,so]=await Promise.all([pN,pE,pG,pS]);if(cur!==a)return;
+if(C){a.dv=ex;a.fg=g}else a.fx=ex;a.so=so;a.nw=nw;a.ns=nw&&nw.length?sent(nw):null;
+if(!C&&a.fx&&a.fx.dte!=null&&a.fx.dte>=0)a.m.ev={k:TD(a.fx.dte,'stock'),j:Math.max(.05,3*a.m.sd)};
+show(a,h);st(`Listo: ${h.v.length} observaciones${nw&&nw.length?` y ${nw.length} noticias`:'; sin noticias disponibles (puntaje solo técnico)'}.`)}
+catch(e){if(cur===a){st(e.message);conn('Error de sincronización','var(--rd)')}}
+$('go').disabled=false}
 const cl=v=>v>=60?'var(--gr)':v<=39?'var(--rd)':'var(--au)',tc=v=>v>=60?'bull':v<=39?'bear':'neu',lb=v=>v>=60?'ALCISTA':v<=39?'BAJISTA':'NEUTRAL';
 const gz=(i,v)=>{$('n'+i).textContent=v==null?'—':Math.round(v);$('g'+i).style.background=v==null?'#333':`conic-gradient(${cl(v)} ${v*3.6}deg,#2a323b 0)`};
 function show(a,h){a.bt=null;const m=a.m,ns=a.ns,nsc=ns?50+ns.s/2:null,wn=ns?Math.min(.3,.03*ns.n):0,comb=Math.max(0,Math.min(100,m.t*(1-wn)+(nsc??0)*wn+clp(adj(a),-15,15)));a.comb=comb;
@@ -354,7 +371,7 @@ $('cr').textContent=`Histórico: ${Wd} sesiones (${histLabel}) · Proyección co
   if(!c)return;
   let tip=document.getElementById('chtip');
   if(!tip){tip=document.createElement('div');tip.id='chtip';tip.style.cssText='position:fixed;pointer-events:none;z-index:50;background:#0d1217ee;border:1px solid #e6b84a66;border-radius:8px;padding:6px 10px;font-size:11px;color:#eef1f4;display:none;box-shadow:0 6px 18px #000a;white-space:nowrap';document.body.appendChild(tip)}
-  c.onmousemove=function(e){
+  let raf=0,lastE=null;const mm=function(e){
     const st=window._ch;if(!st)return;
     const rect=c.getBoundingClientRect();
     const mx=e.clientX-rect.left, my=e.clientY-rect.top;
@@ -391,7 +408,7 @@ $('cr').textContent=`Histórico: ${Wd} sesiones (${histLabel}) · Proyección co
     tip.style.left=(e.clientX+14)+'px';
     tip.style.top=(e.clientY-36)+'px';
   };
-  c.onmouseleave=function(){tip.style.display='none';chart()};
+  c.onmousemove=e=>{lastE=e;if(!raf)raf=requestAnimationFrame(()=>{raf=0;mm(lastE)})};c.onmouseleave=function(){tip.style.display='none';chart()};
 })();
 
 /* ===== v9: PERFIL DE RIESGO + FILOSOFÍA DE INVERSIÓN ===== */
@@ -683,6 +700,8 @@ catch(e){U.crypto=[['bitcoin','btc','Bitcoin'],['ethereum','eth','Ethereum'],['s
 /* ---- precios de acciones (Top) ---- */
 let stocksLoading=false;
 let stocksAttempted=false;
+function qLoad(){try{const c=JSON.parse(LS('mi_q')||'null');if(!c||Date.now()-c.t>216e5)return;U.stock.forEach(a=>{const q=c.d[a.symbol];if(q&&a.price==null){a.price=q[0];a.chg=q[1];a.hi52=q[2]}});if(tb==='stock')$('ul').innerHTML=rows('stock')}catch(e){}}
+function qSave(){try{const d={};U.stock.forEach(a=>{if(a.price!=null)d[a.symbol]=[a.price,a.chg,a.hi52]});if(Object.keys(d).length)LS('mi_q',JSON.stringify({t:Date.now(),d}))}catch(e){}}
 
 async function quoteChart(a){const j=await jget(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=5d&interval=1d`),r0=j.chart.result[0],cl=(r0.indicators.quote[0].close||[]).filter(x=>x!=null);a.price=r0.meta.regularMarketPrice??cl.at(-1);const pc=cl.length>1?cl.at(-2):r0.meta.chartPreviousClose;a.chg=pc?pct(a.price,pc):null;return a.price!=null}
 async function initStocks(force=false){
@@ -693,11 +712,11 @@ async function initStocks(force=false){
 
   stocksLoading=true;
   stocksAttempted=true;
-  const status=$('lu');
+  const status=$('lu');qLoad();
   let ok=0,failed=0;
 
   try{
-    const batch=20;
+    const batch=50;
     for(let i=0;i<list.length;i+=batch){
       const slice=list.slice(i,i+batch);
       const syms=slice.map(a=>a.symbol).join(',');
@@ -710,21 +729,20 @@ async function initStocks(force=false){
           const q=by[a.symbol]||by[a.symbol.replace('-','')];
           if(q){
             a.price=q.regularMarketPrice??q.postMarketPrice??q.preMarketPrice??null;
-            a.chg=q.regularMarketChangePercent??null;
+            a.chg=q.regularMarketChangePercent??null;a.hi52=q.fiftyTwoWeekHigh??null;
             if(q.shortName)a.name=q.shortName;
             if(a.price!=null)ok++;
           }
         });
-      }catch(e){failed+=slice.length;if(!ok&&i>=40)break}
+      }catch(e){failed+=slice.length;if(!ok)break}
 
       status.textContent=`Acciones: ${Math.min(i+batch,list.length)}/${list.length} consultadas`;
-      await new Promise(resolve=>setTimeout(resolve,180));
+      await new Promise(resolve=>setTimeout(resolve,60));
     }
     const miss=list.filter(a=>a.price==null);
     if(miss.length){const q=[...miss];let k=0;const wk=async()=>{while(q.length){const a=q.shift();try{if(await quoteChart(a))ok++}catch(e){}status.textContent=`Acciones (respaldo): ${++k}/${miss.length}`}};await Promise.all(Array.from({length:6},wk))}
     failed=list.filter(a=>a.price==null).length;
-  }finally{
-    stocksLoading=false;
+  }finally{qSave();stocksLoading=false;
     if(tb==='stock')$('ul').innerHTML=rows('stock');
     status.textContent=ok
       ?`Acciones: ${ok} precios cargados${failed?` · ${failed} sin precio`:''}`
@@ -772,8 +790,8 @@ if(a.type==='stock')o+=c('Dividendo',f&&f.dy!=null?fmt(f.dy,2)+'%':N,'Rendimient
 /* ---- estrategia de rebote ---- */
 const opp=(m,ty)=>{let s=Math.min(30,-m.dd*(ty==='crypto'?.45:.8))+(m.rsi<30?20:m.rsi<40?12:m.rsi<50?4:0)+(m.hist>m.hist1?10:0)+(m.last>m.e10?8:0)+(m.hl?8:0)+(m.div?12:0);if(m.mom<-25&&m.hist<m.hist1&&m.last<m.e10)s-=15;if(pct(m.last,m.v.at(-2))<-5)s-=8;if(ty==='crypto'&&m.dd<-85)s-=15;return Math.max(0,Math.min(100,s))};
 async function scan(){const ty=$('sty').value,thr=+$('thr').value,res=[];$('sb').disabled=true;$('rc').innerHTML='';if(phil()==='index'){try{await scanIdx(ty)}catch(e){$('ss').textContent='Error: '+e.message}$('sb').disabled=false;return}
-if(ty==='stock'){const list=U.stock.filter(a=>!a.etf&&staticFit(a).f>=.22),q=[...list];let n=0;const wk=async()=>{while(q.length){const a=q.shift();try{const r=await hStock(a,1);a.m=A(r.v,'stock');a.price=r.q.price;a.chg=r.q.chg;res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${list.length}…`}};await Promise.all(Array.from({length:5},wk))}
-else{const pre=U.crypto.filter(a=>!STB.includes(a.symbol.toLowerCase())&&(a.c30<=-8||a.ath<=-40)&&staticFit(a).f>=.22).sort((x,y)=>x.c30-y.c30).slice(0,18);let n=0;for(const a of pre){try{const r=await hCrypto(a);a.m=A(r.v,'crypto');res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${pre.length} cripto (límite de CoinGecko)…`;await new Promise(r=>setTimeout(r,1800))}}
+if(ty==='stock'){const list=U.stock.filter(a=>!a.etf&&staticFit(a).f>=.22&&!(a.price!=null&&a.hi52>0&&pct(a.price,a.hi52)>-(thr-3))),q=[...list];let n=0;const wk=async()=>{while(q.length){const a=q.shift();try{const r=await hStock(a,1);a.m=A(r.v,'stock');a.price=r.q.price;a.chg=r.q.chg;res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${list.length}…`}};await Promise.all(Array.from({length:5},wk))}
+else{const pre=U.crypto.filter(a=>!STB.includes(a.symbol.toLowerCase())&&(a.c30<=-8||a.ath<=-40)&&staticFit(a).f>=.22).sort((x,y)=>x.c30-y.c30).slice(0,18);let n=0;for(const a of pre){let slow=1;try{const r=await hCrypto(a);slow=r.src!=='Binance';a.m=A(r.v,'crypto');res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${pre.length} cripto (límite de CoinGecko)…`;if(slow)await new Promise(r=>setTimeout(r,1800))}}
 if(!res.length){$('ss').textContent='No hay candidatas para tu perfil y filosofía, o no se pudieron leer datos (CORS/proxy/límite). Reintenta en un minuto o ajusta tu perfil.';$('sb').disabled=false;return}
 let c=res.filter(a=>a.m.dd<=-thr).map(a=>({a,o:opp(a.m,ty)})).sort((x,y)=>y.o-x.o).slice(0,14);$('ss').textContent='Leyendo noticias, contexto y social de las candidatas…';const F=ty==='crypto'?await fg():null;
 await Promise.all(c.map(async x=>{const a=x.a;try{a.nw=await news(a);a.ns=a.nw.length?sent(a.nw):null}catch(e){a.ns=null}x.n=a.ns;if(ty==='stock')a.fx=await fund(a).catch(()=>null);else{a.dv=await deriv(a).catch(()=>null);a.fg=F}a.so=await social(a).catch(()=>null);x.f=Math.max(0,Math.min(100,x.o+(x.n?x.n.s/5:0)+adj(a)))}));
@@ -857,7 +875,7 @@ const x=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook 
 l.href=URL.createObjectURL(new Blob([x],{type:'application/vnd.ms-excel'}));l.download='market_intelligence_'+new Date().toISOString().slice(0,10)+'.xls';l.click();st('Excel descargado ('+sh.length+' hojas).')}
 addEventListener('resize',chart);$('period').addEventListener('change',()=>{
   const need=+$('period').value;
-  if(cur&&cur.m&&(need>=99999||need>cur.m.v.length+10)){st('Cargando más historial…');load(cur)}
+  if(cur&&cur.m&&(need>(cur.need||0)&&(need>=99999||TD(need,cur.type)>cur.m.v.length+10))){st('Cargando más historial…');load(cur)}
   else chart();
 });
 prefInit();$('ak').value=key;$('fk').value=fk;sbLoad();tab('crypto');initCrypto().then(()=>{if(!cur&&U.crypto[0])load(U.crypto[0])});
