@@ -89,13 +89,26 @@ html{background:#0a0d11;-webkit-text-size-adjust:100%}body{min-height:100vh;min-
 @media(max-width:600px){input,select{font-size:16px}}
 @media(display-mode:standalone),(display-mode:fullscreen){body{overscroll-behavior-y:contain}}
 #ioshint{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin:0 0 12px;font-size:12px;line-height:1.5;color:var(--tx)}#ioshint span{cursor:pointer;padding:0 4px;color:var(--mu)}
-</style></head><body><div id="ld"></div>
+.ctl2{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:600px){.ctl2{grid-template-columns:1fr}}
+.ft{font-size:9px;font-weight:800;margin-left:6px;padding:1px 6px;border-radius:99px;border:1px solid;vertical-align:middle;white-space:nowrap}
+.ft.y{color:var(--gr);border-color:#2fd6a055}.ft.p{color:var(--au);border-color:#e6b84a55}.ft.n{color:var(--rd);border-color:#ff5c6c55}
+#pfgate{position:fixed;inset:0;z-index:200;background:#05080cdd;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));overflow:auto}
+.pgb{width:min(780px,100%);max-height:100%;overflow:auto;border:1px solid transparent;border-radius:18px;padding:18px;background:linear-gradient(160deg,#1c222a,#0f1318) padding-box,var(--edge) border-box;box-shadow:0 20px 60px #000c}
+.pgh{margin:14px 0 8px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--au);font-weight:800}
+.pgg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.pgo{text-align:left;border:1px solid #3a444e;background:#0d1217;color:var(--tx);border-radius:12px;padding:10px;font-size:12px;line-height:1.45}
+.pgo b{display:block;font-size:13px;margin-bottom:3px}.pgo:hover{border-color:var(--au)}.pgo.on{border-color:var(--au);background:#1d1a10;box-shadow:0 0 0 2px #e6b84a33}
+</style></head><body><div id="ld"></div><div id="pfgate" hidden><div class="pgb"><h2 style="font-size:15px">Configura tu perfil de inversor</h2><div class="mu" style="margin-top:4px">De tu perfil de riesgo y tu filosofía dependen las señales de compra y venta, los rangos, el escáner y las listas. Puedes cambiarlos cuando quieras.</div>
+<div class="pgh">1 · Perfil de riesgo</div><div class="pgg" id="pgp"></div>
+<div class="pgh">2 · Filosofía de inversión</div><div class="pgg" id="pgf"></div>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn s" id="pgc" onclick="closeGate()" hidden>Cancelar</button><button class="btn" id="pgok" onclick="saveGate()" disabled>Comenzar</button></div></div></div>
 <!-- ACCESO PREMIUM COMPLETAMENTE ELIMINADO -->
 <div class="app">
-<header><div class="brand"><img class="mk" src="https://www.image2url.com/r2/default/images/1795311089070-8fd3a370-bb2d-44b6-ad73-70ce07b096ea.png" alt="Logo Market Intelligence"><div><h1>MARKET INTELLIGENCE</h1><div class="sub">Esto no es asesoría financiera, es especulación con señales</div></div></div>
-<div><span class="pill"><span class="dot" id="cd"></span><span id="ct">Cargando mercado…</span></span> <span class="pill" id="lu">Sin datos</span> <button class="btn sm" onclick="xls()">⬇ Excel</button> <button class="btn sm s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button> <button class="btn sm b" id="inb" onclick="instApp()" hidden>📲 Instalar</button></div></header>
+<header><div class="brand"><img class="mk" src="https://www.image2url.com/r2/default/images/1795311089070-8fd3a370-bb2d-44b6-ad73-70ce07b096ea.png" alt="Logo Market Intelligence"><div><h1>MARKET INTELLIGENCE</h1><div class="sub">Esto no es asesoría financiera, es especulación con señales inteligentes.</div></div></div>
+<div><span class="pill"><span class="dot" id="cd"></span><span id="ct">Cargando mercado…</span></span> <span class="pill" id="lu">Sin datos</span> <button class="pill" id="pfpill" onclick="openGate()" style="cursor:pointer;color:var(--au)">👤 Perfil</button> <button class="btn sm" onclick="xls()">⬇ Excel</button> <button class="btn sm s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button> <button class="btn sm b" id="inb" onclick="instApp()" hidden>📲 Instalar</button></div></header>
 <div class="note" id="ioshint" hidden><div id="iosTxt"></div><span onclick="hintOff()" title="Cerrar">×</span></div>
 <div class="layout"><main class="col">
+<section class="card" id="pfcard"><div class="ch"><h2>Tu perfil de inversor</h2><span class="mu" id="pfhz">—</span></div><div class="ctl2"><div><label class="mu">Perfil de riesgo</label><select id="selp" onchange="setPref(this.value,null)"></select></div><div><label class="mu">Filosofía de inversión</label><select id="self" onchange="setPref(null,this.value)"></select></div></div><div class="note" id="pfd"></div></section>
 <section class="card srch"><div class="ch"><h2>Buscar activo</h2><span class="mu">Escribe las primeras letras · búsqueda en línea</span></div>
 <div class="ctl"><div style="position:relative"><input id="q" autocomplete="off" placeholder="Ej: bit, eth, app, nvd, tesla…"><div class="dd" id="dd" hidden></div></div>
 <select id="period"><option value="30">1 mes</option><option value="90" selected>3 meses</option><option value="180">6 meses</option><option value="365">1 año</option><option value="1825">5 años</option></select>
@@ -109,24 +122,25 @@ html{background:#0a0d11;-webkit-text-size-adjust:100%}body{min-height:100vh;min-
 <div class="sc"><div class="gz"><div class="gauge" id="g1"><b id="n1">—</b></div><small>TÉCNICO</small></div><div class="gz"><div class="gauge" id="g2"><b id="n2">—</b></div><small id="nl">NOTICIAS</small></div><div class="gz"><div class="gauge" id="g3"><b id="n3">—</b></div><small>COMBINADO</small></div></div>
 <div class="g4" style="grid-template-columns:repeat(3,1fr)" id="pj"></div>
 <div class="note">Escenarios = simulación con volatilidad dinámica (tipo GARCH, retornos históricos remuestreados, drift mínimo); la banda 10–90 % se ensancha antes de resultados trimestrales. En acciones se cuentan días bursátiles. No es una predicción ni asesoría financiera.</div></section>
+<section class="card" id="stratbox"><div class="ch"><h2>Encaje con tu estrategia</h2><span class="mu" id="stsub">—</span></div><div id="stb" style="font-size:12px;line-height:1.6">Carga un activo para ver si encaja con tu perfil y tu filosofía, y qué haría tu estrategia a corto y largo plazo.</div><div id="sts" class="sgs"></div></section>
 <section class="card" id="recbox"><div class="ch"><h2>Recomendación</h2><span class="mu" id="recsub">Integra todas las señales del análisis</span></div>
 <div id="rec" style="font-size:13px;line-height:1.55">Carga un activo para obtener la recomendación según indicadores y señales.</div>
 <div id="recsig" class="sgs"></div>
 <div id="recexp" style="margin-top:12px;padding-top:10px;border-top:1px solid #2b343d;font-size:12px;line-height:1.6;color:#98a2ad">La explicación aparecerá aquí cuando cargues un activo.</div>
-<div class="note">Cada señal vota de −1 a +1 con un peso: tendencia, momentum, RSI/Bollinger, volumen, zonas, proyección, rebote, noticias, fundamentales o derivados, social y validación histórica. La recomendación combina ese voto con el puntaje combinado y reglas de seguridad (resultados próximos, sobrecompra, noticias negativas). ○ = dato informativo o no disponible (no vota). No es asesoría financiera.</div></section>
+<div class="note">Cada señal vota de −1 a +1 con un peso: tendencia, momentum, RSI/Bollinger, volumen, zonas, proyección, rebote, noticias, fundamentales o derivados, social y validación histórica. La recomendación combina ese voto con el puntaje combinado y reglas de seguridad (resultados próximos, sobrecompra, noticias negativas) y se ajusta a tu perfil y filosofía: puede convertir una compra en «no encaja» o una venta técnica en «mantener». ○ = dato informativo o no disponible (no vota). No es asesoría financiera.</div></section>
 <section class="card"><div class="ch"><h2>Rangos de compra</h2><span class="mu" id="rgt">—</span></div><label class="mu">Capital disponible (USD) para calcular tamaños</label><input id="cap" type="number" min="0" oninput="LS('mi_cap',this.value);rg()" style="margin-bottom:8px"><div class="rgs" id="rgb"><div class="mu">Carga un activo.</div></div><div class="note">Zonas = retrocesos medidos en oscilaciones semanales del activo (volatilidad reciente); stop bajo la zona; objetivo según la relación riesgo/beneficio indicada. La probabilidad de llegar a la zona es una aproximación estadística (sin tendencia) a 30 días. No es asesoría financiera.</div></section>
 <section class="card"><div class="ch"><h2>Validación de la señal</h2><span class="mu" id="bth">—</span><select id="bhz" style="width:auto" onchange="cur&&cur.m&&extras(cur,{v:cur.m.v,ts:cur.m.ts})"><option>7</option><option selected>30</option><option>90</option></select></div><div class="g4" id="btg"></div><div class="st" id="bvd"></div><div class="note" id="plog">Registro de predicciones: sin datos aún.</div><div class="note">Backtest: el puntaje técnico recalculado día a día sobre el histórico y lo que pasó 30 días después. Las observaciones se solapan y la muestra es limitada: es una guía de confianza, no una garantía.</div></section>
 <section class="card"><div class="ch"><h2 id="fxt">Contexto</h2><span class="mu">Fundamentales / derivados / social</span></div><div class="g4" id="fx"><div class="mu">Selecciona un activo.</div></div></section>
 <section class="card"><div class="ch"><h2>Noticias y sentimiento</h2><span class="mu" id="nm">—</span></div><div class="news" id="nw"><div class="mu">Sin noticias aún.</div></div></section>
 </main>
 <aside class="col">
-<section class="card"><div class="ch"><h2>Oportunidades: caídas con rebote</h2></div>
-<select id="sty" style="margin-bottom:8px"><option value="stock">Acciones (top 100)</option><option value="crypto">Criptomonedas (top 100)</option></select><div class="mu" style="margin-bottom:8px">Caída fuerte + sobreventa + giro confirmado (MACD, EMA10, mínimos crecientes, divergencia RSI) + noticias y contexto.</div>
+<section class="card"><div class="ch"><h2 id="sct">Oportunidades: caídas con rebote</h2></div>
+<select id="sty" style="margin-bottom:8px"><option value="stock">Acciones (top 100)</option><option value="crypto">Criptomonedas (top 100)</option></select><div class="mu" id="scd" style="margin-bottom:8px">Caída fuerte + sobreventa + giro confirmado (MACD, EMA10, mínimos crecientes, divergencia RSI) + noticias y contexto.</div>
 <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center"><div><label class="mu">Caída mínima vs máx. 52 sem.: <b id="tv">20</b>%</label><input type="range" id="thr" min="10" max="60" value="20" oninput="tv.textContent=this.value" style="padding:0"></div><button class="btn" id="sb" onclick="scan()">Escanear</button></div>
 <div class="st" id="ss">Acciones: ~1–3 min. Cripto: preselecciona las 18 más castigadas (~40 s).</div><div id="rc" style="margin-top:8px"></div></section>
 <section class="card"><div class="ch"><h2>Top 100</h2><div style="display:flex;gap:6px;align-items:center"><button class="btn s sm" onclick="retryStocks()" title="Volver a consultar los precios de acciones">↻</button><div class="tabs" style="width:210px"><button class="btn s sm on" id="tc" onclick="tab('crypto')">Cripto</button><button class="btn s sm" id="ts" onclick="tab('stock')">Acciones</button></div></div></div>
-<select id="catf" style="margin-bottom:8px" onchange="tab(tb)"><option value="">Todas las categorías</option></select>
-<div class="ul" id="ul"></div></section>
+<select id="fitf" style="margin-bottom:8px" onchange="tab(tb)"><option value="rec">Recomendados para mi perfil y filosofía</option><option value="all">Todos los activos del Top</option></select><select id="catf" style="margin-bottom:8px" onchange="tab(tb)"><option value="">Todas las categorías</option></select>
+<div class="mu" id="fitn" style="margin-bottom:6px"></div><div class="ul" id="ul"></div></section>
 <section class="card"><div class="ch"><h2>Portafolio</h2><span><button class="btn s sm" onclick="pfNew()">＋ Posición</button> <button class="btn s sm" id="csv" onclick="csv()">CSV</button></span></div><div id="pfb"></div></section>
 <section class="card"><div class="ch"><h2>Alertas</h2></div><div style="display:grid;grid-template-columns:90px 1fr auto;gap:8px"><select id="alop"><option value="&gt;">Sube a</option><option value="&lt;">Baja a</option></select><input id="alpx" type="number" step="any" placeholder="Precio"><button class="btn sm" onclick="alAdd()">Crear</button></div><div id="alb" class="mu" style="margin-top:8px">Sin alertas</div><div class="note" id="aln"></div></section>
 <section class="card"><div class="ch"><h2>Seguimiento</h2></div><div class="chips" id="wl"><span class="mu">Vacío</span></div></section>
@@ -380,6 +394,201 @@ $('cr').textContent=`Histórico: ${Wd} sesiones (${histLabel}) · Proyección co
   c.onmouseleave=function(){tip.style.display='none';chart()};
 })();
 
+/* ===== v9: PERFIL DE RIESGO + FILOSOFÍA DE INVERSIÓN ===== */
+let PRF=LS('mi_prof')||'',PHL=LS('mi_phil')||'',GP='',GF='';
+const PROF={
+ cons:{n:'Conservador',ic:'🛡',hz:'Largo plazo (3+ años)',thr:15,
+  d:'Protege el capital: pocas operaciones, activos grandes y estables, confirmación fuerte antes de comprar, tamaños pequeños y sin perseguir rebotes.',
+  r:'Compra solo con tendencia confirmada y puntaje alto; reduce temprano ante deterioro; no compra rebotes; en cripto admite solo BTC/ETH y en porcentaje pequeño.',
+  nn:-15,nnNet:.3,sellComb:42,sellNet:-.2,sellRsi:68,sellRsiNet:.2,buyComb:68,buyNet:.38,buyRsi:65,trend:true,caut:65,amNet:.25,amComb:60,reb:false,rebDD:-30,rebOp:65,rg:0,rgReb:0,rk:.6,maxPos:.1,vmax:{stock:45,crypto:80}},
+ mod:{n:'Moderado',ic:'⚖',hz:'Mediano–largo plazo (1–3 años)',thr:20,
+  d:'Equilibra crecimiento y protección: acepta caídas temporales, combina activos sólidos con algo de riesgo y compra con confirmación razonable.',
+  r:'Compra con tendencia y momentum alineados; admite rebotes con tamaño reducido; en cripto admite las grandes capitalizaciones.',
+  nn:-25,nnNet:.2,sellComb:35,sellNet:-.3,sellRsi:72,sellRsiNet:.15,buyComb:62,buyNet:.3,buyRsi:70,trend:false,caut:70,amNet:.15,amComb:55,reb:true,rebDD:-20,rebOp:50,rg:1,rgReb:0,rk:1,maxPos:.2,vmax:{stock:70,crypto:130}},
+ agr:{n:'Agresivo',ic:'🔥',hz:'Corto–mediano plazo (semanas a 1 año)',thr:30,
+  d:'Busca el máximo retorno y tolera caídas fuertes: opera más seguido, entra antes y acepta activos volátiles con tamaño controlado.',
+  r:'Compra con menos confirmación y entra más cerca del precio; aprovecha rebotes profundos; permite activos volátiles y memecoins con tamaño mínimo.',
+  nn:-35,nnNet:.1,sellComb:30,sellNet:-.4,sellRsi:75,sellRsiNet:.1,buyComb:56,buyNet:.22,buyRsi:75,trend:false,caut:75,amNet:.1,amComb:50,reb:true,rebDD:-15,rebOp:40,rg:2,rgReb:1,rk:1.5,maxPos:.3,vmax:{stock:999,crypto:999}}
+};
+const PHIL={
+ value:{n:'Valor (Value)',ic:'💎',hz:'3–7 años',
+  d:'Busca empresas que cotizan por debajo de su valor real según sus estados financieros, esperando que el mercado reconozca su precio justo con el tiempo.',
+  buy:'Compra cuando el precio está por debajo del valor estimado (P/E y P/B bajos, deuda sana, ganancias positivas) y hay margen de seguridad. La técnica solo afina la entrada.',
+  sell:'Vende o reduce cuando el precio supera el valor razonable (múltiplos altos) o el negocio se deteriora. No vende por una caída ni por señales técnicas.'},
+ growth:{n:'Crecimiento (Growth)',ic:'🚀',hz:'3–5 años',
+  d:'Apuesta por compañías jóvenes o innovadoras con alto potencial de expandir sus ingresos rápidamente, aunque hoy parezcan caras.',
+  buy:'Compra empresas con ingresos creciendo rápido y tendencia larga alcista (sobre SMA200); acepta múltiplos altos y aprovecha los retrocesos.',
+  sell:'Reduce si la tendencia larga se rompe (bajo SMA200) o el crecimiento se frena. No vende solo por sobrecompra ni por un P/E alto.'},
+ income:{n:'Dividendos (Income)',ic:'💰',hz:'5+ años',
+  d:'Prioriza activos que reparten flujos de efectivo periódicos (dividendos, staking) para generar ingresos pasivos.',
+  buy:'Compra activos que pagan de forma estable, idealmente cuando el precio cede (más rendimiento), y reinvierte los pagos.',
+  sell:'Solo vende si el pago está en riesgo (deuda alta, ingresos cayendo, recorte). Ignora la volatilidad de corto plazo.'},
+ index:{n:'Indexado / pasivo',ic:'📊',hz:'5+ años',
+  d:'Replica el comportamiento general del mercado con fondos indexados o ETFs de bajo costo, sin elegir acciones individuales.',
+  buy:'Aportes periódicos fijos (DCA) a ETFs amplios o a BTC+ETH; sin elegir el momento ni acciones individuales.',
+  sell:'No vende por señales: rebalancea una vez al año o cuando necesite el dinero.'}
+};
+const prof=()=>PROF[PRF]?PRF:'mod',phil=()=>PHIL[PHL]?PHL:'value';
+/* ETFs indexados (se agregan a la lista de acciones) */
+[['SPY','SPDR S&P 500 ETF','broad'],['VOO','Vanguard S&P 500 ETF','broad'],['VTI','Vanguard Total Stock Market ETF','broad'],['VT','Vanguard Total World Stock ETF','broad'],['QQQ','Invesco QQQ (Nasdaq 100)','growth'],['VUG','Vanguard Growth ETF','growth'],['VTV','Vanguard Value ETF','value'],['SCHD','Schwab US Dividend Equity ETF','income'],['VYM','Vanguard High Dividend Yield ETF','income']]
+ .forEach(([s,n,k])=>{if(!U.stock.some(a=>a.symbol===s))U.stock.push({type:'stock',id:s,symbol:s,name:n,idx:true,sub:k,cat:'etf'})});
+const DIVS=new Set('KO PEP PG JNJ XOM CVX PM MO VZ T SO NEE ABBV MRK MCD HD LOW WMT JPM BLK CSCO IBM TXN ADP LMT CAT BX MS GS BAC WFC C PFE AMGN GILD UNP LIN ETN HON DE ICE AXP SBUX NKE ABT MDT COP SPGI MA V CB QCOM ADI APH CMCSA RTX GE KKR COST'.split(' '));
+const NODIV=new Set('TSLA AMZN PLTR UBER CRWD NFLX PANW NOW ANET AMD ISRG BRK-B'.split(' '));
+const LOWDIV=new Set('AAPL MSFT GOOGL META NVDA AVGO ORCL MU LRCX KLAC AMAT DIS CRM'.split(' '));
+const GROW=new Set('NVDA AMD PLTR TSLA NFLX UBER CRWD PANW NOW ANET AVGO META AMZN ISRG LLY VRTX MU LRCX KLAC INTU ADBE CRM MSFT GOOGL AAPL BKNG AMAT ORCL'.split(' '));
+const HIGHR=new Set('PLTR TSLA CRWD UBER AMD MU'.split(' '));
+const STAKE=new Set('eth sol ada dot atom near avax ton sui'.split(' '));
+const VALC=['finance','energy','health','staple','materials','industrial','utilities','telecom','reit','agri'],GROWC=['tech','ai','disc','health'],INCC=['staple','utilities','reit','energy','telecom','finance'];
+const isStable=a=>a.type==='crypto'&&(STB.includes((a.symbol||'').toLowerCase())||catOf(a)==='stable');
+const isCore=a=>a.type==='crypto'&&['bitcoin','ethereum'].includes((a.id||'').toLowerCase());
+const cname=a=>((a.type==='crypto'?CAT_CRYPTO:CAT_STOCK).find(x=>x.id===catOf(a))||{}).name||'sector';
+/* encaje del activo con la filosofía (0 a 1) */
+function philEval(a){
+ const ph=phil(),m=a.m,f=a.fx,c=catOf(a),cr=a.type==='crypto',sy=(a.symbol||'').toUpperCase(),sl=(a.symbol||'').toLowerCase(),it=[],vs=[],
+ add=(k,t,d)=>it.push({k,t,d:clp(d)}),avg=x=>x.length?x.reduce((p,q)=>p+q,0)/x.length:0,n=m?m.v.length:0,dd=m?m.dd:null,s2=m&&m.s200?m.s200[n-1]:null;
+ let fit=.5,why='',has=false,income=false,sellF=false;
+ const no=t=>{why=t;add('No encaja',t,-1)};
+ if(ph==='index'){
+  if(a.idx){fit=a.sub==='broad'?1:.75;add('ETF indexado',a.sub==='broad'?'ETF amplio y diversificado: es justo lo que busca la estrategia pasiva':'ETF indexado temático: aceptable, aunque menos diversificado que uno amplio',a.sub==='broad'?1:.3)}
+  else if(cr){if(isStable(a)){fit=0;no('Una stablecoin no es un activo de inversión por precio')}else if(isCore(a)){fit=.8;add('Núcleo cripto','BTC y ETH son el "índice" práctico del mercado cripto por capitalización',.8)}else if(a.rank&&a.rank<=10&&c!=='meme'){fit=.5;add('Gran capitalización','Top 10 por capitalización: forma parte de un índice cripto, con más riesgo individual',.2)}else{fit=.1;no('Un inversor pasivo no elige criptos individuales fuera del núcleo BTC/ETH')}}
+  else{fit=.1;no('Una acción individual es lo opuesto a replicar el mercado; usa un ETF amplio')}
+ }else if(ph==='value'){
+  if(cr){fit=.15;no('Las criptomonedas no tienen estados financieros ni flujos de caja: no hay "valor intrínseco" que comparar con el precio')}
+  else if(a.idx){const k=a.sub;fit=k==='value'?1:k==='broad'?.6:.3;add('ETF',k==='value'?'ETF de acciones de valor: encaja':k==='broad'?'ETF amplio: neutral para valor (compra el mercado completo)':'ETF de otro estilo: poco alineado con valor',k==='value'?1:k==='broad'?.1:-.5)}
+  else{
+   if(f){has=true;
+    if(f.pe!=null){const v=f.pe<0?-1:f.pe<12?1:f.pe<18?.7:f.pe<25?.2:f.pe<35?-.4:-1;vs.push(v);add('P/E '+fmt(f.pe,1),f.pe<0?'Pérdidas: sin margen de seguridad':f.pe<18?'Múltiplo bajo: posible descuento':f.pe<25?'Múltiplo razonable':'Múltiplo alto: poco margen de seguridad',v)}
+    if(f.pb!=null){const v=f.pb<1.5?.8:f.pb<3?.3:f.pb>8?-.6:-.1;vs.push(v);add('P/B '+fmt(f.pb,1),f.pb<1.5?'Cotiza cerca de su valor en libros':f.pb>8?'Cotiza muy por encima de su valor en libros':'Valor en libros: neutral',v)}
+    if(f.de!=null){const v=f.de>2.5?-.6:f.de<1?.3:0;vs.push(v);add('Deuda/capital '+fmt(f.de),f.de>2.5?'Balance muy apalancado':'Balance manejable',v)}
+    if(f.pe!=null&&(f.pe>35||f.pe<0)||f.de>2.5)sellF=true}
+   else{vs.push(VALC.includes(c)?.3:GROWC.includes(c)?-.2:0);add('Sin P/E ni P/B','Falta la clave Finnhub: se estima por sector ('+cname(a)+') y por la caída desde máximos. Cárgala en "Datos" para una valoración real',0)}
+   if(dd!=null){const v=dd<=-25?.7:dd<=-12?.4:dd>=-3?-.2:0;vs.push(v);add('Distancia al máximo',sg(dd)+' vs máx. 52 sem.: '+(v>0?'descuento frente al máximo':v<0?'cerca de máximos':'neutral'),v)}
+   fit=clp((avg(vs)+1)/2,0,1)}
+ }else if(ph==='growth'){
+  if(cr){if(isStable(a)){fit=0;no('Una stablecoin no crece: su precio es fijo')}else{const b={smart:.75,ai:.8,infra:.7,oracle:.65,defi:.65,rwa:.65,game:.55,storage:.6,pago:.6,priv:.35,meme:.2,otros:.4}[c]??.4;fit=clp(b+(a.rank&&a.rank<=30?.1:0),0,1);if(c==='meme')no('Memecoin: especulación pura, sin crecimiento fundamental medible');else add('Sector: '+cname(a),'Red o protocolo con potencial de adopción (riesgo alto)',fit>=.6?.6:0)}}
+  else if(a.idx){const k=a.sub;fit=k==='growth'?1:k==='broad'?.5:.2;add('ETF',k==='growth'?'ETF de crecimiento: encaja':k==='broad'?'ETF amplio: crecimiento diluido con todo el mercado':'ETF de otro estilo: poco alineado con crecimiento',k==='growth'?1:k==='broad'?0:-.5)}
+  else{
+   if(f){has=true;
+    if(f.rg!=null){const v=f.rg>25?1:f.rg>12?.7:f.rg>5?.2:f.rg<0?-1:-.5;vs.push(v);add('Ingresos '+sg(f.rg)+' interanual',f.rg>12?'Crecimiento alto':f.rg>5?'Crecimiento moderado':'Crecimiento débil o negativo',v)}
+    if(f.eg!=null){const v=f.eg>15?.6:f.eg>0?.1:-.6;vs.push(v);add('Ganancias por acción '+sg(f.eg),f.eg>15?'Las ganancias aceleran':f.eg>0?'Ganancias positivas':'Ganancias cayendo',v)}
+    if(f.pe!=null&&f.pe>100){vs.push(-.2);add('P/E '+fmt(f.pe,0),'Múltiplo muy alto: tolerable solo si el crecimiento se mantiene',-.2)}}
+   else{vs.push(GROW.has(sy)?.6:GROWC.includes(c)?.3:INCC.includes(c)?-.4:0);add('Sin datos de crecimiento','Falta la clave Finnhub: se estima por sector/lista ('+cname(a)+'). Cárgala en "Datos" para medir el crecimiento real',0)}
+   if(s2!=null){const up=m.last>s2;vs.push(up?.4:-.5);add('Tendencia larga (SMA200)',up?'Precio sobre la media de 200 sesiones':'Precio bajo la media de 200 sesiones',up?.5:-.8)}
+   if(m&&m.mom90>10){vs.push(.3);add('Momentum 90D',sg(m.mom90),.4)}
+   fit=clp((avg(vs)+1)/2,0,1)}
+ }else{
+  if(cr){if(isStable(a)){fit=.3;add('Stablecoin','Rinde en plataformas (con riesgo de contraparte) pero no se compra por precio',0)}else if(STAKE.has(sl)){fit=.5;add('Staking','Genera rendimiento por staking (variable; no es un dividendo y el precio puede caer)',.3)}else{fit=.05;no('No genera flujo periódico: ni dividendos ni staking')}}
+  else if(a.idx){const k=a.sub;fit=k==='income'?1:k==='broad'?.5:.2;add('ETF',k==='income'?'ETF de dividendos: encaja':k==='broad'?'ETF amplio: rendimiento por dividendo bajo':'ETF de otro estilo: poco alineado con ingresos',k==='income'?1:k==='broad'?0:-.5)}
+  else{
+   const dy=f&&f.dy!=null?f.dy:null;
+   if(dy!=null){has=true;const v=dy>=4?1:dy>=2.5?.8:dy>=1.5?.4:dy>0?-.2:-1;vs.push(v);income=dy>=2;add('Dividendo '+fmt(dy,2)+'%',dy>=2.5?'Rendimiento atractivo':dy>=1.5?'Rendimiento moderado':dy>0?'Rendimiento bajo':'No paga dividendo',v)}
+   else{const v=NODIV.has(sy)?-1:LOWDIV.has(sy)?-.4:DIVS.has(sy)?.6:INCC.includes(c)?.3:-.2;vs.push(v);income=DIVS.has(sy);add('Dividendo (estimado)',NODIV.has(sy)?'No paga dividendo':LOWDIV.has(sy)?'Dividendo marginal (menos de ~1%)':DIVS.has(sy)?'Pagador histórico de dividendos (rendimiento exacto con Finnhub)':'Sin dato de dividendo: cárgalo con la clave Finnhub',v)}
+   if(f){if(f.de>2.5){vs.push(-.5);sellF=true;add('Deuda/capital '+fmt(f.de),'Deuda alta: el dividendo puede estar en riesgo',-.6)}if(f.rg<-5){vs.push(-.5);sellF=true;add('Ingresos '+sg(f.rg),'Ingresos cayendo: riesgo de recorte del dividendo',-.6)}}
+   fit=clp((avg(vs)+1)/2,0,1)}
+ }
+ if(!why&&fit<.35){const z=it.filter(s=>s.d<0)[0];why=z?z.t:'No encaja con tu filosofía'}
+ return{fit,tag:fit>=.6?'ENCAJA':fit>=.35?'PARCIAL':'NO ENCAJA',it,has,income,sellF,why,ok:fit>=.35}}
+/* encaje del activo con el perfil de riesgo */
+function riskOf(a){
+ if(a.type==='crypto'){if(isStable(a))return 1;if(isCore(a))return 2;if(catOf(a)==='meme')return 3.5;return a.rank&&a.rank<=15?2.5:3}
+ if(a.idx)return 1;if(HIGHR.has((a.symbol||'').toUpperCase()))return 3;
+ return['staple','utilities','health','finance','telecom','reit','agri'].includes(catOf(a))?1:2}
+function profFit(a){
+ const k=prof(),PR=PROF[k],r=riskOf(a),cr=a.type==='crypto',m=a.m;let f=1,why='';
+ if(isStable(a)){f=.3;why='Las stablecoins sirven como reserva de liquidez, no para ganar por precio'}
+ else if(k==='cons'){f=r<=1?1:(!cr&&r<=2)?.7:(cr&&r<=2)?.5:0;if(f===0)why=cr?'En cripto, el perfil conservador solo admite BTC/ETH y en porcentaje pequeño':'Activo demasiado volátil o especulativo para un perfil conservador';else if(cr)why='Cripto: mantén BTC/ETH en un porcentaje pequeño del portafolio'}
+ else if(k==='mod'){f=r<=2?1:r<=2.5?.7:r<=3?.5:.2;if(f<.5)why='Demasiado especulativo para un perfil moderado'}
+ else{f=r<=1?.6:r<=3?1:.8;if(r<=1)why='Activo defensivo: poco potencial de ganancia para un perfil agresivo';if(r>=3.5)why='Memecoin: permitida solo con tamaño mínimo'}
+ if(m&&f>0&&m.vol>PR.vmax[a.type]){f=Math.min(f,.35);why='Volatilidad anual '+fmt(m.vol,0)+'% supera el máximo cómodo para tu perfil ('+PR.vmax[a.type]+'%)'}
+ return{f,why,r}}
+function staticFit(a){const pe=philEval(a),pf=profFit(a);return{f:pe.fit*pf.f,pe,pf,tip:(pe.it[0]?pe.it[0].t:'')+(pf.why?' · '+pf.why:'')}}
+/* la filosofía y el perfil pueden convertir, mantener o anular el veredicto técnico */
+function overlay(a,V,x){
+ const PR=PROF[prof()],ph=phil(),pe=philEval(a),pf=profFit(a),cr=a.type==='crypto',
+ NZ=(sh,title,text,miss,cls)=>({sh,cls:cls||'neu',dir:0,rg:-1,na:true,title,text,miss}),
+ buy=V.dir>0,sell=V.dir<0,{last,s20,s50,s200,rsi,dd,earn}=x,
+ up=s200!=null?last>s200:(s50!=null?last>s50:true),
+ alt=ph==='index'?(cr?'BTC y ETH (ponderados por capitalización)':'ETFs amplios como SPY, VOO, VTI o VT'):ph==='income'?(cr?'activos con staking (ETH, SOL, ADA…)':'acciones pagadoras de dividendos o ETFs como SCHD o VYM'):ph==='value'?'acciones con múltiplos bajos y balance sano, o el ETF VTV':'empresas con ingresos creciendo y tendencia alcista, o ETFs como QQQ o VUG';
+ a.phe=pe;a.pfe=pf;
+ if(buy)V.rg=V.sh==='REBOTE'?PR.rgReb:V.sh==='COMPRA'?PR.rg:V.rg;
+ if(buy&&pf.f<.4)return NZ('NO ENCAJA','NO ENCAJA CON TU PERFIL '+PR.n.toUpperCase(),'⛔ <b>La señal técnica es de compra, pero este activo no encaja con tu perfil '+PR.n.toLowerCase()+'.</b> '+E(pf.why),'Elegir un activo más acorde a tu perfil o cambiar el perfil en «Tu perfil de inversor».');
+ if(ph==='index'){
+  if(!pe.ok)return NZ('NO APLICA','NO APLICA A TU ESTRATEGIA INDEXADA','📊 <b>Un inversor pasivo no elige activos individuales.</b> '+E(pe.why)+'. En su lugar, considera '+alt+'.'+(sell?' Si ya lo tienes, la señal técnica es bajista, pero tu estrategia no opera por señales: valora rotar gradualmente hacia un índice.':''),'Elegir un fondo indexado o un ETF amplio.');
+  return{sh:'ACUMULAR',cls:'bull',dir:0,rg:-1,dca:true,pas:true,title:'ACUMULAR: aportes periódicos (DCA)',text:'📅 <b>Estrategia pasiva: no intentes acertar el momento.</b> Aporta una cantidad fija cada mes y rebalancea una vez al año.'+(dd<=-15?' Cae '+sg(dd)+' desde máximos: puedes hacer un aporte extra opcional (la lectura técnica de corto plazo no cambia el plan).':'')+(sell?' <i>Referencia de corto plazo: señales técnicas bajistas; un inversor pasivo no vende por esto.</i>':''),miss:'Solo cambia el plan si cambian tu horizonte, tu necesidad de liquidez o la diversificación del fondo; no por las señales técnicas.'};
+ }
+ if(ph==='value'){
+  if(buy&&!pe.ok)return NZ('NO ENCAJA','NO ENCAJA CON TU ESTRATEGIA DE VALOR','🧮 <b>La técnica es favorable, pero este activo no se puede valorar como un inversor en valor.</b> '+E(pe.why)+' Considera '+alt+'.','Un activo con estados financieros y múltiplos que muestren descuento.');
+  if(buy&&pe.fit<.5)return NZ('ESPERAR','ESPERAR: sin margen de seguridad','🧮 <b>La técnica acompaña, pero la valoración no ofrece descuento.</b> Un inversor en valor compra por debajo del valor real, no por momentum. '+(pe.has?'':'Sin P/E ni P/B no puedo confirmar el descuento: carga la clave Finnhub en «Datos».'),'Que el precio caiga o que los múltiplos (P/E, P/B) muestren descuento con balance sano.');
+  if(sell&&pe.ok&&pe.fit>=.6&&V.sh!=='EVITAR')return{sh:'ACUMULAR GRADUAL',cls:'reb',dir:1,rg:0,title:'ACUMULAR GRADUAL: valoración atractiva',text:'💎 <b>La técnica está débil, pero la valoración es atractiva.</b> Un inversor en valor no vende por caídas ni por señales técnicas: si el balance sigue sano, acumula en tramos pequeños y espera que el precio converja al valor real.',miss:'Deterioro del negocio (ingresos y márgenes cayendo, deuda en alza) o que el precio alcance un múltiplo exigente.'};
+  if(!sell&&pe.has&&pe.sellF&&dd>-8)return{sh:'REDUCIR',cls:'bear',dir:-1,rg:-1,title:'REDUCIR: sobrevaluada o balance débil',text:'🔻 <b>El precio está cerca de máximos y los fundamentales restan margen de seguridad</b> (múltiplo alto, pérdidas o deuda elevada). Para un inversor en valor es zona de toma de ganancias.',miss:'Una corrección que devuelva el múltiplo a un nivel razonable.'};
+  return V;
+ }
+ if(ph==='growth'){
+  if(buy&&!pe.ok)return NZ('NO ENCAJA','NO ENCAJA CON TU ESTRATEGIA DE CRECIMIENTO','🚀 <b>La técnica es favorable, pero este activo no es una historia de crecimiento.</b> '+E(pe.why)+' Considera '+alt+'.','Un activo con ingresos creciendo y tendencia larga alcista.');
+  if(buy&&pe.fit<.45)return NZ('ESPERAR','ESPERAR: crecimiento no confirmado','🚀 <b>La técnica acompaña, pero no hay evidencia sólida de crecimiento.</b> '+(pe.has?'':'Carga la clave Finnhub para medir el crecimiento real de ingresos y ganancias.'),'Ingresos creciendo por encima de 12 % y precio sobre la SMA200.');
+  const broken=s200!=null&&s50!=null&&last<s200&&s50<s200;
+  if(broken&&!sell&&pe.ok)return{sh:'REDUCIR',cls:'bear',dir:-1,rg:-1,title:'REDUCIR: tendencia larga rota',text:'🔻 <b>El precio perdió la SMA200 con la SMA50 por debajo.</b> Para un inversor en crecimiento es la señal de salida: la tendencia que sostenía la tesis se rompió. Reduce o protege con stop.',miss:'Recuperar la SMA200 y que el crecimiento de ingresos siga acelerando.'};
+  if(sell&&!broken&&pe.ok&&pe.fit>=.5&&V.sh!=='EVITAR')return NZ('MANTENER','MANTENER: la tendencia de crecimiento sigue intacta','🚀 <b>La lectura de corto plazo pide cautela, pero la tendencia larga no se rompió.</b> Un inversor en crecimiento tolera la volatilidad mientras la tesis y la SMA200 se mantengan; usa los retrocesos para añadir, no para vender.','Cierre bajo la SMA200 con la SMA50 cruzando a la baja, o ingresos que dejan de crecer.');
+  if(!buy&&!sell&&pe.ok&&pe.fit>=.6&&up&&s20!=null&&last<=s20*1.03&&rsi<65&&!earn)return{sh:'COMPRA EN RETROCESO',cls:'bull',dir:1,rg:PR.rg,title:'COMPRA EN RETROCESO (crecimiento)',text:'🚀 <b>Empresa con perfil de crecimiento y tendencia larga alcista, cerca de su SMA20.</b> Es el retroceso que busca un inversor en crecimiento: entra en tramos y con stop bajo la SMA50.',miss:'Cierre bajo la SMA200 o un frenazo del crecimiento de ingresos.'};
+  return V;
+ }
+ if(ph==='income'){
+  if(buy&&!pe.ok)return NZ('NO ENCAJA','NO ENCAJA CON TU ESTRATEGIA DE DIVIDENDOS','💰 <b>La técnica es favorable, pero este activo no genera ingresos periódicos.</b> '+E(pe.why)+' Considera '+alt+'.','Un activo que pague dividendos o staking de forma estable.');
+  if(buy&&pe.fit<.45)return NZ('ESPERAR','ESPERAR: poco ingreso para tu estrategia','💰 <b>La técnica acompaña, pero el flujo de ingresos es bajo o incierto.</b> '+(pe.has?'':'Carga la clave Finnhub para ver el rendimiento por dividendo real.'),'Un rendimiento por dividendo atractivo con deuda e ingresos sanos.');
+  if(sell&&pe.ok&&!pe.sellF&&V.sh!=='EVITAR')return NZ('MANTENER','MANTENER: sigue cobrando tus ingresos','💰 <b>La técnica de corto plazo es bajista, pero el flujo de ingresos no está en riesgo.</b> Un inversor de dividendos ignora la volatilidad: mantén y reinvierte; si el precio cae, el rendimiento sube y puedes sumar.','Recorte del dividendo, deuda en alza o ingresos cayendo.');
+  if(sell&&pe.sellF)V.text+=' <span style="color:#ff5c6c">⚠ Además, los fundamentales ponen el dividendo en riesgo.</span>';
+  if(!sell&&pe.ok&&pe.income&&pe.fit>=.6&&rsi<68&&!earn&&V.sh!=='PRECAUCIÓN'&&V.sh!=='VIGILAR')return{sh:'ACUMULAR',cls:'bull',dir:1,rg:Math.min(PR.rg,1),title:'ACUMULAR POR DIVIDENDO',text:'💰 <b>Activo con flujo de ingresos y precio sin sobrecompra.</b> Compra en tramos y reinvierte los pagos; la compra escalonada reduce el riesgo de entrar caro.',miss:'Recorte del dividendo, deuda en alza o ingresos cayendo.'};
+  return V;
+ }
+ return V}
+function renderStrat(a,V0,V){
+ const PR=PROF[prof()],PH=PHIL[phil()],pe=a.phe,pf=a.pfe,
+ tc=pe.fit>=.6?['ENCAJA','bull']:pe.fit>=.35?['ENCAJA PARCIAL','neu']:['NO ENCAJA','bear'],
+ pc=pf.f>=.7?['PERFIL OK','bull']:pf.f>=.4?['PERFIL: CON LÍMITES','neu']:['FUERA DE TU PERFIL','bear'];
+ $('stsub').textContent=PR.ic+' '+PR.n+' · '+PH.ic+' '+PH.n;
+ $('stb').innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag '+tc[1]+'">'+tc[0]+' · '+E(PH.n)+'</span><span class="tag '+pc[1]+'">'+pc[0]+'</span></div>'+
+ '<div style="margin-top:8px"><b>Corto plazo (referencia técnica):</b> '+E(V0.title)+'<br><b>Según tu estrategia ('+E(PR.hz.toLowerCase())+'):</b> '+E(V.title)+'</div>'+
+ '<div class="note" style="margin-top:8px"><b>Compra:</b> '+E(PH.buy)+'<br><b>Venta:</b> '+E(PH.sell)+'<br><b>Tu perfil:</b> '+E(PR.r)+'</div>';
+ const pi=pe.it.concat(pf.why?[{k:'Perfil de riesgo',t:pf.why,d:pf.f>=.4?0:-1}]:[]);
+ $('sts').innerHTML=pi.length?'<div class="sgh">Por qué</div>'+pi.map(s=>{const c=s.d>=.2?['▲','var(--gr)']:s.d<=-.2?['▼','var(--rd)']:['●','var(--au)'];return'<div class="sgi"><span class="ic" style="color:'+c[1]+'">'+c[0]+'</span><div><b>'+E(s.k)+'</b><span class="mu">'+E(s.t)+'</span></div></div>'}).join(''):''}
+/* ---- selección de perfil / filosofía ---- */
+function openGate(first){GP=PRF;GF=PHL;gateDraw();$('pgc').hidden=!!first||!(PRF&&PHL);$('pfgate').hidden=false}
+function gateDraw(){
+ $('pgp').innerHTML=Object.keys(PROF).map(k=>{const p=PROF[k];return'<button class="pgo'+(GP===k?' on':'')+'" onclick="GP=\''+k+'\';gateDraw()"><b>'+p.ic+' '+p.n+'</b>'+E(p.d)+'<br><span class="mu">'+E(p.hz)+'</span></button>'}).join('');
+ $('pgf').innerHTML=Object.keys(PHIL).map(k=>{const p=PHIL[k];return'<button class="pgo'+(GF===k?' on':'')+'" onclick="GF=\''+k+'\';gateDraw()"><b>'+p.ic+' '+p.n+'</b>'+E(p.d)+'<br><span class="mu">Horizonte típico: '+E(p.hz)+'</span></button>'}).join('');
+ $('pgok').disabled=!(GP&&GF)}
+function saveGate(){if(!(GP&&GF))return;const ch=GP!==PRF||GF!==PHL;PRF=GP;PHL=GF;LS('mi_prof',PRF);LS('mi_phil',PHL);$('pfgate').hidden=true;applyPrefs(ch)}
+function closeGate(){$('pfgate').hidden=true}
+function setPref(p,f){if(p)PRF=p;if(f)PHL=f;LS('mi_prof',prof());LS('mi_phil',phil());applyPrefs(true)}
+const SCD={value:'Caídas con descuento: activos con múltiplos bajos y balance sano que cayeron desde máximos. La señal técnica solo afina la entrada.',growth:'Retrocesos en empresas en crecimiento: caída + sobreventa + giro confirmado, priorizando ingresos crecientes y tendencia larga.',income:'Pagadores con descuento: activos de dividendos o staking que cayeron (más rendimiento) con giro confirmado.',index:'Núcleo indexado: ETFs amplios o BTC/ETH. No se buscan rebotes; el plan es aportar de forma periódica. Aquí ves la caída actual de cada uno para decidir aportes extra.'};
+const SCP={cons:' Perfil conservador: solo señales confirmadas, sin «cuchillos cayendo».',mod:' Perfil moderado: rebotes con tamaño reducido.',agr:' Perfil agresivo: admite rebotes profundos y activos volátiles.'};
+function applyPrefs(rebuild){
+ const PR=PROF[prof()],PH=PHIL[phil()];
+ $('selp').value=prof();$('self').value=phil();$('pfhz').textContent='Horizonte: '+PR.hz;
+ $('pfd').innerHTML='<b>'+PR.ic+' '+PR.n+':</b> '+E(PR.d)+'<br><b>'+PH.ic+' '+PH.n+':</b> '+E(PH.d);
+ $('pfpill').textContent=PR.ic+' '+PR.n+' · '+PH.ic+' '+PH.n.split(' ')[0];
+ $('sct').textContent=phil()==='index'?'Núcleo indexado: aportes periódicos':'Oportunidades: caídas con rebote';
+ $('scd').textContent=SCD[phil()]+(phil()==='index'?'':SCP[prof()]);
+ $('sb').textContent=phil()==='index'?'Ver núcleo':'Escanear';
+ if(rebuild){SC=[];rr();$('thr').value=PR.thr;$('tv').textContent=PR.thr;$('ss').textContent='Cambió tu perfil o filosofía: vuelve a escanear para ver candidatas acordes.';sbSave()}
+ tab(tb);
+ if(cur&&cur.m){try{recommend(cur)}catch(e){console.error(e)}rg()}}
+function prefInit(){
+ $('selp').innerHTML=Object.keys(PROF).map(k=>'<option value="'+k+'">'+PROF[k].ic+' '+PROF[k].n+'</option>').join('');
+ $('self').innerHTML=Object.keys(PHIL).map(k=>'<option value="'+k+'">'+PHIL[k].ic+' '+PHIL[k].n+'</option>').join('');
+ applyPrefs(false);if(!PRF||!PHL)openGate(true)}
+/* núcleo indexado (escáner para filosofía pasiva) */
+async function scanIdx(ty){
+ const list=ty==='stock'?U.stock.filter(a=>a.idx):U.crypto.filter(a=>!isStable(a)).slice(0,5),res=[],q=[...list];let n=0;
+ const wk=async()=>{while(q.length){const a=q.shift();try{const r=ty==='stock'?await hStock(a,1):await hCrypto(a);a.m=A(r.v,ty,r.vo);if(ty==='stock'){a.price=r.q.price;a.chg=r.q.chg}if(profFit(a).f>=.4)res.push(a)}catch(e){}$('ss').textContent='Analizando '+(++n)+'/'+list.length+'…';if(ty==='crypto')await new Promise(r=>setTimeout(r,1500))}};
+ await Promise.all(Array.from({length:ty==='stock'?4:1},wk));
+ if(!res.length){$('ss').textContent='No hay activos del núcleo para tu perfil o no se pudieron leer datos (CORS/proxy/límite). Reintenta en un minuto.';return}
+ SC=res.map(a=>{const m=a.m,pe=philEval(a),ex=m.dd<=-15;return{type:ty,id:a.id,symbol:a.symbol,name:a.name,img:a.img,f:Math.max(0,Math.min(100,pe.fit*70+Math.min(30,-m.dd))),v:ex?['Aporte extra opcional ('+sg(m.dd)+')','gr']:['Aporte periódico (DCA)','gr'],d:sg(m.dd)+' vs máx. · RSI '+fmt(m.rsi,0)+' · '+PROF[prof()].n}}).sort((x,y)=>y.f-x.f);
+ rr();$('ss').textContent='Núcleo indexado actualizado ('+res.length+' activos, '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})+'). Plan: aportes periódicos, sin vender por señales.';sbSave()}
+function rgIdx(a){
+ const cap=+(LS('mi_cap')||1000),mo=cap/12,pe=a.phe||philEval(a),P=a.price||a.m.last,u=mo/P,dd=a.m.dd;
+ $('rgt').textContent='Plan pasivo · sin stops ni objetivos';
+ $('rgb').innerHTML=pe.ok?'<div class="rgc" style="grid-column:1/-1;border-color:var(--bl)"><h3 style="color:var(--bl)">📅 Aportes periódicos (DCA)</h3>Capital: <b>'+money(cap)+'</b> → 12 aportes de <b>'+money(mo)+'</b> (uno al mes)<br>≈ <b>'+fmt(u,u<1?4:2)+'</b> uds por aporte al precio de hoy<br>Aporte extra opcional si cae ≥ 15 % desde máximos <span class="mu">(ahora '+sg(dd)+')</span><br>Rebalanceo: una vez al año · Horizonte: 5+ años<br><span class="mu">No hay stop ni objetivo: la estrategia pasiva no vende por señales.</span><div style="margin-top:8px"><button class="btn s sm" onclick="pfAdd('+u+',0,'+P+')">＋ Portafolio (1 aporte)</button></div></div>':'<div class="mu" style="grid-column:1/-1">Tu estrategia es indexada: este activo no genera un plan de compra. '+E(pe.why||'')+'</div>'}
 /* ---- v7: recomendación integrada (todas las señales) ---- */
 function recommend(a){
 const m=a.m;if(!m||!$('rec'))return;
@@ -419,26 +628,27 @@ const bt=a.bt;
 if(bt&&bt.edge!=null)add(G8,'Backtest de la señal',bt.edge>5?.6:bt.edge>-5?0:-.8,1,`Señal ALCISTA vs base: ${bt.edge>=0?'+':''}${fmt(bt.edge,0)} pts (${bt.alc.n} casos)${bt.reb&&bt.reb.n?` · rebote confirmado: ${fmt(bt.reb.up,0)}% sube (${bt.reb.n})`:''}`);
 else add(G8,'Backtest de la señal',0,0,bt?'Pocos casos alcistas: no se puede validar':'Calculando…');
 const W=S.filter(s=>s.w>0),net=W.reduce((x,s)=>x+s.d*s.w,0)/W.reduce((x,s)=>x+s.w,0);
-const earn=dte!=null&&dte<=7,negNews=a.ns&&a.ns.s<-25,btBad=bt&&bt.edge!=null&&bt.edge<=-5,conf=last>m.e10||macdUp,reb=dd<=-20&&op>=50;
+const PR=PROF[prof()],earn=dte!=null&&dte<=7,negNews=a.ns&&a.ns.s<PR.nn,btBad=bt&&bt.edge!=null&&bt.edge<=-5,conf=last>m.e10||macdUp,reb=PR.reb&&dd<=PR.rebDD&&op>=PR.rebOp;
 let V;
-if(negNews&&net<.2)V={sh:'EVITAR',cls:'bear',dir:-1,rg:-1,title:'EVITAR: noticias negativas',text:'🔴 <b>Las noticias recientes son claramente negativas</b> y el resto de las señales no lo compensa. Evita abrir posición hasta que cambie el relato; si ya tienes, protege con stop.',miss:'Un cambio de tono en las noticias y un cierre sobre EMA10 con MACD mejorando.'};
-else if(comb<=35||net<=-.3||(rsi>72&&!macdUp&&net<.15))V={sh:'VENDER / EVITAR',cls:'bear',dir:-1,rg:-1,title:'VENDER / EVITAR',text:'🔴 <b>Sesgo bajista o sobrecompra.</b> Puntaje débil, señales mayormente en contra, o RSI alto con momentum deteriorándose. No persigas el precio; si tienes posición, valora reducir o proteger con stop. No es una orden automática.',miss:'Recuperar SMA20/SMA50 con MACD positivo, o un enfriamiento del RSI hacia 50–60 sin romper soportes.'};
-else if(comb>=62&&net>=.3&&macdUp&&last>m.e10&&rsi<70&&!earn&&!btBad)V={sh:'COMPRA',cls:'bull',dir:1,rg:1,title:'COMPRA (tendencia confirmada)',text:'✅ <b>Sesgo alcista con confirmación.</b> Tendencia, momentum y puntaje combinado se alinean: MACD al alza, precio sobre EMA10 y sin sobrecompra. Considera entradas en retrocesos hacia SMA20 o soporte (rango Moderado) con stop bajo el mínimo reciente. No es una orden automática.',miss:'Cierre bajo EMA10 con MACD volviendo a negativo, resultados o noticias adversas, o ruptura del soporte.'};
+if(negNews&&net<PR.nnNet)V={sh:'EVITAR',cls:'bear',dir:-1,rg:-1,title:'EVITAR: noticias negativas',text:'🔴 <b>Las noticias recientes son claramente negativas</b> y el resto de las señales no lo compensa. Evita abrir posición hasta que cambie el relato; si ya tienes, protege con stop.',miss:'Un cambio de tono en las noticias y un cierre sobre EMA10 con MACD mejorando.'};
+else if(comb<=PR.sellComb||net<=PR.sellNet||(rsi>PR.sellRsi&&!macdUp&&net<PR.sellRsiNet))V={sh:'VENDER / EVITAR',cls:'bear',dir:-1,rg:-1,title:'VENDER / EVITAR',text:'🔴 <b>Sesgo bajista o sobrecompra.</b> Puntaje débil, señales mayormente en contra, o RSI alto con momentum deteriorándose. No persigas el precio; si tienes posición, valora reducir o proteger con stop. No es una orden automática.',miss:'Recuperar SMA20/SMA50 con MACD positivo, o un enfriamiento del RSI hacia 50–60 sin romper soportes.'};
+else if(comb>=PR.buyComb&&net>=PR.buyNet&&macdUp&&last>m.e10&&rsi<PR.buyRsi&&!earn&&!btBad&&(!PR.trend||s200==null||last>s200))V={sh:'COMPRA',cls:'bull',dir:1,rg:1,title:'COMPRA (tendencia confirmada)',text:'✅ <b>Sesgo alcista con confirmación.</b> Tendencia, momentum y puntaje combinado se alinean: MACD al alza, precio sobre EMA10 y sin sobrecompra. Considera entradas en retrocesos hacia SMA20 o soporte (rango Moderado) con stop bajo el mínimo reciente. No es una orden automática.',miss:'Cierre bajo EMA10 con MACD volviendo a negativo, resultados o noticias adversas, o ruptura del soporte.'};
 else if(reb){V=conf&&!earn&&!btBad?{sh:'REBOTE',cls:'reb',dir:1,rg:0,title:'COMPRA POR REBOTE (tamaño reducido)',text:`🔵 <b>Caída fuerte (${sg(dd)}) con giro confirmado.</b> Puntaje de rebote ${Math.round(op)}/100 y primer cambio de MACD o EMA10. Entra solo en el rango Más seguro, tamaño pequeño y stop estricto.`,miss:'Mínimos crecientes y precio sostenido sobre EMA10; un nuevo mínimo anula la idea.'}:{sh:'VIGILAR',cls:'neu',dir:0,rg:0,title:'VIGILAR: falta confirmación',text:`🟡 <b>Caída fuerte (${sg(dd)}) y señales de rebote</b>, pero aún no hay giro confirmado${earn?' y hay resultados muy cerca':''}${btBad?' y el backtest no respalda la señal en este activo':''}. Espera antes de aumentar exposición.`,miss:'Cierre sobre EMA10, MACD cruzando al alza y mínimos crecientes'+(earn?'; pasar el reporte de resultados':'')+(btBad?'; que el backtest mejore':'')+'.'}}
-else if(earn||rsi>=70||zs.k==='sell'||(zs.k==='caut'&&net<.3))V={sh:'PRECAUCIÓN',cls:'neu',dir:0,rg:0,title:'PRECAUCIÓN: no perseguir precio',text:'🟡 <b>Hay motivos para no entrar ahora:</b> '+[earn?`resultados en ${dte} día(s)`:'',rsi>=70?`RSI en sobrecompra (${fmt(rsi,1)})`:'',zs.k==='sell'?'precio en zona de venta':zs.k==='caut'?'precio en zona de precaución':''].filter(Boolean).join(', ')+'. Mejor esperar retroceso o confirmación de continuidad.',miss:'Un retroceso hacia SMA20/SMA50 con RSI enfriándose, o pasar el reporte de resultados.'};
-else if(net>=.15&&comb>=55)V={sh:'ALCISTA MODERADO',cls:'bull',dir:1,rg:0,title:'SESGO ALCISTA MODERADO',text:'🟢 <b>Sesgo positivo sin confirmación completa.</b> Espera un retroceso hacia el rango Más seguro o un cierre sobre EMA10 con MACD mejorando antes de entrar.',miss:'Precio sobre EMA10, MACD positivo y puntaje combinado ≥ 62.'};
+else if(earn||rsi>=PR.caut||zs.k==='sell'||(zs.k==='caut'&&net<.3))V={sh:'PRECAUCIÓN',cls:'neu',dir:0,rg:0,title:'PRECAUCIÓN: no perseguir precio',text:'🟡 <b>Hay motivos para no entrar ahora:</b> '+[earn?`resultados en ${dte} día(s)`:'',rsi>=70?`RSI en sobrecompra (${fmt(rsi,1)})`:'',zs.k==='sell'?'precio en zona de venta':zs.k==='caut'?'precio en zona de precaución':''].filter(Boolean).join(', ')+'. Mejor esperar retroceso o confirmación de continuidad.',miss:'Un retroceso hacia SMA20/SMA50 con RSI enfriándose, o pasar el reporte de resultados.'};
+else if(net>=PR.amNet&&comb>=PR.amComb)V={sh:'ALCISTA MODERADO',cls:'bull',dir:1,rg:0,title:'SESGO ALCISTA MODERADO',text:'🟢 <b>Sesgo positivo sin confirmación completa.</b> Espera un retroceso hacia el rango Más seguro o un cierre sobre EMA10 con MACD mejorando antes de entrar.',miss:'Precio sobre EMA10, MACD positivo y puntaje combinado ≥ 62.'};
 else V={sh:'ESPERAR',cls:'neu',dir:0,rg:0,title:'ESPERAR: sin ventaja clara',text:'⚪ <b>Señales mixtas.</b> Operar aquí es más ruido que señal. Usa el escáner de rebotes o espera una alineación clara.',miss:'Puntaje combinado claramente sobre 60 con MACD y EMA10 alineados, o un deterioro claro que justifique evitar.'};
-if(earn&&V.sh!=='PRECAUCIÓN'&&V.sh!=='VIGILAR')V.text+=` <span style="color:#ff5c6c">⚠ Resultados en ${dte} día(s): reduce tamaño o espera al reporte.</span>`;
+const V0={...V};V=overlay(a,V,{last,s20,s50,s200,rsi,dd,earn});
+if(earn&&!V.na&&V.sh!=='PRECAUCIÓN'&&V.sh!=='VIGILAR')V.text+=` <span style="color:#ff5c6c">⚠ Resultados en ${dte} día(s): reduce tamaño o espera al reporte.</span>`;
 const nz=W.filter(s=>Math.abs(s.d)>=.2),al=V.dir?nz.filter(s=>Math.sign(s.d)===V.dir).length:0,ag=V.dir&&nz.length?al/nz.length:null;
 let cf=ag==null?'—':ag>=.7?'Alta':ag>=.55?'Media':'Baja';
 if(ag!=null&&(btBad||earn))cf=cf==='Alta'?'Media':'Baja';
 const top=g=>W.filter(s=>Math.sign(s.d)===g&&Math.abs(s.d)>=.3).sort((x,y)=>Math.abs(y.d*y.w)-Math.abs(x.d*x.w)).slice(0,4).map(s=>s.k);
-a.rcm={...V,net,S,cf};
-$('rec').innerHTML=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="tag ${V.cls}">${V.title}</span><span class="mu">${ag==null?'Señales mixtas o sin dirección':`Confianza <b>${cf}</b> · ${al}/${nz.length} señales alineadas`} · puntaje combinado ${Math.round(comb)}</span></div><div style="margin-top:8px">${V.text}</div>`;
+a.rcm={...V,net,S,cf,base:V0.title};renderStrat(a,V0,V);
+$('rec').innerHTML=`<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="tag ${V.cls}">${V.title}</span><span class="pill">${PROF[prof()].ic} ${PROF[prof()].n} · ${PHIL[phil()].n}</span><span class="mu">${V.pas?'Plan pasivo: no depende de señales':ag==null?'Señales mixtas o sin dirección':`Confianza <b>${cf}</b> · ${al}/${nz.length} señales alineadas`} · puntaje combinado ${Math.round(comb)}</span></div><div style="margin-top:8px">${V.text}</div>`;
 $('recsub').textContent=`${W.length} señales con voto · balance ${net>=0?'+':''}${fmt(net*100,0)}`;
 const gs=[...new Set(S.map(s=>s.g))];
 $('recsig').innerHTML=gs.map(g=>`<div class="sgh">${E(g)}</div>`+S.filter(s=>s.g===g).map(s=>{const c=s.w===0?['○','var(--mu)']:s.d>=.2?['▲','var(--gr)']:s.d<=-.2?['▼','var(--rd)']:['●','var(--au)'];return`<div class="sgi"><span class="ic" style="color:${c[1]}">${c[0]}</span><div><b>${E(s.k)}</b><span class="mu">${E(s.t)}</span></div></div>`}).join('')).join('');
-$('recexp').innerHTML=`<b>A favor:</b> ${top(1).map(E).join(', ')||'ninguna señal fuerte'}<br><b>En contra:</b> ${top(-1).map(E).join(', ')||'ninguna señal fuerte'}<br><b>Qué falta o qué invalidaría la idea:</b> ${V.miss}<br><b>Rango de compra:</b> ${V.rg<0?'ninguno sugerido por ahora':'sugerido «'+['Más seguro','Moderado','Más arriesgado'][V.rg]+'» (ver Rangos de compra)'}`;
+$('recexp').innerHTML=`<b>A favor:</b> ${top(1).map(E).join(', ')||'ninguna señal fuerte'}<br><b>En contra:</b> ${top(-1).map(E).join(', ')||'ninguna señal fuerte'}<br><b>Qué falta o qué invalidaría la idea:</b> ${V.miss}<br><b>Rango de compra:</b> ${V.dca?'plan de aportes periódicos (ver Rangos de compra)':V.rg<0?'ninguno sugerido por ahora':'sugerido «'+['Más seguro','Moderado','Más arriesgado'][V.rg]+'» (ver Rangos de compra)'}`;
 $('tg').textContent=V.sh;$('tg').className='tag '+V.cls}
 /* ---- listas ---- */
 function fillCat(){
@@ -450,12 +660,12 @@ function fillCat(){
 }
 function rows(t){
   const f=$('catf')?$('catf').value:'';
-  const list=U[t].map((a,i)=>({a,i})).filter(({a})=>!(a.etf)&&(!f||catOf(a)===f));
-  if(!list.length)return '<div class="mu" style="padding:8px">Ningún activo en esta categoría dentro del Top cargado.</div>';
-  return list.map(({a,i})=>{
+  const onlyRec=($('fitf')?$('fitf').value:'rec')==='rec';let list=U[t].map((a,i)=>({a,i,sf:staticFit(a)})).filter(({a})=>!(a.etf)&&(!f||catOf(a)===f));const tot=list.length;if(onlyRec)list=list.filter(z=>z.sf.f>=.22);list.sort((p,q)=>Math.round(q.sf.f*10)-Math.round(p.sf.f*10)||p.i-q.i);if($('fitn'))$('fitn').textContent=onlyRec?`Mostrando ${list.length} de ${tot} que encajan con ${PROF[prof()].n} · ${PHIL[phil()].n}`:`Mostrando todos (${tot}) con su nivel de encaje`;
+  if(!list.length)return '<div class="mu" style="padding:8px">'+(tot?'Ningún activo de esta lista encaja con tu perfil y filosofía. Elige «Todos los activos del Top» o cambia tu perfil.':'Ningún activo en esta categoría dentro del Top cargado.')+'</div>';
+  return list.map(({a,i,sf})=>{
     const catName=((t==='crypto'?CAT_CRYPTO:CAT_STOCK).find(c=>c.id===(a.cat||catOf(a)))||{}).name||'';
     const tip=E((a.name||a.symbol)+' · '+(a.symbol||'').toUpperCase()+(catName?' · '+catName:'')+(a.rank?' · Rank #'+a.rank:''));
-    return `<div class="ur" title="${tip}" onclick="pickU('${t}',${i})">${im(a)}<div class="n"><strong>${E(a.symbol.toUpperCase())}</strong><small>${a.rank?'#'+a.rank+' · ':''}${E(a.name)}${catName?' · '+E(catName):''}</small></div><div class="p">${a.price!=null?money(a.price):'—'}<br><span style="color:${a.chg==null?'':a.chg>=0?'var(--gr)':'var(--rd)'}">${a.chg!=null?sg(a.chg):''}</span></div></div>`;
+    return `<div class="ur" title="${tip}" onclick="pickU('${t}',${i})">${im(a)}<div class="n"><strong>${E(a.symbol.toUpperCase())}<span class="ft ${sf.f>=.45?'y':sf.f>=.22?'p':'n'}" title="${E(sf.tip)}">${sf.f>=.45?'✔ Encaja':sf.f>=.22?'◐ Parcial':'✖ No encaja'}</span></strong><small>${a.rank?'#'+a.rank+' · ':''}${E(a.name)}${catName?' · '+E(catName):''}</small></div><div class="p">${a.price!=null?money(a.price):'—'}<br><span style="color:${a.chg==null?'':a.chg>=0?'var(--gr)':'var(--rd)'}">${a.chg!=null?sg(a.chg):''}</span></div></div>`;
   }).join('');
 }
 function tab(t){
@@ -544,7 +754,7 @@ const updW=rw;
 const FH='https://finnhub.io/api/v1/',STB='usdt usdc dai usde usds busd tusd fdusd usdd pyusd usd1 usdtb susds susde steth wsteth weth wbtc weeth cbbtc wbeth reth bsc-usd'.split(' ');
 async function fund(a){if(!fk)return null;const g=p=>jget(FH+p+'&token='+fk,D).catch(()=>null),sy=a.symbol.replace('-','.'),td=new Date().toISOString().slice(0,10),to=new Date(Date.now()+90*864e5).toISOString().slice(0,10);
 const[m,r,e]=await Promise.all([g('stock/metric?metric=all&symbol='+sy),g('stock/recommendation?symbol='+sy),g(`calendar/earnings?from=${td}&to=${to}&symbol=${sy}`)]),x=(m&&m.metric)||{},rc=r&&r[0],ed=e&&e.earningsCalendar&&e.earningsCalendar[0];
-return{pe:x.peBasicExclExtraTTM??x.peTTM,rg:x.revenueGrowthTTMYoy,de:x['totalDebt/totalEquityQuarterly'],an:rc?{b:rc.strongBuy+rc.buy,h:rc.hold,s:rc.sell+rc.strongSell}:null,ed:ed?ed.date:null,dte:ed?Math.round((new Date(ed.date)-Date.now())/864e5):null}}
+return{dy:x.dividendYieldIndicatedAnnual??x.currentDividendYieldTTM,pb:x.pbQuarterly??x.pbAnnual,eg:x.epsGrowthTTMYoy,pe:x.peBasicExclExtraTTM??x.peTTM,rg:x.revenueGrowthTTMYoy,de:x['totalDebt/totalEquityQuarterly'],an:rc?{b:rc.strongBuy+rc.buy,h:rc.hold,s:rc.sell+rc.strongSell}:null,ed:ed?ed.date:null,dte:ed?Math.round((new Date(ed.date)-Date.now())/864e5):null}}
 async function deriv(a){const s=a.symbol.toUpperCase()+'USDT',B='https://fapi.binance.com/',g=p=>jget(B+p,D).catch(()=>null),[p,o,l]=await Promise.all([g('fapi/v1/premiumIndex?symbol='+s),g('futures/data/openInterestHist?period=1d&limit=7&symbol='+s),g('futures/data/globalLongShortAccountRatio?period=1d&limit=1&symbol='+s)]);
 return{fr:p&&p.lastFundingRate!=null?+p.lastFundingRate*100:null,oi:Array.isArray(o)&&o.length>1?pct(+o.at(-1).sumOpenInterestValue,+o[0].sumOpenInterestValue):null,ls:Array.isArray(l)&&l[0]?+l[0].longShortRatio:null}}
 const fg=async()=>{try{const j=await jget('https://api.alternative.me/fng/?limit=1',D);return{v:+j.data[0].value,c:j.data[0].value_classification}}catch(e){return null}};
@@ -558,16 +768,16 @@ if(so){if(so.s!=null)x+=so.s>20?2:so.s<-20?-2:0;if(so.tw!=null)x+=so.tw>30?3:so.
 function ctx(a){const c=(k,v,h,col)=>`<div class="m"><div class="k">${k}</div><div class="v" style="color:${col||''}">${v}</div><div class="h">${h}</div></div>`,f=a.fx,d=a.dv,so=a.so,N='N/D';let o='';
 if(a.type==='stock'){const an=f&&f.an,t=an?an.b+an.h+an.s:0,w=f&&f.dte!=null&&f.dte<=7;o=c('P/E',f&&f.pe!=null?fmt(f.pe,1):N,f?'Múltiplo de ganancias':'Requiere clave Finnhub')+c('Crec. ingresos',f&&f.rg!=null?sg(f.rg):N,'Interanual TTM',f&&f.rg<0?'var(--rd)':'')+c('Deuda/Capital',f&&f.de!=null?fmt(f.de):N,'>2.5 = alto',f&&f.de>2.5?'var(--rd)':'')+c('Analistas',t?`${an.b}C/${an.h}M/${an.s}V`:N,'Compra/Mantener/Venta')+c('Próx. resultados',f&&f.ed?f.ed:N,f&&f.dte!=null?(w?'⚠ en '+f.dte+' días: riesgo alto':'en '+f.dte+' días'):'',w?'var(--rd)':'')}
 else o=c('Fear & Greed',a.fg?a.fg.v:N,a.fg?a.fg.c:'Mercado cripto')+c('Funding',d&&d.fr!=null?fmt(d.fr,4)+'%':N,'Perpetuos Binance')+c('Open interest 7D',d&&d.oi!=null?sg(d.oi):N,'Apalancamiento')+c('Largos/Cortos',d&&d.ls!=null?fmt(d.ls):N,'Ratio de cuentas')+c('Flujos a exchanges',N,'Requiere Glassnode/CryptoQuant');
-o+=c('Reddit',so&&so.s!=null?sg(so.s):N,so?so.n+' posts/semana':'Sin datos')+c('StockTwits',so&&so.tw!=null?sg(so.tw):N,'Bull vs Bear')+c('X / Twitter',N,'API de pago');$('fx').innerHTML=o;$('fxt').textContent=a.type==='stock'?'Fundamentales y contexto':'Derivados y contexto'}
+if(a.type==='stock')o+=c('Dividendo',f&&f.dy!=null?fmt(f.dy,2)+'%':N,'Rendimiento anual')+c('P/B',f&&f.pb!=null?fmt(f.pb,1):N,'Precio / valor en libros');o+=c('Reddit',so&&so.s!=null?sg(so.s):N,so?so.n+' posts/semana':'Sin datos')+c('StockTwits',so&&so.tw!=null?sg(so.tw):N,'Bull vs Bear')+c('X / Twitter',N,'API de pago');$('fx').innerHTML=o;$('fxt').textContent=a.type==='stock'?'Fundamentales y contexto':'Derivados y contexto'}
 /* ---- estrategia de rebote ---- */
 const opp=(m,ty)=>{let s=Math.min(30,-m.dd*(ty==='crypto'?.45:.8))+(m.rsi<30?20:m.rsi<40?12:m.rsi<50?4:0)+(m.hist>m.hist1?10:0)+(m.last>m.e10?8:0)+(m.hl?8:0)+(m.div?12:0);if(m.mom<-25&&m.hist<m.hist1&&m.last<m.e10)s-=15;if(pct(m.last,m.v.at(-2))<-5)s-=8;if(ty==='crypto'&&m.dd<-85)s-=15;return Math.max(0,Math.min(100,s))};
-async function scan(){const ty=$('sty').value,thr=+$('thr').value,res=[];$('sb').disabled=true;$('rc').innerHTML='';
-if(ty==='stock'){const list=U.stock.filter(a=>!a.etf),q=[...list];let n=0;const wk=async()=>{while(q.length){const a=q.shift();try{const r=await hStock(a,1);a.m=A(r.v,'stock');a.price=r.q.price;a.chg=r.q.chg;res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${list.length}…`}};await Promise.all(Array.from({length:5},wk))}
-else{const pre=U.crypto.filter(a=>!STB.includes(a.symbol.toLowerCase())&&(a.c30<=-8||a.ath<=-40)).sort((x,y)=>x.c30-y.c30).slice(0,18);let n=0;for(const a of pre){try{const r=await hCrypto(a);a.m=A(r.v,'crypto');res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${pre.length} cripto (límite de CoinGecko)…`;await new Promise(r=>setTimeout(r,1800))}}
-if(!res.length){$('ss').textContent='No se pudieron leer datos (CORS/proxy/límite). Reintenta en un minuto o usa una API Key.';$('sb').disabled=false;return}
-const c=res.filter(a=>a.m.dd<=-thr).map(a=>({a,o:opp(a.m,ty)})).sort((x,y)=>y.o-x.o).slice(0,10);$('ss').textContent='Leyendo noticias, contexto y social de las candidatas…';const F=ty==='crypto'?await fg():null;
+async function scan(){const ty=$('sty').value,thr=+$('thr').value,res=[];$('sb').disabled=true;$('rc').innerHTML='';if(phil()==='index'){try{await scanIdx(ty)}catch(e){$('ss').textContent='Error: '+e.message}$('sb').disabled=false;return}
+if(ty==='stock'){const list=U.stock.filter(a=>!a.etf&&staticFit(a).f>=.22),q=[...list];let n=0;const wk=async()=>{while(q.length){const a=q.shift();try{const r=await hStock(a,1);a.m=A(r.v,'stock');a.price=r.q.price;a.chg=r.q.chg;res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${list.length}…`}};await Promise.all(Array.from({length:5},wk))}
+else{const pre=U.crypto.filter(a=>!STB.includes(a.symbol.toLowerCase())&&(a.c30<=-8||a.ath<=-40)&&staticFit(a).f>=.22).sort((x,y)=>x.c30-y.c30).slice(0,18);let n=0;for(const a of pre){try{const r=await hCrypto(a);a.m=A(r.v,'crypto');res.push(a)}catch(e){}$('ss').textContent=`Analizando ${++n}/${pre.length} cripto (límite de CoinGecko)…`;await new Promise(r=>setTimeout(r,1800))}}
+if(!res.length){$('ss').textContent='No hay candidatas para tu perfil y filosofía, o no se pudieron leer datos (CORS/proxy/límite). Reintenta en un minuto o ajusta tu perfil.';$('sb').disabled=false;return}
+let c=res.filter(a=>a.m.dd<=-thr).map(a=>({a,o:opp(a.m,ty)})).sort((x,y)=>y.o-x.o).slice(0,14);$('ss').textContent='Leyendo noticias, contexto y social de las candidatas…';const F=ty==='crypto'?await fg():null;
 await Promise.all(c.map(async x=>{const a=x.a;try{a.nw=await news(a);a.ns=a.nw.length?sent(a.nw):null}catch(e){a.ns=null}x.n=a.ns;if(ty==='stock')a.fx=await fund(a).catch(()=>null);else{a.dv=await deriv(a).catch(()=>null);a.fg=F}a.so=await social(a).catch(()=>null);x.f=Math.max(0,Math.min(100,x.o+(x.n?x.n.s/5:0)+adj(a)))}));
-c.sort((x,y)=>y.f-x.f);SC=c.map(x=>{const a=x.a,m=a.m,nv=x.n?x.n.s:null,er=a.fx&&a.fx.dte!=null&&a.fx.dte<=7,cf=m.last>m.e10||m.hist>m.hist1,v=nv!=null&&nv<-25?['Evitar: noticias negativas','rd']:er?['Cautela: resultados en '+a.fx.dte+' d','au']:x.f>=60&&cf?['Compra por rebote (confirmado)','gr']:x.f>=45?['Vigilar: falta confirmación','au']:['Cuchillo cayendo','rd'];
+c=c.filter(x=>{const q=philEval(x.a);x.pe=q;return q.fit>=.35&&profFit(x.a).f>=.4}).slice(0,10);c.forEach(x=>{x.f=clp(x.f+(x.pe.fit-.5)*30,0,100)});c.sort((x,y)=>y.f-x.f);SC=c.map(x=>{const a=x.a,m=a.m,nv=x.n?x.n.s:null,er=a.fx&&a.fx.dte!=null&&a.fx.dte<=7,cf=m.last>m.e10||m.hist>m.hist1,v=nv!=null&&nv<-25?['Evitar: noticias negativas','rd']:er?['Cautela: resultados en '+a.fx.dte+' d','au']:x.f>=60&&cf?(PROF[prof()].reb?['Compra por rebote (confirmado)','gr']:['Vigilar: tu perfil no compra rebotes','au']):x.f>=45?['Vigilar: falta confirmación','au']:['Cuchillo cayendo','rd'];
 return{type:ty,id:a.id,symbol:a.symbol,name:a.name,img:a.img,f:x.f,v,d:`${sg(m.dd)} vs máx. · RSI ${fmt(m.rsi,0)} · noticias ${nv==null?'N/D':sg(nv)}${m.div?' · div. alcista':''}${m.hl?' · mín. crecientes':''}`}});
 rr();$('ss').textContent=`Escaneo ${ty==='stock'?'de acciones':'cripto'} completo (${res.length} analizados, ${new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})}). Puntaje = caída + sobreventa + giro + noticias + contexto.`;$('sb').disabled=false;sbSave()}
 function rr(){$('rc').innerHTML=SC.length?SC.map((x,i)=>`<div class="rec" onclick="load(U['${x.type}'].find(z=>z.id==='${x.id}')||SC[${i}])">${im(x)}<div class="n"><b>${E(x.symbol.toUpperCase())} <span style="color:var(--${x.v[1]})">· ${x.v[0]}</span></b><small>${E(x.name)} · ${x.d}</small><div class="bar"><i style="width:${x.f}%"></i></div></div><b>${Math.round(x.f)}</b></div>`).join(''):'<div class="mu">Ninguna candidata supera la caída mínima elegida.</div>'}
@@ -625,10 +835,11 @@ async function gateGo(){ /* premium eliminado */ }
 const Phi=x=>{const t=1/(1+.2316419*Math.abs(x)),p=.3989423*Math.exp(-x*x/2)*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p};
 let RGS=[];
 function ranges(a){const m=a.m,P=a.price||m.last,w=Math.max(.01,Math.min(.2,m.sd*Math.sqrt(5))),T=TD(30,a.type),cap=+(LS('mi_cap')||1000),pz=h=>h>=P?1:Math.min(1,2*Phi(Math.log(h/P)/(m.sd*Math.sqrt(T))));
-return[['Más seguro','🛡',.5,1.5,3,.75,2.5,'var(--gr)'],['Moderado','⚖',1,.5,1.5,1.25,2,'var(--au)'],['Más arriesgado','🔥',1.5,0,.5,2,1.5,'var(--rd)']].map(([n,ic,rp,ha,la,sm,rr,col])=>{const hi=P*(1-ha*w),lo=P*(1-la*w),e=(hi+lo)/2,stop=Math.max(lo*.2,lo*(1-sm*w)),rk0=e-stop,tg=e+rr*rk0,qty=Math.min(cap*rp/100/rk0,cap*.25/e);return{n,ic,lo,hi,e,stop,tg,rr,pz:pz(hi),qty,rp,col}})}
-function rg(){const a=cur;if(!a||!a.m)return;RGS=ranges(a);const rec=a.rcm?a.rcm.rg:((a.comb||0)>=60?1:0);
+return[['Más seguro','🛡',.5,1.5,3,.75,2.5,'var(--gr)'],['Moderado','⚖',1,.5,1.5,1.25,2,'var(--au)'],['Más arriesgado','🔥',1.5,0,.5,2,1.5,'var(--rd)']].map(([n,ic,rp,ha,la,sm,rr,col])=>{rp=rp*PROF[prof()].rk;const hi=P*(1-ha*w),lo=P*(1-la*w),e=(hi+lo)/2,stop=Math.max(lo*.2,lo*(1-sm*w)),rk0=e-stop,tg=e+rr*rk0,qty=Math.min(cap*rp/100/rk0,cap*PROF[prof()].maxPos/e);return{n,ic,lo,hi,e,stop,tg,rr,pz:pz(hi),qty,rp,col}})}
+function rg(){const a=cur;if(!a||!a.m)return;RGS=ranges(a);if(phil()==='index'){rgIdx(a);return}const rec=a.rcm?a.rcm.rg:((a.comb||0)>=60?1:0);
 $('rgt').textContent=`Precio ${money(a.price)} · oscilación semanal ±${fmt(Math.min(20,a.m.sd*Math.sqrt(5)*100),1)}%`;
-$('rgb').innerHTML=RGS.map((r,i)=>`<div class="rgc" style="border-color:${i===rec?r.col:''}"><h3 style="color:${r.col}">${r.ic} ${r.n}${i===rec?' · sugerido':''}</h3>Compra <b>${money(r.lo)} – ${money(r.hi)}</b><br><span class="mu">${sg(pct(r.lo,a.price))} a ${sg(pct(r.hi,a.price))} vs hoy</span><br>Stop <b>${money(r.stop)}</b> <span class="mu">(${sg(pct(r.stop,r.e))})</span><br>Objetivo <b>${money(r.tg)}</b> <span class="mu">(${sg(pct(r.tg,r.e))} · R:R 1:${r.rr})</span><br>Prob. de llegar a la zona (30 d): <b>${fmt(r.pz*100,0)}%</b><br>Tamaño: <b>${fmt(r.qty,r.qty<1?4:2)}</b> uds ≈ ${money(r.qty*r.e)} <span class="mu">(riesgo ${r.rp}% del capital)</span><div style="margin-top:8px;display:flex;gap:6px"><button class="btn s sm" onclick="rgAdd(${i})">＋ Portafolio</button>${r.pz<1?`<button class="btn s sm" onclick="alB(${r.hi})">🔔 Alerta</button>`:''}</div></div>`).join('')+((a.comb||0)<45?'<div class="mu" style="grid-column:1/-1;color:var(--rd)">Señal combinada débil: evita el rango más arriesgado hasta que haya confirmación.</div>':'')}
+$('rgb').innerHTML=RGS.map((r,i)=>`<div class="rgc" style="border-color:${i===rec?r.col:''}"><h3 style="color:${r.col}">${r.ic} ${r.n}${i===rec?' · sugerido':''}</h3>Compra <b>${money(r.lo)} – ${money(r.hi)}</b><br><span class="mu">${sg(pct(r.lo,a.price))} a ${sg(pct(r.hi,a.price))} vs hoy</span><br>Stop <b>${money(r.stop)}</b> <span class="mu">(${sg(pct(r.stop,r.e))})</span><br>Objetivo <b>${money(r.tg)}</b> <span class="mu">(${sg(pct(r.tg,r.e))} · R:R 1:${r.rr})</span><br>Prob. de llegar a la zona (30 d): <b>${fmt(r.pz*100,0)}%</b><br>Tamaño: <b>${fmt(r.qty,r.qty<1?4:2)}</b> uds ≈ ${money(r.qty*r.e)} <span class="mu">(riesgo ${+r.rp.toFixed(2)}% del capital)</span><div style="margin-top:8px;display:flex;gap:6px"><button class="btn s sm" onclick="rgAdd(${i})">＋ Portafolio</button>${r.pz<1?`<button class="btn s sm" onclick="alB(${r.hi})">🔔 Alerta</button>`:''}</div></div>`)
+.join('')+'<div class="mu" style="grid-column:1/-1">'+PROF[prof()].ic+' Perfil '+PROF[prof()].n.toLowerCase()+': riesgo por operación ×'+PROF[prof()].rk+' y máximo '+Math.round(PROF[prof()].maxPos*100)+'% del capital por activo.</div>'+((a.comb||0)<45?'<div class="mu" style="grid-column:1/-1;color:var(--rd)">Señal combinada débil: evita el rango más arriesgado hasta que haya confirmación.</div>':'')}
 function rgAdd(i){const r=RGS[i];if(r)pfAdd(r.qty,r.stop,r.e)}
 function alB(v){const a=cur;if(!a)return;AL.push({id:'a'+Date.now(),type:a.type,symbol:a.symbol,op:'<',px:v,f:0});sbSave();alr();st('Alerta creada: '+a.symbol.toUpperCase()+' ≤ '+money(v))}
 function xls(){const a=cur,sh=[],X=s=>String(s??'').replace(/[&<>']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),cell=v=>typeof v==='number'&&isFinite(v)?`<Cell><Data ss:Type="Number">${v}</Data></Cell>`:`<Cell><Data ss:Type="String">${X(v)}</Data></Cell>`,
@@ -641,7 +852,7 @@ sh.push(sheet('Activo',['Dato','Valor'],[['Activo',a.symbol.toUpperCase()+' · '
 if(a&&a.rcm)sh.push(sheet('Senales',['Grupo','Senal','Lectura','Voto (-1 a +1)','Peso'],[['VEREDICTO',a.rcm.title,'Confianza '+a.rcm.cf,Math.round(a.rcm.net*100)/100,'']].concat(a.rcm.S.map(s=>[s.g,s.k,s.t,Math.round(s.d*100)/100,s.w]))));
 if(W.length)sh.push(sheet('Seguimiento',['Tipo','Simbolo','Nombre','Puntaje'],W.map(w=>[w.type,w.symbol.toUpperCase(),w.name,Math.round(w.comb||0)])));
 if(PF.length)sh.push(sheet('Portafolio',['Tipo','Simbolo','Cantidad','Entrada','Stop'],PF.map(x=>[x.type,x.symbol.toUpperCase(),x.qty,x.entry,x.stop])));
-if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
+if(sh.length)sh.push(sheet('Perfil',['Dato','Valor'],[['Perfil de riesgo',PROF[prof()].n],['Filosofia',PHIL[phil()].n],['Horizonte',PROF[prof()].hz]].concat(a&&a.rcm?[['Lectura tecnica (corto plazo)',a.rcm.base],['Veredicto segun tu estrategia',a.rcm.title]]:[])));if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
 const x=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#E6B84A" ss:Pattern="Solid"/></Style></Styles>${sh.join('')}</Workbook>`,l=document.createElement('a');
 l.href=URL.createObjectURL(new Blob([x],{type:'application/vnd.ms-excel'}));l.download='market_intelligence_'+new Date().toISOString().slice(0,10)+'.xls';l.click();st('Excel descargado ('+sh.length+' hojas).')}
 addEventListener('resize',chart);$('period').addEventListener('change',()=>{
@@ -649,7 +860,7 @@ addEventListener('resize',chart);$('period').addEventListener('change',()=>{
   if(cur&&cur.m&&(need>=99999||need>cur.m.v.length+10)){st('Cargando más historial…');load(cur)}
   else chart();
 });
-$('ak').value=key;$('fk').value=fk;sbLoad();tab('crypto');initCrypto().then(()=>{if(!cur&&U.crypto[0])load(U.crypto[0])});
+prefInit();$('ak').value=key;$('fk').value=fk;sbLoad();tab('crypto');initCrypto().then(()=>{if(!cur&&U.crypto[0])load(U.crypto[0])});
 </script>
 <script>
 /* ---- v8: pantalla completa / acceso directo (PWA) ---- */
