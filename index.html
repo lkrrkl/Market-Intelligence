@@ -190,6 +190,11 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 .ur strong .ft{margin-left:6px}
 .rec b{font-size:13px}.rec small{font-size:11px}
 /* cartera */
+#wperiod{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:10px}
+#wperiod button{min-height:38px;font-size:11px}
+#wl{display:grid;gap:7px}
+#wl .ur{margin:0}
+
 .pfl{margin-top:2px}
 .pfr{display:grid;grid-template-columns:minmax(0,1fr) auto 36px;gap:10px;align-items:center;padding:10px 11px;border-radius:14px;background:#0d1217;border:1px solid #2b343d;margin-top:8px}
 .pfr .a b{font-size:15px}.pfr small{display:block;color:var(--mu);font-size:11px}
@@ -212,6 +217,22 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 #ioshint{font-size:11px;padding:8px 12px;margin-bottom:6px;display:flex;gap:8px;justify-content:space-between;align-items:flex-start}
 .pill.pf{max-width:60vw;white-space:nowrap}
 .fl select{padding-right:6px}
+/* ===== Indicador de cartera y seguimiento ===== */
+.ur,.pfr{position:relative}
+.wflag{
+  position:absolute;top:6px;left:6px;z-index:3;
+  box-sizing:border-box;max-width:calc(100% - 12px);
+  padding:3px 7px;border-radius:99px;border:1px solid #3a444e;
+  background:#0d1217f0;color:var(--mu);
+  font-size:9px;font-weight:900;line-height:1.1;letter-spacing:.25px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.wflag b{margin-right:4px}
+.wflag.blue{color:var(--bl);border-color:#5b9bd566}
+.wflag.bull{color:var(--gr);border-color:#2fd6a055}
+.wflag.bear{color:var(--rd);border-color:#ff5c6c55}
+.wflag.neu{color:var(--au);border-color:#e6b84a55}
+.ur.has-wflag,.pfr.has-wflag{padding-top:24px}
 </style></head><body><div id="ld"></div>
 <div id="pfgate" hidden><div class="pgb"><h2 style="font-size:15px">Configura tu perfil de inversor</h2><div class="mu" style="margin-top:4px">De tu perfil de riesgo y tu filosofía dependen las señales de compra y venta, los rangos, el escáner y las listas. Puedes cambiarlos cuando quieras.</div>
 <div class="pgh">1 · Perfil de riesgo</div><div class="pgg" id="pgp"></div>
@@ -231,7 +252,7 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 <button class="btn wide" id="sb" onclick="scan()">Escanear</button>
 <div class="st" id="ss">Acciones: ~1–3 min. Cripto: preselecciona las 18 más castigadas (~40 s).</div><div id="rc" style="margin-top:8px"></div></section></div>
 <div class="pn" id="pn-an"><section class="card ah"><div class="ah1"><span id="al"></span><div class="ahn"><div class="mu" id="an">—</div><div class="price" id="pr">—</div><div id="pc" class="mu">Esperando datos</div></div>
-<div class="ahr"><span class="tag neu" id="tg">SIN ANÁLISIS</span><div class="row"><button class="ib" id="go" onclick="cur&&load(cur)" aria-label="Sincronizar">↻</button><button class="ib" onclick="addW()" aria-label="Agregar a seguimiento">★</button></div></div></div>
+<div class="ahr"><span class="tag neu" id="tg">SIN ANÁLISIS</span><div class="row"><button class="ib" id="go" onclick="cur&&load(cur)" aria-label="Sincronizar">↻</button><button class="ib" id="wstar" onclick="addW()" aria-label="Agregar a seguimiento" title="Agregar a seguimiento">★</button></div></div></div>
 <div class="rngw" id="rngw" hidden><div class="rngl"><span id="rlo">—</span><span>Rango 52 semanas</span><span id="rhi">—</span></div><div class="rngb"><i id="rmk"></i></div></div>
 <div class="g4"><div class="m"><div class="k">RSI (14)</div><div class="v" id="rsi">—</div><div class="h" id="rh">Fuerza relativa</div></div><div class="m"><div class="k">Caída vs máx. 52 sem.</div><div class="v" id="dd2">—</div><div class="h">Distancia al máximo</div></div><div class="m"><div class="k">Volatilidad anual</div><div class="v" id="vol">—</div><div class="h" id="rk">—</div></div><div class="m"><div class="k">Momentum 30D</div><div class="v" id="mo">—</div><div class="h" id="mc">MACD —</div></div></div>
 <div class="sub src" id="src">Fuente: —</div></section><section class="card"><div class="ch"><h2>Precio y proyección</h2><span class="mu" id="cr">—</span></div>
@@ -248,9 +269,11 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 <details class="nt" open><summary>▾ Detalle de las señales</summary><div id="recsig" class="sgs"></div></details>
 <div id="recexp" style="margin-top:12px;padding-top:10px;border-top:1px solid #2b343d;font-size:12px;line-height:1.6;color:#98a2ad">La explicación aparecerá aquí cuando cargues un activo.</div>
 <details class="nt"><summary>ℹ Cómo se calcula la recomendación</summary><div class="note">Cada señal vota de −1 a +1 con un peso: tendencia, momentum, RSI/Bollinger, volumen, zonas, proyección, rebote, noticias, fundamentales o derivados, social y validación histórica. La recomendación combina ese voto con el puntaje combinado y reglas de seguridad (resultados próximos, sobrecompra, noticias negativas) y se ajusta a tu perfil y filosofía: puede convertir una compra en «no encaja» o una venta técnica en «mantener». ○ = dato informativo o no disponible (no vota). No es asesoría financiera.</div></details></section><section class="card" id="stratbox"><div class="ch"><h2>Encaje con tu estrategia</h2><span class="mu" id="stsub">—</span></div><div id="stb" style="font-size:12px;line-height:1.6">Carga un activo para ver si encaja con tu perfil y tu filosofía, y qué haría tu estrategia a corto y largo plazo.</div><div id="sts" class="sgs"></div></section><section class="card"><div class="ch"><h2>Rangos de compra</h2><span class="mu" id="rgt">—</span></div><label class="mu">Capital disponible (USD) para calcular tamaños</label><input id="cap" type="number" inputmode="decimal" min="0" oninput="LS('mi_cap',this.value);rg()" style="margin-bottom:8px"><div class="rgs" id="rgb"><div class="mu">Carga un activo.</div></div><details class="nt"><summary>ℹ Cómo se calculan los rangos</summary><div class="note">Zonas = retrocesos medidos en oscilaciones semanales del activo (volatilidad reciente); stop bajo la zona; objetivo según la relación riesgo/beneficio indicada. La probabilidad de llegar a la zona es una aproximación estadística (sin tendencia) a 30 días. No es asesoría financiera.</div></details></section><section class="card"><div class="ch"><h2>Validación de la señal</h2><span class="mu" id="bth">—</span><select id="bhz" style="width:auto" onchange="cur&&cur.m&&extras(cur,{v:cur.m.v,ts:cur.m.ts})"><option>7</option><option selected>30</option><option>90</option></select></div><div class="g4" id="btg"></div><div class="st" id="bvd"></div><div class="note" id="plog">Registro de predicciones: sin datos aún.</div><details class="nt"><summary>ℹ Cómo se valida la señal</summary><div class="note">Backtest: el puntaje técnico recalculado día a día sobre el histórico y lo que pasó 30 días después. Las observaciones se solapan y la muestra es limitada: es una guía de confianza, no una garantía.</div></details></section></div>
-<div class="pn" id="pn-pf"><section class="card"><div class="ch"><h2>Portafolio</h2><span><button class="btn s sm" onclick="pfNew()">＋ Posición</button> <button class="btn s sm" id="csv" onclick="csv()">CSV</button></span></div><div id="pfb"></div></section><section class="card"><div class="ch"><h2>Alertas</h2></div><div class="alf"><select id="alop"><option value="&gt;">Sube a</option><option value="&lt;">Baja a</option></select><input id="alpx" type="number" inputmode="decimal" step="any" placeholder="Precio"><button class="btn" onclick="alAdd()">Crear</button></div><div id="alb" class="mu" style="margin-top:8px">Sin alertas</div><div class="note" id="aln"></div></section><section class="card"><div class="ch"><h2>Seguimiento</h2></div><div class="chips" id="wl"><span class="mu">Vacío</span></div></section></div>
-<div class="pn" id="pn-cf"><section class="card" id="pfcard"><div class="ch"><h2>Perfil de inversor</h2><span class="mu" id="pfhz">—</span></div><div class="ctl2"><div><label class="mu">Perfil de riesgo</label><select id="selp" onchange="setPref(this.value,null)"></select></div><div><label class="mu">Filosofía de inversión</label><select id="self" onchange="setPref(null,this.value)"></select></div></div><div class="note" id="pfd"></div></section><section class="card"><div class="ch"><h2>Herramientas</h2></div><div class="tl"><button class="btn s" onclick="xls()">⬇ Exportar a Excel</button><button class="btn s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button><button class="btn b" id="inb" onclick="instApp()" hidden>📲 Instalar app</button></div></section><section class="card"><div class="ch"><h2>Datos</h2></div><label class="mu">Alpha Vantage (respaldo de acciones, opcional)</label><input id="ak" type="password" placeholder="Opcional" oninput="key=this.value.trim();LS('mi_ak',key)"><label class="mu" style="display:block;margin-top:8px">Finnhub (fundamentales y resultados, gratis)</label><input id="fk" type="password" placeholder="Opcional" oninput="fk=this.value.trim();LS('mi_fk',fk)"><label class="mu" style="display:block;margin-top:8px">Proxy propio (Cloudflare Worker, opcional; recarga después)</label><input id="pxy" placeholder="https://tu-worker.workers.dev/?u=" oninput="LS('mi_px',this.value.trim())">
-<details class="nt"><summary>ℹ Fuentes de datos</summary><div class="note">Cripto: CoinGecko, CryptoCompare, Binance Futures (funding/OI), alternative.me (Fear &amp; Greed). Acciones: Yahoo Finance (directo o proxy), Finnhub (con clave). Social: Reddit y StockTwits (pueden bloquearse por CORS); X y flujos a exchanges requieren APIs de pago. Claves guardadas solo en este navegador. Logos: CoinGecko/FMP/Parqet. Herramienta informativa, no asesoría financiera.</div></details></section><div class="foot">Market Intelligence · versión móvil<br>Herramienta informativa; no constituye asesoría financiera.</div></div>
+<div class="pn" id="pn-pf"><section class="card"><div class="ch"><h2>Mi portafolio</h2><span><button class="btn s sm" onclick="pfNew()">＋ Añadir activo</button> <button class="btn s sm" id="csv" onclick="csv()">CSV</button></span></div><div id="pfb"></div></section><section class="card"><div class="ch"><h2>Seguimiento</h2><button class="ib sm" onclick="refreshWatch(true)" title="Actualizar seguimiento">↻</button></div>
+<div class="seg2" id="wperiod"><button class="on" data-wp="1d">24 h</button><button data-wp="7d">1 sem.</button><button data-wp="30d">1 mes</button><button data-wp="90d">3 meses</button><button data-wp="180d">6 meses</button><button data-wp="365d">1 año</button></div>
+<div class="st" id="wstatus">Añade activos con la estrella de Análisis.</div><div id="wl"><span class="mu">Vacío</span></div></section></div>
+<div class="pn" id="pn-cf"><section class="card" id="pfcard"><div class="ch"><h2>Perfil de inversor</h2><span class="mu" id="pfhz">—</span></div><div class="ctl2"><div><label class="mu">Perfil de riesgo</label><select id="selp" onchange="setPref(this.value,null)"></select></div><div><label class="mu">Filosofía de inversión</label><select id="self" onchange="setPref(null,this.value)"></select></div></div><div class="note" id="pfd"></div></section><section class="card"><div class="ch"><h2>Herramientas</h2></div><div class="tl"><button class="btn s" onclick="xls()">⬇ Exportar a Excel</button><button class="btn s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button><button class="btn b" id="inb" onclick="instApp()" hidden>📲 Instalar app</button></div></section><section class="card"><div class="ch"><h2>Datos</h2></div><label class="mu">Alpha Vantage (respaldo opcional; xStocks cotizan primero en Kraken)</label><input id="ak" type="password" placeholder="Opcional" oninput="key=this.value.trim();LS('mi_ak',key)"><label class="mu" style="display:block;margin-top:8px">Finnhub (fundamentales y resultados, gratis)</label><input id="fk" type="password" placeholder="Opcional" oninput="fk=this.value.trim();LS('mi_fk',fk)"><label class="mu" style="display:block;margin-top:8px">Proxy propio (Cloudflare Worker, opcional; recarga después)</label><input id="pxy" placeholder="https://tu-worker.workers.dev/?u=" oninput="LS('mi_px',this.value.trim())">
+<details class="nt"><summary>ℹ Fuentes de datos</summary><div class="note">Cripto: CoinGecko, CryptoCompare, Binance Futures (funding/OI), alternative.me (Fear &amp; Greed). xStocks: precios spot de Kraken (API pública) con Yahoo Finance como respaldo; históricos de Yahoo Finance. Finnhub (con clave). Social: Reddit y StockTwits (pueden bloquearse por CORS); X y flujos a exchanges requieren APIs de pago. Claves guardadas solo en este navegador. Logos: CoinGecko/FMP/Parqet. Herramienta informativa, no asesoría financiera.</div></details></section><div class="foot">Market Intelligence · versión móvil<br>Herramienta informativa; no constituye asesoría financiera.</div></div>
 </main></div><nav class="bn" id="bn"><button data-t="mk" class="on" onclick="goTab('mk')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/></svg><span>Mercado</span></button><button data-t="an" onclick="goTab('an')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 8-9"/><path d="M3 21h18"/></svg><span>Análisis</span></button><button data-t="st" onclick="goTab('st')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>Estrategia</span></button><button data-t="pf" onclick="goTab('pf')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 13h18"/></svg><span>Cartera</span></button><button data-t="cf" onclick="goTab('cf')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Ajustes</span></button></nav>
 
 <script>
@@ -407,10 +430,115 @@ const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?quotesCou
 /* ---- históricos ---- */
 async function hCrypto(a){const s=a.symbol.toUpperCase();if(!STB.includes(a.symbol.toLowerCase()))try{const k=await jget(`https://api.binance.com/api/v3/klines?symbol=${s}USDT&interval=1d&limit=1000`,D);if(Array.isArray(k)&&k.length>=200){const v=k.map(x=>+x[4]);return{v,ts:k.map(x=>x[0]),vo:k.map(x=>+x[7]),q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'Binance'}}}catch(e){}return hCryptoCG(a)}
 async function hCryptoCG(a){const pv=+$('period')?.value||365;const days=pv>=99999?'max':(pv>=3650?3650:pv>=1825?1825:Math.max(365,pv));const j=await jget(CG+`coins/${a.id}/market_chart?vs_currency=usd&days=${days}&interval=daily`,D);const P=(j.prices||[]).map((p,i)=>[p[0],p[1],j.total_volumes&&j.total_volumes[i]?j.total_volumes[i][1]:null]).filter(p=>p[1]),v=P.map(p=>p[1]),ts=P.map(p=>p[0]),vo=P.map(p=>p[2]);if(v.length<30)throw new Error('CoinGecko no devolvió suficiente histórico (posible límite de consultas, reintenta en 1 min).');return{v,ts,vo,q:{price:a.price??v.at(-1),chg:a.chg??pct(v.at(-1),v.at(-2))},src:'CoinGecko'}}
-async function hStock(a,q){let er;const nd=+($('period')?$('period').value:90),ranges=q?['1y']:nd>=99999?['max','10y','5y']:nd>1825?['10y','5y']:['5y','2y','1y'];
-for(const r of ranges)for(const h of ['query1','query2']){try{const j=await jget(`https://${h}.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=${r}&interval=1d&events=div`),r0=j.chart.result[0],q0=r0.indicators.quote[0],P=q0.close.map((x,i)=>[r0.timestamp[i]*1e3,x,q0.volume?q0.volume[i]:null]).filter(x=>x[1]!=null),v=P.map(x=>x[1]),ts=P.map(x=>x[0]),vo=P.map(x=>x[2]);if(v.length<30)throw new Error('Yahoo devolvió pocos datos');return{v,ts,vo,dvs:Object.values((r0.events&&r0.events.dividends)||{}).map(d=>({t:d.date*1e3,a:d.amount})).sort((x,y)=>x.t-y.t),q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Yahoo Finance ('+r+')'}}catch(e){er=e}}
-if(!key)throw new Error('No se pudo leer Yahoo Finance ('+(er&&er.message||'sin respuesta')+'). Es fin de semana o hay bloqueo CORS: configura un proxy o API Key de Alpha Vantage en "Datos".');
-const j=await jget(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${a.symbol}&outputsize=full&apikey=${encodeURIComponent(key)}`,D),s=j['Time Series (Daily)'];if(!s)throw new Error(j.Note||j.Information||'Alpha Vantage sin datos.');const E0=Object.entries(s).sort((x,y)=>x[0]<y[0]?-1:1).slice(-1260),v=E0.map(x=>+x[1]['4. close']),ts=E0.map(x=>Date.parse(x[0])),vo=E0.map(x=>+x[1]['5. volume']);return{v,ts,vo,q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},src:'Alpha Vantage'}}
+/* ---- xStocks: histórico primario en Kraken OHLC, Yahoo/Alpha como respaldo ---- */
+async function hKrakenStock(a){
+  const pair=XSP[a.symbol]||XSP[(a.symbol||'').replace('-','.')];
+  if(!pair)throw new Error('sin par xStock en Kraken');
+
+  const j=await jget(
+    'https://api.kraken.com/0/public/OHLC?pair='
+    +encodeURIComponent(pair)+'&interval=1440',
+    D
+  );
+
+  const entry=Object.entries(j.result||{}).find(([k])=>k!=='last');
+  const rows=(entry&&Array.isArray(entry[1]))?entry[1]:[];
+
+  const P=rows
+    .map(r=>[+r[0]*1000,+r[4],r[6]==null?null:+r[6]])
+    .filter(x=>Number.isFinite(x[1])&&x[1]>0);
+
+  const v=P.map(x=>x[1]),ts=P.map(x=>x[0]),vo=P.map(x=>x[2]);
+  if(v.length<30)throw new Error('Kraken devolvió un histórico insuficiente');
+
+  return{
+    v,ts,vo,dvs:undefined,
+    q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},
+    src:'Kraken xStocks (OHLC)'
+  };
+}
+
+async function hStock(a,q){
+  let kErr=null;
+
+  /* Fuente primaria: el propio xStock en Kraken. */
+  try{return await hKrakenStock(a)}
+  catch(e){kErr=e}
+
+  let er;
+  const nd=+($('period')?$('period').value:90),
+        ranges=q
+          ?['1y']
+          :nd>=99999
+            ?['max','10y','5y']
+            :nd>1825
+              ?['10y','5y']
+              :['5y','2y','1y'];
+
+  /* Respaldo 1: Yahoo Finance. */
+  for(const r of ranges)for(const h of ['query1','query2']){
+    try{
+      const j=await jget(
+        `https://${h}.finance.yahoo.com/v8/finance/chart/`
+        +encodeURIComponent(a.symbol)
+        +`?range=${r}&interval=1d&events=div`
+      );
+      const r0=j.chart.result[0],
+            q0=r0.indicators.quote[0],
+            P=q0.close.map((x,i)=>[
+              r0.timestamp[i]*1e3,
+              x,
+              q0.volume?q0.volume[i]:null
+            ]).filter(x=>x[1]!=null);
+
+      const v=P.map(x=>x[1]),
+            ts=P.map(x=>x[0]),
+            vo=P.map(x=>x[2]);
+
+      if(v.length<30)throw new Error('Yahoo devolvió pocos datos');
+
+      return{
+        v,ts,vo,
+        dvs:Object.values((r0.events&&r0.events.dividends)||{})
+          .map(d=>({t:d.date*1e3,a:d.amount}))
+          .sort((x,y)=>x.t-y.t),
+        q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},
+        src:'Yahoo Finance ('+r+')'
+      };
+    }catch(e){er=e}
+  }
+
+  /* Respaldo 2: Alpha Vantage, únicamente si hay clave configurada. */
+  if(!key)throw new Error(
+    'No se pudo leer el histórico del xStock. '
+    +'Kraken: '+(kErr&&kErr.message||'sin respuesta')
+    +'; Yahoo Finance: '+(er&&er.message||'sin respuesta')
+    +'. Configura un proxy o una API Key de Alpha Vantage en "Datos".'
+  );
+
+  const j=await jget(
+    'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='
+    +encodeURIComponent(a.symbol)
+    +'&outputsize=full&apikey='+encodeURIComponent(key),
+    D
+  );
+  const s=j['Time Series (Daily)'];
+  if(!s)throw new Error(j.Note||j.Information||'Alpha Vantage sin datos.');
+
+  const E0=Object.entries(s)
+    .sort((x,y)=>x[0]<y[0]?-1:1)
+    .slice(-1260);
+
+  const v=E0.map(x=>+x[1]['4. close']),
+        ts=E0.map(x=>Date.parse(x[0])),
+        vo=E0.map(x=>+x[1]['5. volume']);
+
+  return{
+    v,ts,vo,
+    q:{price:v.at(-1),chg:pct(v.at(-1),v.at(-2))},
+    src:'Alpha Vantage'
+  };
+}
 /* ---- dividendos (Yahoo: events=div) y reinversión ---- */
 function divCalc(dvs,v,ts){
  if(!Array.isArray(dvs)||!v.length)return null;
@@ -444,7 +572,7 @@ let QT=0;
 async function load(a){cur=a;if(!QT&&window.goTab)goTab('an',1);$('go').disabled=true;st('Descargando histórico…');
 try{const C=a.type==='crypto',pN=news(a).catch(()=>null),pE=(C?deriv(a):fund(a)).catch(()=>null),pG=C?fg():Promise.resolve(null),pS=social(a).catch(()=>null);
 const h=await(C?hCrypto(a):hStock(a));if(cur!==a)return;
-a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;a.price=h.q.price;a.chg=h.q.chg;a.need=+$('period').value;a.dvd=a.type==='stock'?divCalc(h.dvs,h.v,h.ts):null;
+a.m=A(h.v,a.type,h.vo);a.m.ts=h.ts;a.price=a.type==='stock'?await krakenQuote(a).catch(()=>null):h.q.price;a.chg=h.q.chg;a.need=+$('period').value;a.dvd=a.type==='stock'?divCalc(h.dvs,h.v,h.ts):null;
 show(a,h);st(`Histórico listo (${h.v.length} observaciones). Cargando noticias y contexto…`);conn('Datos sincronizados','var(--gr)');$('lu').textContent='Actualizado '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});$('go').disabled=false;
 const[nw,ex,g,so]=await Promise.all([pN,pE,pG,pS]);if(cur!==a)return;
 if(C){a.dv=ex;a.fg=g}else a.fx=ex;a.so=so;a.nw=nw;a.ns=nw&&nw.length?sent(nw):null;
@@ -464,7 +592,7 @@ recommend(a);
 $('pj').innerHTML=[7,30,90].map(d=>{const p=m.pj(d);return`<div class="m"><div class="k">A ${d} días</div><div class="v" style="color:${p.b>=a.price?'var(--gr)':'var(--rd)'}">${money(p.b)}</div><div class="h">${money(p.lo)} – ${money(p.hi)}</div></div>`}).join('');
 $('nm').textContent=ns?`Sentimiento ${sg(ns.s/1)} (léxico simple, titulares en inglés)`:'No disponible';
 $('nw').innerHTML=a.nw&&a.nw.length?a.nw.map(x=>`<div class="ni"><a href="${E(x.url)}" target="_blank" rel="noopener">${E(x.title)}</a><p><span style="color:${x.s>0?'var(--gr)':x.s<0?'var(--rd)':'var(--au)'}">${x.s>0?'▲ positiva':x.s<0?'▼ negativa':'● neutral'}</span> · ${E(x.src)} · ${new Date(x.t).toLocaleDateString('es-CR')}</p></div>`).join(''):'<div class="mu">No se obtuvieron noticias verificables para este activo.</div>';
-chart();ctx(a);updW();extras(a,h);renderDiv(a);if(window.renderRange)renderRange(a)}
+chart();ctx(a);updW();starState(a);extras(a,h);renderDiv(a);if(window.renderRange)renderRange(a)}
 function zones(m,v){const w=m.last*m.sd*Math.sqrt(10),res=Math.max(...v),sup=Math.min(...v);return[['rgba(74,163,255,.22)',sup-.3*w,sup+w],['rgba(242,201,76,.18)',Math.max(res-2*w,sup+w),res-.5*w],['rgba(255,92,108,.22)',res-.5*w,res+2*w]]}
 function zoneState(m,win){const v=m.v.slice(-win),[bz,yz,rz]=zones(m,v);
 if(m.last>=rz[1])return{k:'sell',d:-1,t:'🔴 Zona de venta: precio en la resistencia del período.'};
@@ -546,18 +674,18 @@ const prof=()=>PROF[PRF]?PRF:'mod',phil=()=>PHIL[PHL]?PHL:'value';
  .forEach(([s,n,k])=>{if(!U.stock.some(a=>a.symbol===s))U.stock.push({type:'stock',id:s,symbol:s,name:n,idx:true,sub:k,cat:'etf'})});
 /* xStocks (acciones/ETF tokenizados de Backed en Kraken; lista de EE. UU. verificada el 11-nov-2026) */
 const XS=new Set('HD HON HRL ETSY ESS EVR EG EVRG EEFT ESAB WTRG BITX MMM AOS ABT ABBV ACN AYI ADBE ADT WMS AEIS AMD ACM AVAV AMG AFRM AFL AGCO A AGNC ADC APD ABNB AKAM ALK ALB ACI AA ARE ALGN ALLE ALGM LNT ALSN ALLY ALNY GOOGL MO AMZN AMBR AMCR AMTM AS AEE AAL AEP AFG AHR AMH AIG AMT AWK COLD AMP AME AMGN AMKR APH ADI NLY AM ANT AON APA APG APO APPF AAPL APLD AIT AMAT AAOI APP ATR APTV ARMK MT ACGL ADM ARES ANET ARM AWI ARW ARWR AJG ASML AIZ AGO ASTS ALAB AZN ATI TEAM ATO AUR ADSK ADP AN AZO AVTR AVY CAR AVT AXTA AXS AXON AXSM BKR BALL BAC BNY OZK BBWI BAX BDX BSY BRK.B BBY BETR BILL BIO BIIB BMRN BTBT BTGO BMNR BJ BX XYZ BE OWL BA BOKF BAH BWA BSX BYD BBIO BFAM BHF BMY BRX AVGO BR BAM BRO BF.B BRKR BC BLDR BG BURL BWXT BXP CHRW AI CACI CDNS CZR CPT COF CAH CAI CSL KMX CCL CRS CARR CVNA CASY CAT CAVA CBRE CCC CDW CE CELH COR CNC CNP CBRS CF CHTR LNG CVX CHWY CHYM CMG CHH CHRD CB CHD CHDN CIEN CINF CTAS CRCL CRUS CSCO C CFG CLH CLSK CWEN CLF CLX NET CME CMS CNA KO CDE CGNX CTSH COHR COIN CL COLB COLM CMCSA FIX CBSH CAG COP ED STZ CEG CPRT CORT CNM CORZ CRBG CRWV GLW CPAY CTVA CSGP CPNG CUZ CR CACC CRDO CRH CROX CRWD CCI CCK CSX CUBE CFR CMI CW CVS DHI DHR DRI DAR DDOG DVA DECK DE DFDV DELL DAL DVN DXCM FANG DKS DLR DOCN DDS SOXL DOCU DLB DG DLTR D DPZ DCI DASH DOV DOW DOCS DKNG DBX DTM DTE DUK BROS DY DT ELF EXP EWBC EGP EMN ETN ECL EIX EW ELAN ESTC ESI ELV LLY EME EMR EHC UUUU ENHA ENPH ENTG ETR NVST EOG EPAM EPR EQT EFX EQIX EQH ELS P ES ECG EXEL EXC EXLS EXE EXPD EXR XOM FNB FFIV FN FDS FICO FAST FRT FDX FDXF FERG FRMI FAAA FNF FIS FITB FIGR FAF FCNCA FHB FHN FSLR FE FISV FIVE FLEX FND FLS FLNC FLUT F FPS FORM FTNT FTV FBIN IQM FLBL FSML BEN USPX FLQM FRHC FCX FRPT FTAI FCN VCX GLXY GME GLPI GRMN IT GTES GE GEHC GEV GEN WGS GNRC GD GIS GM G GNTX GPC GILD GTLB GPN COPX DAX URA GFS GSAT GL GMED GDDY GS GGG LOPE GPK GH GWRE GXO HRB HAL HALO HLNE HAS HAYW HCA HR DOC HL HEI HSIC HPE HXL DINO HLT HIMS HST HLI HHH HWM HPQ HUBB HUBS HUM HBAN HII HUT H IDA IEX IDXX IESC ITW ILMN INCY INDI IR INGM INGR INSM PODD INTC IBKR ICE IBM IFF IP INTU ISRG IVZ QQQ TBLL INVH IONS IONQ IPGP IQV IREN IRDM IRM SGOV IEMG IJR EWQ EWG EWY EWU IWM SOXX SLV ITA ITT JBHT JBL JKHY J JAAA JAN JAZZ JEF JMKE JNJ JCI JLL JPM JPST KRMN KBR KVUE KDP KEY KEYS KRC KMB KIM KMI KNSL KEX KKR KLAC KVYO KNX KTOS KD LHX LRCX LAMR LW LSTR LVS LSCC LAZ LEA YLDE LDOS LEN LII DRS LBTYA LLYVK FWONK LECO LNC LIN LINE LAD LFUS LYV LKQ LOAR LMT L LPX LOW LPLA LITE LYFT LYB MTB MTSI M MDGL MANH CART MARA MPC MKL MKTX MAR MLM MRVL MAS MTZ MA MTDR MTCH MAT MKC MCD MCK MDU MPT MEDP MDT MRK META MET MTD MTG MGM MCHP MU MSFT MAA MIDD MFP MRP MSA MKSI MRNA MOD MHK TAP MDLZ MDB MPWR MCO MS MORN MSI MP MSM MSCI MSGS MLI MUSA NDAQ NTRA NBIS NTAP NFLX NBIX NYT NEU NEM NWS NXST NEE NXT NKE NI NNN NDSN NSC NTRS NOC NCLH NOV NRG NUE SMR NTNX NVT NVDA NVR ORLY OXY OGE OKLO OKTA ODFL ORI OLN OLLI OHI OMC ON ONDS OMF OKE ONTO OPEN ORCL OGN OSK OTIS OVV OC PCAR PKG PLTR PANW PH PSN PAYX PAYC PCTY PYPL PEGA PAG PNR PEN PEP PFGC PR PFE PCG PM PSX PPC PNFP PNW PINS PLNT PL PNC POOL BPOP POST POWL PPG PPL PRI PRMB PRIM PFG PCOR PG PGR PLD TQQQ PB PRU PTC PEG PSA PHM PCT PVH Q QCOM PWR QNT QUBT QS DGX RAL RL METC RMBS RRC RJF RYN RBA RBC O RCAT RDDT RRX REG REGN RF RGA RS RNR RGEN RSG RMD QSR RVMD RVTY REXR REYN RNG RIOT RITM RIVN RLI RHI HOOD RBLX BOT RKT ROK ROIV ROKU ROL ROP ROST RCL RGLD RPRX RPM RTX RBRK RYAN R SAIA SAIL CRM SNDK SANM SBAC SNDR SCHF SAIC SEB SEIC SRE SMTC S SCI NOW SHAZ SBET FOUR SPG SSD SIRI SITE SITM SKHY SLB SLM SFD SW SNA SNOW SOFI SOLS MWH SGI SON SHC SCCO SSB LUV SPCX GLD SFM SPXC SSNC STAG SAR SWK SBUX STWD STT XLE FEZ SPY XOP STLD STE STRL SF MSTR STRC SATA SYK SMMT SUI SMCI SYF SNPS SYY TMUS TROW TE TSM TTWO TLN TPR TRGP SNX FTI TDY TFX THC TER WULF TSLA TTEK TXN TPL TXRH TXT TFSL ALL CPB CG SCHW CI COO ENSG EL GAP THG HIG HSY SJM KHC KR MOS SMG SHW SO TKR TTD TRV DIS WU TMO THO TJX TKO TOST TOL TONX TTC TPG TSCO TW TT TDG TRU TNL TREX TRMB TFC TTMI TWLO TWST TYL TSN UHAL USB UBER UI UDR UGI PATH ULS ULTA UNP QURE UAL UPS URI UTHR UNH U OLED UHS UNM USFD USAR VFC MTN VLO VMI VVV MOO GDX SMH NLR VGK VUG VTI VOO VXUS VT VEEV VTR VLTO VRSN VRSK VZ VSNT VRTX VRT VTRS VIAV VICI VICR VIDA VIK VKTX VNOM SPCE VIRT V EQR VNT VNO VOYA VMC WPC WRB GWW WAB WMT WM WAT WSO WTS W WEC WFC WELL WEN WCC WST WAL WDC WLK WEX WY WHR WTM WYFI WMB WSM WTW WSC WING WTFC WWD WDAY WRLD WH WYNN XE XEL XRX XPO XYL YETI YUM ZBRA Z ZBH ZION ZTS ZM ZS'.split(' '));
-let XSI='';
+let XSI='';const XSP={};
 /* catálogo xStocks en vivo (Kraken: AssetPairs con aclass_base=tokenized_asset). Solo AMPLÍA la lista local; si falla, se usa la local */
 function xsParse(j){
   const r=j&&j.result;if(!r||typeof r!=='object')throw new Error('sin resultado');
   const L=new Set();
-  Object.values(r).forEach(e=>{if(!e||(e.aclass_base&&e.aclass_base!=='tokenized_asset'))return;const b=String(e.wsname||'').split('/')[0]||String(e.base||'');if(b.length>2&&b.endsWith('x'))L.add(b.slice(0,-1))});
+  Object.entries(r).forEach(([pair,e])=>{if(!e||(e.aclass_base&&e.aclass_base!=='tokenized_asset'))return;const b=String(e.wsname||'').split('/')[0]||String(e.base||'');if(b.length>2&&b.endsWith('x')){const sym=b.slice(0,-1).replace('.','-');L.add(sym);XSP[sym]=pair}});
   if(L.size<50)throw new Error('catálogo incompleto');
   return[...L]}
 async function xsSync(){
   const done=(l,src)=>{const n0=XS.size;l.forEach(t=>XS.add(t));XSI=' ('+src+': '+l.length+' en Kraken'+(XS.size>n0?', +'+(XS.size-n0)+' nuevos':'')+')';if(tb==='stock'&&$('ul'))$('ul').innerHTML=rows('stock')};
-  try{const c=JSON.parse(LS('mi_xs')||'null');if(c&&Array.isArray(c.l)&&c.l.length>=50&&Date.now()-c.t<432e5){done(c.l,'catálogo guardado');return}}catch(e){}
-  try{const l=xsParse(await jget('https://api.kraken.com/0/public/AssetPairs?aclass_base=tokenized_asset'));LS('mi_xs',JSON.stringify({t:Date.now(),l}));done(l,'catálogo en vivo')}
+  try{const c=JSON.parse(LS('mi_xs')||'null');if(c&&Array.isArray(c.l)&&c.l.length>=50&&c.p&&Object.keys(c.p).length>=50&&Date.now()-c.t<432e5){Object.assign(XSP,c.p||{});done(c.l,'catálogo guardado');if(tb==='stock')initStocks(true);return}}catch(e){}
+  try{const l=xsParse(await jget('https://api.kraken.com/0/public/AssetPairs?aclass_base=tokenized_asset'));LS('mi_xs',JSON.stringify({t:Date.now(),l,p:XSP}));done(l,'catálogo en vivo');if(tb==='stock')initStocks(true)}
   catch(e){XSI=' (catálogo local: sin conexión con Kraken)';if(tb==='stock'&&$('ul'))$('ul').innerHTML=rows('stock')}}
 const DIVS=new Set('KO PEP PG JNJ XOM CVX PM MO VZ T SO NEE ABBV MRK MCD HD LOW WMT JPM BLK CSCO IBM TXN ADP LMT CAT BX MS GS BAC WFC C PFE AMGN GILD UNP LIN ETN HON DE ICE AXP SBUX NKE ABT MDT COP SPGI MA V CB QCOM ADI APH CMCSA RTX GE KKR COST'.split(' '));
 const NODIV=new Set('TSLA AMZN PLTR UBER CRWD NFLX PANW NOW ANET AMD ISRG BRK-B'.split(' '));
@@ -629,6 +757,126 @@ function profFit(a){
  if(m&&f>0&&m.vol>PR.vmax[a.type]){f=Math.min(f,.35);why='Volatilidad anual '+fmt(m.vol,0)+'% supera el máximo cómodo para tu perfil ('+PR.vmax[a.type]+'%)'}
  return{f,why,r}}
 function staticFit(a){const pe=philEval(a),pf=profFit(a);return{f:pe.fit*pf.f,pe,pf,tip:(pe.it[0]?pe.it[0].t:'')+(pf.why?' · '+pf.why:'')}}
+/* ===== Indicador de cartera/seguimiento según perfil y filosofía ===== */
+function carState(a,m){
+  const PR=PROF[prof()],
+        PH=PHIL[phil()],
+        ph=phil();
+
+  if(!m||!Array.isArray(m.v)||m.v.length<30)return{
+    cls:'neu',t:'SIN DATOS',d:'Histórico insuficiente'
+  };
+
+  const pe=philEval(a),
+        pf=profFit(a),
+        fit=pe.fit*pf.f,
+        z=zoneState(m,Math.min(120,m.v.length)),
+        rsi=m.rsi;
+
+  let s={
+    cls:'neu',
+    t:'MANTENER',
+    d:'Sin sobrecompra, sobreventa ni zona extrema clara'
+  };
+
+  /* El activo no encaja con la estrategia configurada. */
+  if(fit<.35){
+    s={
+      cls:'bear',
+      t:'REVISAR',
+      d:'No encaja con '+PR.n+' · '+PH.n
+    };
+  }
+
+  /* Sobrecompra o zona de venta. La filosofía puede atenuar la señal. */
+  else if(z.k==='sell'||rsi>=70){
+    if(ph==='index'&&pe.ok){
+      s={
+        cls:'neu',
+        t:'CONTINUAR',
+        d:'La estrategia pasiva no vende por sobrecompra'
+      };
+    }else if(ph==='income'&&pe.ok&&!pe.sellF){
+      s={
+        cls:'neu',
+        t:'MANTENER',
+        d:'Sobrecompra técnica · revisa que el ingreso siga seguro'
+      };
+    }else{
+      s={
+        cls:'bear',
+        t:'PRESTAR ATENCIÓN',
+        d:'DEJAR PRONTO · ZONA DE VENTA'
+          +(rsi>=70?' · RSI '+fmt(rsi,0):'')
+      };
+    }
+  }
+
+  /* Sobreventa o zona de soporte. */
+  else if(z.k==='buy'||rsi<=30){
+    if(ph==='index'&&pe.ok){
+      s={
+        cls:'blue',
+        t:'CONTINUAR',
+        d:'APORTE EXTRA OPCIONAL · CAÍDA '+sg(m.dd)
+      };
+    }else if(ph==='value'&&pe.ok){
+      s={
+        cls:'blue',
+        t:'PRESTAR ATENCIÓN',
+        d:'ACUMULAR GRADUAL · POSIBLE DESCUENTO'
+          +(rsi<=30?' · RSI '+fmt(rsi,0):'')
+      };
+    }else if(ph==='income'&&pe.ok){
+      s={
+        cls:'blue',
+        t:'PRESTAR ATENCIÓN',
+        d:'ZONA DE COMPRA POR INGRESO · CONFIRMA EL FLUJO'
+      };
+    }else if(PR.reb&&fit>=.35){
+      s={
+        cls:'blue',
+        t:'PRESTAR ATENCIÓN',
+        d:'COMPRA POSIBLE · ZONA DE SOPORTE'
+          +(rsi<=30?' · RSI '+fmt(rsi,0):'')
+      };
+    }else{
+      s={
+        cls:'neu',
+        t:'PRESTAR ATENCIÓN',
+        d:'SOBREVENTA · ESPERA CONFIRMACIÓN SEGÚN TU PERFIL'
+          +(rsi<=30?' · RSI '+fmt(rsi,0):'')
+      };
+    }
+  }
+
+  /* Zona intermedia alta, pero todavía no una señal estricta de venta. */
+  else if(z.k==='caut'){
+    s={
+      cls:'neu',
+      t:'PRESTAR ATENCIÓN',
+      d:'ZONA DE PRECAUCIÓN · POSIBLE TOMA DE GANANCIAS'
+    };
+  }
+
+  /* Para indexado, una caída importante habilita un aporte extra. */
+  if(ph==='index'&&pe.ok&&m.dd<=-15){
+    s={
+      cls:'blue',
+      t:'CONTINUAR',
+      d:'APORTE EXTRA OPCIONAL · CAÍDA '+sg(m.dd)
+    };
+  }
+
+  a.phe=pe;
+  a.pfe=pf;
+  return s;
+}
+
+function wflagHTML(s){
+  if(!s||!s.t)return'';
+  return`<span class="wflag ${E(s.cls)}"><b>${E(s.t)}</b><span>${E(s.d)}</span></span>`;
+}
 /* la filosofía y el perfil pueden convertir, mantener o anular el veredicto técnico */
 function overlay(a,V,x){
  const PR=PROF[prof()],ph=phil(),pe=philEval(a),pf=profFit(a),cr=a.type==='crypto',
@@ -787,7 +1035,7 @@ function fillCat(){
 }
 function rows(t){
   const f=$('catf')?$('catf').value:'';
-  const onlyRec=($('fitf')?$('fitf').value:'rec')==='rec';let list=U[t].map((a,i)=>({a,i,sf:staticFit(a)})).filter(({a})=>!(a.etf)&&(!f||catOf(a)===f));const tot=list.length;if(onlyRec)list=list.filter(z=>z.sf.f>=.22);list.sort((p,q)=>Math.round(q.sf.f*10)-Math.round(p.sf.f*10)||p.i-q.i);if($('fitn'))$('fitn').textContent=onlyRec?`Mostrando ${list.length} de ${tot} que encajan con ${PROF[prof()].n} · ${PHIL[phil()].n}${t==='stock'?' · solo xStocks'+XSI:''}`:`Mostrando todos (${tot}) con su nivel de encaje${t==='stock'?' · solo xStocks'+XSI:''}`;
+  const onlyRec=($('fitf')?$('fitf').value:'rec')==='rec';let list=U[t].map((a,i)=>({a,i,sf:staticFit(a)})).filter(({a})=>!(a.etf)&&(t!=='stock'||!!(XSP[a.symbol]||XSP[a.symbol.replace('-','.')]))&&(!f||catOf(a)===f));const tot=list.length;if(onlyRec)list=list.filter(z=>z.sf.f>=.22);list.sort((p,q)=>Math.round(q.sf.f*10)-Math.round(p.sf.f*10)||p.i-q.i);if($('fitn'))$('fitn').textContent=onlyRec?`Mostrando ${list.length} de ${tot} que encajan con ${PROF[prof()].n} · ${PHIL[phil()].n}${t==='stock'?' · solo xStocks'+XSI:''}`:`Mostrando todos (${tot}) con su nivel de encaje${t==='stock'?' · solo xStocks'+XSI:''}`;
   if(!list.length)return '<div class="mu" style="padding:8px">'+(tot?'Ningún activo de esta lista encaja con tu perfil y filosofía. Elige «Todos los activos del Top» o cambia tu perfil.':'Ningún activo en esta categoría dentro del Top cargado.')+'</div>';
   return list.map(({a,i,sf})=>{
     const catName=((t==='crypto'?CAT_CRYPTO:CAT_STOCK).find(c=>c.id===(a.cat||catOf(a)))||{}).name||'';
@@ -813,70 +1061,254 @@ let stocksAttempted=false;
 function qLoad(){try{const c=JSON.parse(LS('mi_q')||'null');if(!c||Date.now()-c.t>216e5)return;U.stock.forEach(a=>{const q=c.d[a.symbol];if(q&&a.price==null){a.price=q[0];a.chg=q[1];a.hi52=q[2]}});if(tb==='stock')$('ul').innerHTML=rows('stock')}catch(e){}}
 function qSave(){try{const d={};U.stock.forEach(a=>{if(a.price!=null)d[a.symbol]=[a.price,a.chg,a.hi52]});if(Object.keys(d).length)LS('mi_q',JSON.stringify({t:Date.now(),d}))}catch(e){}}
 
-async function quoteChart(a){const j=await jget(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=5d&interval=1d`),r0=j.chart.result[0],cl=(r0.indicators.quote[0].close||[]).filter(x=>x!=null);a.price=r0.meta.regularMarketPrice??cl.at(-1);const pc=cl.length>1?cl.at(-2):r0.meta.chartPreviousClose;a.chg=pc?pct(a.price,pc):null;return a.price!=null}
+async function krakenQuote(a){
+ const pair=XSP[a.symbol]||XSP[a.symbol.replace('-','.')];if(!pair)return null;
+ const j=await jget('https://api.kraken.com/0/public/Ticker?pair='+encodeURIComponent(pair),D),v=Object.values(j.result||{})[0];
+ return v&&v.c&&+v.c[0]>0?+v.c[0]:null;
+}
+async function quoteChart(a){
+ let kp=null;try{kp=await krakenQuote(a)}catch(e){}
+ const j=await jget(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(a.symbol)}?range=5d&interval=1d`),r0=j.chart.result[0],cl=(r0.indicators.quote[0].close||[]).filter(x=>x!=null);
+ a.price=kp; if(a.price==null)return false;const pc=cl.length>1?cl.at(-2):r0.meta.chartPreviousClose;a.chg=pc?pct(a.price,pc):null;return a.price!=null}
 async function initStocks(force=false){
   if(stocksLoading)return;
   if(stocksAttempted&&!force)return;
-  const list=U.stock.filter(a=>!a.etf);
-  if(!list.length)return;
+
+  const list=U.stock.filter(a=>
+    !a.etf&&!!(XSP[a.symbol]||XSP[a.symbol.replace('-','.')])
+  );
+
+  const status=$('lu');
+  if(!list.length){
+    if(status)status.textContent=
+      'Catálogo xStocks aún no disponible; espera unos segundos y pulsa ↻.';
+    return;
+  }
 
   stocksLoading=true;
   stocksAttempted=true;
-  const status=$('lu');qLoad();
-  let ok=0,failed=0;
+  qLoad();
 
   try{
-    const batch=50;
-    for(let i=0;i<list.length;i+=batch){
-      const slice=list.slice(i,i+batch);
-      const syms=slice.map(a=>a.symbol).join(',');
+    /* Primero: precios spot de Kraken. */
+    const pairs=list
+      .map(a=>XSP[a.symbol]||XSP[a.symbol.replace('-','.')])
+      .filter(Boolean);
+
+    for(let i=0;i<pairs.length;i+=20){
       try{
-        const j=await jget('https://query1.finance.yahoo.com/v7/finance/quote?symbols='+encodeURIComponent(syms));
-        const arr=(j.quoteResponse&&j.quoteResponse.result)||[];
-        const by={};
-        arr.forEach(q=>{by[q.symbol]=q});
+        const j=await jget(
+          'https://api.kraken.com/0/public/Ticker?pair='
+          +encodeURIComponent(pairs.slice(i,i+20).join(',')),
+          D
+        );
+
+        Object.entries(j.result||{}).forEach(([pair,v])=>{
+          const sym=Object.keys(XSP).find(z=>XSP[z]===pair);
+          const a=list.find(z=>z.symbol===sym);
+          if(a&&v&&v.c&&+v.c[0]>0)a.price=+v.c[0];
+        });
+      }catch(e){}
+    }
+
+    let ok=list.filter(a=>a.price!=null).length,
+        failed=list.length-ok;
+
+    if(status)status.textContent=
+      `xStocks: Kraken respondió con ${ok} precios`
+      +(failed?` · ${failed} pendientes de respaldo`:'');
+
+    /* Después: Yahoo únicamente para los que faltaron. */
+    const pending=list.filter(a=>a.price==null),
+          batch=50;
+
+    for(let i=0;i<pending.length;i+=batch){
+      const slice=pending.slice(i,i+batch),
+            syms=slice.map(a=>a.symbol).join(',');
+
+      try{
+        const j=await jget(
+          'https://query1.finance.yahoo.com/v7/finance/quote?symbols='
+          +encodeURIComponent(syms)
+        );
+        const arr=(j.quoteResponse&&j.quoteResponse.result)||[],
+              by={};
+        arr.forEach(q=>by[q.symbol]=q);
+
         slice.forEach(a=>{
           const q=by[a.symbol]||by[a.symbol.replace('-','')];
-          if(q){
+          if(q&&a.price==null){
             a.price=q.regularMarketPrice??q.postMarketPrice??q.preMarketPrice??null;
-            a.chg=q.regularMarketChangePercent??null;a.hi52=q.fiftyTwoWeekHigh??null;
+            a.chg=q.regularMarketChangePercent??null;
+            a.hi52=q.fiftyTwoWeekHigh??null;
             if(q.shortName)a.name=q.shortName;
-            if(a.price!=null)ok++;
           }
         });
-      }catch(e){failed+=slice.length;if(!ok)break}
+      }catch(e){
+        if(!list.some(a=>a.price!=null))break;
+      }
 
-      status.textContent=`Acciones: ${Math.min(i+batch,list.length)}/${list.length} consultadas`;
-      await new Promise(resolve=>setTimeout(resolve,60));
+      if(status)status.textContent=
+        `xStocks: respaldo Yahoo ${Math.min(i+batch,pending.length)}/${pending.length}`;
+      await new Promise(r=>setTimeout(r,60));
     }
-    const miss=list.filter(a=>a.price==null);
-    if(miss.length){const q=[...miss];let k=0;const wk=async()=>{while(q.length){const a=q.shift();try{if(await quoteChart(a))ok++}catch(e){}status.textContent=`Acciones (respaldo): ${++k}/${miss.length}`}};await Promise.all(Array.from({length:6},wk))}
-    failed=list.filter(a=>a.price==null).length;
-  }finally{qSave();stocksLoading=false;
+
+    /* Último respaldo para los símbolos restantes. */
+    const miss=pending.filter(a=>a.price==null);
+    if(miss.length){
+      const q=[...miss];
+      let k=0;
+
+      const wk=async()=>{
+        while(q.length){
+          const a=q.shift();
+          try{if(await quoteChart(a))ok++}
+          catch(e){}
+          if(status)status.textContent=
+            `xStocks: respaldo histórico ${++k}/${miss.length}`;
+        }
+      };
+
+      await Promise.all(Array.from({length:6},wk));
+    }
+
+    ok=list.filter(a=>a.price!=null).length;
+    failed=list.length-ok;
+  }finally{
+    qSave();
+    stocksLoading=false;
+
     if(tb==='stock')$('ul').innerHTML=rows('stock');
-    status.textContent=ok
-      ?`Acciones: ${ok} precios cargados${failed?` · ${failed} sin precio`:''}`
-      :'Acciones: Yahoo Finance no respondió. Pulsa ↻ para reintentar o configura un proxy.';
+
+    const ok=list.filter(a=>a.price!=null).length,
+          failed=list.length-ok;
+
+    $('lu').textContent=ok
+      ?`xStocks: ${ok} precios cargados`
+        +(failed?` · ${failed} sin precio`:'')
+        +' · fuente primaria Kraken'
+      :'xStocks: Kraken y Yahoo no respondieron. Pulsa ↻ para reintentar o configura un proxy.';
   }
-}
-function retryStocks(){
-  if(stocksLoading)return;
-  stocksAttempted=false;
-  initStocks(true);
 }
 /* ---- autocompletar ---- */
 $('q').addEventListener('input',()=>{clearTimeout(dt);const q=$('q').value.trim().toLowerCase();if(!q){$('dd').hidden=true;return}
-const loc=[...U.crypto,...U.stock].filter(a=>a.symbol.toLowerCase().startsWith(q)||a.name.toLowerCase().startsWith(q)||a.name.toLowerCase().includes(' '+q)).slice(0,6);ddr(loc);
+const loc=[...U.crypto,...U.stock.filter(a=>XSP[a.symbol]||XSP[a.symbol.replace('-','.')] )].filter(a=>a.symbol.toLowerCase().startsWith(q)||a.name.toLowerCase().startsWith(q)||a.name.toLowerCase().includes(' '+q)).slice(0,6);ddr(loc);
 dt=setTimeout(async()=>{let on=[];try{const j=await jget(CG+'search?query='+encodeURIComponent(q),D);on.push(...(j.coins||[]).slice(0,5).map(c=>({type:'crypto',id:c.id,symbol:c.symbol,name:c.name,img:c.large||c.thumb,rank:c.market_cap_rank})))}catch(e){}
-try{const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?newsCount=0&quotesCount=8&q='+encodeURIComponent(q));on.push(...(j.quotes||[]).filter(z=>['EQUITY','ETF'].includes(z.quoteType)&&z.symbol.indexOf('.')<0&&XS.has(z.symbol.replace('-','.'))).slice(0,5).map(z=>({type:'stock',id:z.symbol,symbol:z.symbol,name:z.shortname||z.longname||z.symbol})))}catch(e){}
+try{const j=await jget('https://query1.finance.yahoo.com/v1/finance/search?newsCount=0&quotesCount=8&q='+encodeURIComponent(q));on.push(...(j.quotes||[]).filter(z=>['EQUITY','ETF'].includes(z.quoteType)&&z.symbol.indexOf('.')<0&&(!!(XSP[z.symbol]||XSP[z.symbol.replace('-','.')] ))).slice(0,5).map(z=>({type:'stock',id:z.symbol,symbol:z.symbol,name:z.shortname||z.longname||z.symbol})))}catch(e){}
 const seen=new Set(loc.map(a=>a.type+a.id));ddr([...loc,...on.filter(a=>!seen.has(a.type+a.id))].slice(0,10))},350)});
 let ddl=[];function ddr(l){ddl=l;ddi=-1;$('dd').hidden=!l.length;$('dd').innerHTML=l.map((a,i)=>`<div class="it" onclick="ddp(${i})">${im(a)}<b>${E(a.symbol.toUpperCase())}</b><span class="mu">${E(a.name)}</span><small>${a.type==='crypto'?'CRIPTO':'xStock'}</small></div>`).join('')}
 function ddp(i){const a=ddl[i],f=U[a.type].find(z=>z.id===a.id);$('dd').hidden=true;$('q').value='';load(f||a)}
 let ddi=-1;$('q').addEventListener('keydown',e=>{const n=ddl.length;if(!n||$('dd').hidden)return;if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();ddi=(ddi+(e.key==='ArrowDown'?1:-1)+n)%n;[...$('dd').children].forEach((c,k)=>c.classList.toggle('on',k===ddi));$('dd').children[ddi].scrollIntoView({block:'nearest'})}else if(e.key==='Enter'){ddp(ddi>=0?ddi:0)}else if(e.key==='Escape'){$('dd').hidden=true}});
 document.addEventListener('click',e=>{if(!e.target.closest('#dd,#q'))$('dd').hidden=true});
 /* ---- seguimiento ---- */
-function addW(){if(cur&&!W.some(w=>w.type===cur.type&&w.id===cur.id)){W.push(cur);rw();sbSave()}}
-function rw(){$('wl').innerHTML=W.length?W.map((a,i)=>`<span class="chip" onclick="load(W[${i}])">${im(a)}${E(a.symbol.toUpperCase())}${a.comb!=null?' · '+Math.round(a.comb):''}<x onclick="event.stopPropagation();W.splice(${i},1);rw();sbSave()">×</x></span>`).join(''):'<span class="mu">Vacío</span>'}
+function addW(){if(!cur)return;const i=W.findIndex(w=>w.type===cur.type&&w.id===cur.id);if(i<0){W.push({type:cur.type,id:cur.id,symbol:cur.symbol,name:cur.name,img:cur.img});rw();sbSave();$('wstatus').textContent=cur.symbol.toUpperCase()+' añadido al seguimiento.';refreshWatch(true)}else{$('wstatus').textContent=cur.symbol.toUpperCase()+' ya está en seguimiento.';goTab('pf')}}
+function starState(a){const b=$('wstar');if(!b||!a)return;const yes=W.some(w=>w.type===a.type&&w.id===a.id);b.textContent=yes?'★':'☆';b.title=yes?'Ya está en seguimiento':'Agregar a seguimiento';b.setAttribute('aria-label',b.title);b.style.color=yes?'var(--au)':'var(--tx)'}
+let wPeriod='1d',wBusy=false;
+function rw(){
+  if(!$('wl'))return;
+
+  if(!W.length){
+    $('wl').innerHTML=
+      '<span class="mu">Aún no sigues activos. Usa ★ en Análisis para agregarlos.</span>';
+    return;
+  }
+
+  $('wl').innerHTML=W.map((a,i)=>{
+    const p=a.watchPrice??a.price,
+          ret=a.returns&&a.returns[wPeriod],
+          sp=a.watchSeries?spark({spk:a.watchSeries}):'',
+          flag=wflagHTML(a.sig);
+
+    return `<div class="ur ${a.sig?'has-wflag':''}" style="cursor:default;align-items:flex-start">${flag}<div onclick="load(W[${i}])" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer">${im(a)}<div class="n"><strong>${E(a.symbol.toUpperCase())}</strong><small>${E(a.name||'')}</small></div></div><div class="p" style="min-width:82px"><b>${p!=null?money(p):'—'}</b><br><span style="color:${ret==null?'var(--mu)':ret>=0?'var(--gr)':'var(--rd)'}">${ret==null?'—':sg(ret)}</span>${sp}</div><button class="x" onclick="W.splice(${i},1);rw();sbSave()" aria-label="Quitar seguimiento">×</button></div>`;
+  }).join('');
+}async function watchHistory(a){
+  const now=Date.now();
+  if(a.watchAt&&now-a.watchAt<4*60e3&&a.returns)return;
+
+  let vals=[],ts=[],vo=[];
+
+  if(a.type==='crypto'){
+    const j=await jget(
+      'https://api.binance.com/api/v3/klines?symbol='
+      +a.symbol.toUpperCase()+'USDT&interval=1d&limit=370',
+      D
+    );
+    vals=j.map(x=>+x[4]);
+    ts=j.map(x=>+x[0]);
+    vo=j.map(x=>+x[7]);
+  }else{
+    const pair=XSP[a.symbol]||XSP[a.symbol.replace('-','.')];
+
+    if(pair){
+      const j=await jget(
+        'https://api.kraken.com/0/public/OHLC?pair='
+        +encodeURIComponent(pair)+'&interval=1440',
+        D
+      );
+      const entry=Object.entries(j.result||{}).find(([k])=>k!=='last'),
+            rows=(entry&&Array.isArray(entry[1]))?entry[1]:[],
+            P=rows
+              .map(r=>[+r[0]*1000,+r[4],r[6]==null?null:+r[6]])
+              .filter(x=>Number.isFinite(x[1])&&x[1]>0);
+
+      vals=P.map(x=>x[1]);
+      ts=P.map(x=>x[0]);
+      vo=P.map(x=>x[2]);
+    }else{
+      const j=await jget(
+        'https://query1.finance.yahoo.com/v8/finance/chart/'
+        +encodeURIComponent(a.symbol)+'?range=1y&interval=1d',
+        D
+      );
+      const r=j.chart.result[0],
+            q=r.indicators.quote[0],
+            P=q.close.map((x,i)=>[
+              r.timestamp[i]*1e3,
+              x,
+              q.volume?q.volume[i]:null
+            ]).filter(x=>x[1]!=null);
+
+      vals=P.map(x=>x[1]);
+      ts=P.map(x=>x[0]);
+      vo=P.map(x=>x[2]);
+    }
+  }
+
+  const last=vals.at(-1);
+  if(!last)return;
+
+  const ret={};
+  [['1d',1],['7d',7],['30d',30],['90d',90],['180d',180],['365d',365]]
+    .forEach(([k,n])=>{
+      const old=vals[Math.max(0,vals.length-1-n)];
+      ret[k]=old>0?pct(last,old):null;
+    });
+
+  a.watchPrice=a.type==='stock'
+    ?(await krakenQuote(a).catch(()=>null))||last
+    :last;
+
+  a.returns=ret;
+  a.watchSeries=vals.slice(-35);
+  a.watchAt=now;
+
+  try{
+    a.m=A(vals,a.type,vo.length===vals.length?vo:null);
+    a.sig=carState(a,a.m);
+    a.sigAt=now;
+  }catch(e){
+    a.sig={
+      cls:'neu',
+      t:'SIN DATOS',
+      d:'No se pudo calcular la señal'
+    };
+    a.sigAt=now;
+  }
+}
+async function refreshWatch(force=false){if(wBusy||!W.length)return;W=W.filter(a=>a.type==='crypto'||XSP[a.symbol]||XSP[a.symbol.replace('-','.')] );if(!W.length){rw();return}wBusy=true;$('wstatus').textContent='Actualizando precios e históricos…';
+ try{await Promise.all(W.map(async a=>{if(force)a.watchAt=0;try{await watchHistory(a)}catch(e){try{a.watchPrice=await px(a)}catch(_){}}}));rw();sbSave();$('wstatus').textContent='Actualizado '+new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})}
+ finally{wBusy=false}}
+document.querySelectorAll('#wperiod button').forEach(b=>b.addEventListener('click',()=>{wPeriod=b.dataset.wp;document.querySelectorAll('#wperiod button').forEach(x=>x.classList.toggle('on',x===b));rw()}));
 const updW=rw;
 /* ---- contexto: fundamentales, derivados, social ---- */
 const FH='https://finnhub.io/api/v1/',STB='usdt usdc dai usde usds busd tusd fdusd usdd pyusd usd1 usdtb susds susde steth wsteth weth wbtc weeth cbbtc wbeth reth bsc-usd'.split(' ');
@@ -934,18 +1366,119 @@ logPred(a);evalLog(a,h);lgSum()}catch(e){$('bvd').textContent='No se pudo calcul
 /* ---- v5: cuenta, portafolio, alertas (estado en WordPress) ---- */
 let PF=[],AL=[];
 function free(){return{pos:100,al:50}}
-async function sbSave(){LS('mi_state',JSON.stringify({watch:W.map(a=>({type:a.type,id:a.id,symbol:a.symbol,name:a.name,img:a.img})),scan:SC,log:LG,pf:PF,al:AL}))}
-async function sbLoad(){let d=null;try{d=JSON.parse(LS('mi_state'))}catch(e){}W=d&&d.watch||[];SC=d&&d.scan||[];LG=d&&d.log||[];PF=d&&d.pf||[];AL=d&&d.al||[];$('cap').value=LS('mi_cap')||1000;$('pxy').value=LS('mi_px')||'';rw();rr();lgSum();rg();pfr();alr();gate()}
+async function sbSave(){LS('mi_state',JSON.stringify({watch:W.map(a=>({type:a.type,id:a.id,symbol:a.symbol,name:a.name,img:a.img,watchPrice:a.watchPrice,returns:a.returns,watchSeries:a.watchSeries,watchAt:a.watchAt})),scan:SC,log:LG,pf:PF}))}
+async function sbLoad(){let d=null;try{d=JSON.parse(LS('mi_state'))}catch(e){}W=d&&d.watch||[];SC=d&&d.scan||[];LG=d&&d.log||[];PF=d&&d.pf||[];AL=[];$('cap').value=LS('mi_cap')||1000;$('pxy').value=LS('mi_px')||'';rw();rr();lgSum();rg();pfr();refreshWatch();gate()}
 function ntf(t){st('🔔 '+t);try{if(Notification.permission==='granted')new Notification('Market Intelligence',{body:t});else if(Notification.permission==='default')Notification.requestPermission()}catch(e){}}
-setInterval(()=>{if(PF.length||AL.length){pfr();alr()}},12e4);
-async function px(p){try{if(p.type==='crypto'){const j=await jget('https://api.binance.com/api/v3/ticker/price?symbol='+p.symbol.toUpperCase()+'USDT');return +j.price}const j=await jget('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(p.symbol)+'?range=1d&interval=1d');return j.chart.result[0].meta.regularMarketPrice}catch(e){return null}}
-function pfAdd(q,s,e){const a=cur;if(!a||!a.price)return;if(PF.length>=free().pos){st('Límite de posiciones de tu plan: '+free().pos);return}PF.push({id:'p'+Date.now(),type:a.type,symbol:a.symbol,qty:q,entry:e||a.price,stop:s,sf:0});sbSave();pfr()}
-function pfNew(){const a=cur;if(!a||!a.price){st('Carga un activo primero');return}const q=+prompt('Cantidad de '+a.symbol.toUpperCase()+' en tu posición:');if(!(q>0))return;pfAdd(q,+prompt('Precio de stop-loss (0 = sin stop):','0')||0)}
-async function pfr(){if(!PF.length){$('pfb').innerHTML='<span class="mu">Sin posiciones. Carga un activo y pulsa ＋ Posición.</span>';return}
-const P=await Promise.all(PF.map(px));let tv=0,tg=0,rs=0;
-const rows=PF.map((x,i)=>{const p=P[i],g=p?(p-x.entry)*x.qty:null;if(p){tv+=p*x.qty;tg+=g;if(x.stop>0)rs+=Math.max(0,(p-x.stop)*x.qty);if(x.stop>0&&p<=x.stop&&!x.sf){x.sf=1;sbSave();ntf('⚠ '+x.symbol.toUpperCase()+' tocó su stop-loss')}}return`<div class="pfr"><div class="a"><b>${E(x.symbol.toUpperCase())}</b><small>${fmt(x.qty,x.qty<1?4:2)} u. · entrada ${money(x.entry)}${x.stop>0?' · stop '+money(x.stop):''}</small></div><div class="b"><b>${money(p)}</b><span style="color:${g==null?'':g>=0?'var(--gr)':'var(--rd)'}">${p?sg(pct(p,x.entry))+' · '+money(g):'—'}</span></div><button class="x" onclick="PF.splice(${i},1);sbSave();pfr()" aria-label="Quitar">×</button></div>`}).join('');
-$('pfb').innerHTML=`<div class="g3"><div class="m"><div class="k">Valor</div><div class="v">${money(tv)}</div></div><div class="m"><div class="k">Resultado</div><div class="v" style="color:${tg>=0?'var(--gr)':'var(--rd)'}">${money(tg)}</div></div><div class="m"><div class="k">Riesgo a stops</div><div class="v">${money(rs)}</div></div></div><div class="pfl">${rows}</div>`}
-function csv(){const t='tipo,simbolo,cantidad,entrada,stop\n'+PF.map(x=>[x.type,x.symbol,x.qty,x.entry,x.stop].join(',')).join('\n'),l=document.createElement('a');l.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));l.download='portafolio.csv';l.click()}
+setInterval(()=>{if(PF.length){pfr()}if(W.length){refreshWatch()}},12e4);
+async function px(p){try{if(p.type==='crypto'){const j=await jget('https://api.binance.com/api/v3/ticker/price?symbol='+p.symbol.toUpperCase()+'USDT',D);return +j.price}const kp=await krakenQuote(p).catch(()=>null);if(kp)return kp;const j=await jget('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(p.symbol)+'?range=1d&interval=1d',D);return j.chart.result[0].meta.regularMarketPrice}catch(e){return null}}
+function pfAdd(q){const a=cur;if(!a)return;if(!(q>0))return;if(PF.length>=free().pos){st('Límite de posiciones alcanzado');return}
+ const old=PF.find(x=>x.type===a.type&&x.symbol===a.symbol);if(old)old.qty+=q;else PF.push({id:'p'+Date.now(),type:a.type,idAsset:a.id,symbol:a.symbol,name:a.name,qty:q});
+ sbSave();pfr()}
+function pfNew(){if(!cur){st('Primero selecciona una criptomoneda o xStock en Mercado o Análisis.');return}
+ const q=+prompt('¿Cuántas unidades de '+cur.symbol.toUpperCase()+' tienes?');if(!(q>0))return;pfAdd(q)}
+/* Histórico breve y señal para Portafolio; reutiliza datos de Seguimiento. */
+async function sigHist(a){
+  const now=Date.now(),
+        match=W.find(x=>
+          x.type===a.type&&(
+            x.id===a.id||
+            (x.symbol||'').toUpperCase()===(a.symbol||'').toUpperCase()
+          )
+        );
+
+  if(match&&match.sig&&match.watchAt&&now-match.watchAt<9e5){
+    a.sig=match.sig;
+    a.sigAt=match.watchAt;
+    return a.sig;
+  }
+
+  if(a.sig&&a.sigAt&&now-a.sigAt<9e5)return a.sig;
+
+  let v=[],vo=null;
+
+  try{
+    if(a.type==='crypto'){
+      const j=await jget(
+        'https://api.binance.com/api/v3/klines?symbol='
+        +a.symbol.toUpperCase()+'USDT&interval=1d&limit=220',
+        D
+      );
+      if(Array.isArray(j)&&j.length){
+        v=j.map(x=>+x[4]);
+        vo=j.map(x=>+x[7]);
+      }
+    }else{
+      try{
+        const h=await hKrakenStock(a);
+        v=h.v;
+        vo=h.vo;
+      }catch(e){
+        const j=await jget(
+          'https://query1.finance.yahoo.com/v8/finance/chart/'
+          +encodeURIComponent(a.symbol)+'?range=1y&interval=1d',
+          D
+        );
+        const r=j.chart.result[0],
+              q=r.indicators.quote[0],
+              P=(q.close||[])
+                .map((x,i)=>[r.timestamp[i]*1e3,x,q.volume?q.volume[i]:null])
+                .filter(x=>x[1]!=null);
+
+        v=P.map(x=>x[1]);
+        vo=P.map(x=>x[2]);
+      }
+    }
+
+    if(v.length>=30){
+      const m=A(v,a.type,vo);
+      a.sig=carState(a,m);
+    }else{
+      a.sig={
+        cls:'neu',
+        t:'SIN DATOS',
+        d:'Histórico insuficiente'
+      };
+    }
+  }catch(e){
+    a.sig={
+      cls:'neu',
+      t:'SIN DATOS',
+      d:'No se pudo obtener el histórico'
+    };
+  }
+
+  a.sigAt=now;
+  if(match)match.sig=a.sig;
+  return a.sig;
+}
+async function pfr(){
+  if(!PF.length){
+    $('pfb').innerHTML=
+      '<span class="mu">Sin activos. Selecciona una cripto o xStock, abre Análisis y pulsa ＋ Añadir activo.</span>';
+    return;
+  }
+
+  const [P]=await Promise.all([
+    Promise.all(PF.map(px)),
+    Promise.all(PF.map(sigHist))
+  ]);
+
+  let total=0,missing=0;
+
+  const rows=PF.map((x,i)=>{
+    const p=P[i],
+          v=p!=null?p*x.qty:null,
+          flag=wflagHTML(x.sig);
+
+    if(v!=null)total+=v;
+    else missing++;
+
+    return `<div class="pfr ${x.sig?'has-wflag':''}">${flag}<div class="a"><b>${E(x.symbol.toUpperCase())}</b><small>${E(x.name||'')} · ${fmt(x.qty,x.qty<1?8:4)} unidades × ${p!=null?money(p):'sin precio'}</small></div><div class="b"><b>${v!=null?money(v):'—'}</b><span style="color:var(--mu)">Valor actual</span></div><button class="x" onclick="PF.splice(${i},1);sbSave();pfr()" aria-label="Quitar">×</button></div>`;
+  }).join('');
+
+  $('pfb').innerHTML=`<div class="g3"><div class="m" style="grid-column:1/-1"><div class="k">Valor total del portafolio</div><div class="v" style="font-size:25px">${money(total)}</div><div class="h">${PF.length} activos registrados${missing?' · '+missing+' sin precio':''}</div></div></div><div class="pfl">${rows}</div><div class="note">El valor se calcula como cantidad × precio actual. La etiqueta superior combina RSI, zonas del gráfico, tu perfil de riesgo y tu filosofía de inversión.</div>`;
+}
+function csv(){const t='tipo,simbolo,cantidad\n'+PF.map(x=>[x.type,x.symbol,x.qty].join(',')).join('\n'),l=document.createElement('a');l.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));l.download='portafolio.csv';l.click()}
 function alAdd(){const a=cur,v=+$('alpx').value;if(!a||!(v>0)){st('Carga un activo e indica el precio');return}if(AL.length>=free().al){st('Límite de alertas de tu plan: '+free().al);return}AL.push({id:'a'+Date.now(),type:a.type,symbol:a.symbol,op:$('alop').value,px:v,f:0});$('alpx').value='';sbSave();alr()}
 async function alr(){$('aln').textContent='Las alertas se revisan cada 2 min mientras esta página esté abierta (acepta las notificaciones del navegador). Sin servidor no hay avisos con la página cerrada.';
 const P=await Promise.all(AL.map(px));AL.forEach((x,i)=>{if(!x.f&&P[i]&&(x.op==='>'?P[i]>=x.px:P[i]<=x.px)){x.f=1;sbSave();ntf(x.symbol.toUpperCase()+(x.op==='>'?' ≥ ':' ≤ ')+x.px+' (precio '+P[i]+')')}});$('alb').innerHTML=AL.length?AL.map((x,i)=>{const hit=P[i]&&(x.op==='>'?P[i]>=x.px:P[i]<=x.px);return`<div class="alr"><span>${E(x.symbol.toUpperCase())} ${x.op==='>'?'≥':'≤'} ${money(x.px)} <span class="mu">(${money(P[i])})</span> ${hit?'<b style="color:var(--au)">¡cumplida!</b>':''}</span><button class="x" onclick="AL.splice(${i},1);sbSave();alr()">×</button></div>`}).join(''):'Sin alertas'}
@@ -979,7 +1512,7 @@ sh.push(sheet('Rangos de compra',['Perfil','Compra desde','Compra hasta','Stop',
 sh.push(sheet('Activo',['Dato','Valor'],[['Activo',a.symbol.toUpperCase()+' · '+a.name],['Tipo',a.type],['Precio',P],['Puntaje combinado',Math.round(a.comb||0)],['Puntaje tecnico',a.m.t],['RSI 14',a.m.rsi],['Momentum 30D %',a.m.mom],['Caida vs maximo %',a.m.dd],['Volatilidad anual %',a.m.vol],['Fecha',new Date().toLocaleString('es-CR')]]))}
 if(a&&a.rcm)sh.push(sheet('Senales',['Grupo','Senal','Lectura','Voto (-1 a +1)','Peso'],[['VEREDICTO',a.rcm.title,'Confianza '+a.rcm.cf,Math.round(a.rcm.net*100)/100,'']].concat(a.rcm.S.map(s=>[s.g,s.k,s.t,Math.round(s.d*100)/100,s.w]))));
 if(W.length)sh.push(sheet('Seguimiento',['Tipo','Simbolo','Nombre','Puntaje'],W.map(w=>[w.type,w.symbol.toUpperCase(),w.name,Math.round(w.comb||0)])));
-if(PF.length)sh.push(sheet('Portafolio',['Tipo','Simbolo','Cantidad','Entrada','Stop'],PF.map(x=>[x.type,x.symbol.toUpperCase(),x.qty,x.entry,x.stop])));
+if(PF.length)sh.push(sheet('Portafolio',['Tipo','Simbolo','Cantidad'],PF.map(x=>[x.type,x.symbol.toUpperCase(),x.qty])));
 if(sh.length)sh.push(sheet('Perfil',['Dato','Valor'],[['Perfil de riesgo',PROF[prof()].n],['Filosofia',PHIL[phil()].n],['Horizonte',PROF[prof()].hz]].concat(a&&a.rcm?[['Lectura tecnica (corto plazo)',a.rcm.base],['Veredicto segun tu estrategia',a.rcm.title]]:[]).concat(a&&a.dvd&&a.dvd.n?[['Dividendo TTM por accion (USD)',+a.dvd.ttm.toFixed(4)],['Rendimiento por dividendo TTM (%)',+a.dvd.yld.toFixed(2)],['Frecuencia de pago',a.dvd.freq||''],['Retorno por precio en el periodo (%)',+a.dvd.pr.toFixed(2)],['Retorno con dividendos reinvertidos (%)',+a.dvd.tr.toFixed(2)]]:[])));if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
 const x=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#E6B84A" ss:Pattern="Solid"/></Style></Styles>${sh.join('')}</Workbook>`,l=document.createElement('a');
 l.href=URL.createObjectURL(new Blob([x],{type:'application/vnd.ms-excel'}));l.download='market_intelligence_'+new Date().toISOString().slice(0,10)+'.xls';l.click();st('Excel descargado ('+sh.length+' hojas).')}
@@ -1034,7 +1567,7 @@ function goTab(t,auto){
   document.querySelectorAll('.pn').forEach(p=>p.classList.toggle('on',p.id==='pn-'+t));
   document.querySelectorAll('#bn button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   if(changed){window.scrollTo(0,0);if(!auto&&navigator.vibrate)try{navigator.vibrate(6)}catch(e){}}
-  if(t==='an')requestAnimationFrame(()=>chart());
+  if(t==='an')requestAnimationFrame(()=>chart());if(t==='pf'&&W.length)refreshWatch();if(t==='pf')pfr();
 }
 function mkSub(x){
   $('mk-top').hidden=x!=='top';$('mk-scan').hidden=x!=='scan';
