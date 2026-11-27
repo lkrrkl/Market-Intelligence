@@ -264,7 +264,7 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 <div class="ahr"><span class="tag neu" id="tg">SIN ANÁLISIS</span><div class="row"><button class="ib" id="go" onclick="cur&&load(cur)" aria-label="Sincronizar">↻</button><button class="ib" onclick="addW()" aria-label="Agregar a seguimiento">★</button></div></div></div>
 <div class="rngw" id="rngw" hidden><div class="rngl"><span id="rlo">—</span><span>Rango 52 semanas</span><span id="rhi">—</span></div><div class="rngb"><i id="rmk"></i></div></div>
 <div class="g4"><div class="m"><div class="k">RSI (14)</div><div class="v" id="rsi">—</div><div class="h" id="rh">Fuerza relativa</div></div><div class="m"><div class="k">Caída vs máx. 52 sem.</div><div class="v" id="dd2">—</div><div class="h">Distancia al máximo</div></div><div class="m"><div class="k">Volatilidad anual</div><div class="v" id="vol">—</div><div class="h" id="rk">—</div></div><div class="m"><div class="k">Momentum 30D</div><div class="v" id="mo">—</div><div class="h" id="mc">MACD —</div></div></div>
-<div class="sub src" id="src">Fuente: —</div></section><section class="card"><div class="ch"><h2>Precio y proyección</h2><span class="mu" id="cr">—</span></div>
+<div class="sub src" id="src">Fuente: —</div></section><section class="card"><div class="ch"><h2>Precio y proyección</h2><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tag neu" id="trendlbl" style="font-size:10px;padding:3px 10px;letter-spacing:.4px">—</span><span class="mu" id="cr">—</span></span></div>
 <div id="pchips"><button data-p="1">24h</button><button data-p="30">1M</button><button data-p="90" class="on">3M</button><button data-p="180">6M</button><button data-p="365">1A</button><button data-p="1825">5A</button></div>
 <select id="period" hidden><option value="1">24 horas</option><option value="30">1 mes</option><option value="90" selected>3 meses</option><option value="180">6 meses</option><option value="365">1 año</option><option value="1825">5 años</option></select>
 <div class="chrd" id="chrd"><span class="mu">☝ Toca y desliza sobre el gráfico para ver precio y fecha</span></div>
@@ -501,8 +501,79 @@ if(m.last>=rz[1])return{k:'sell',d:-1,t:'🔴 Zona de venta: precio en la resist
 if(m.last>=yz[1])return{k:'caut',d:-.5,t:'🟡 Precaución: zona de posible toma de ganancias.'};
 if(m.last<=bz[2]){const c=m.hist>m.hist1&&m.last>m.e10;return{k:'buy',d:c?1:.5,t:c?'🔵 Compra por rebote: soporte con giro confirmado (MACD y EMA10).':'🔵 Zona de soporte: espera confirmación de giro antes de comprar.'}}
 return{k:'mid',d:0,t:'⚪ Zona media: sin ventaja clara.'}}
-function chart(){if(!cur||!cur.m)return;const m=cur.m,H0=+$('period').value,/* proyección siempre corta (máx 90 días) */H=TD(Math.min(90,H0<=1?7:H0>365?30:H0>90?60:30),cur.type),Wd=Math.min(H0>=99999?m.v.length:(H0<=1?Math.min(5,m.v.length):H0),m.v.length),v=m.v.slice(-Wd),off=m.v.length-Wd,s20=m.s20.slice(off),s50=m.s50.slice(off),s200=m.s200.slice(off),ts=(m.ts||[]).slice(off),c=$('cv'),r=c.getBoundingClientRect(),dp=devicePixelRatio||1;
-if(!r.width||!r.height)return;c.width=r.width*dp;c.height=r.height*dp;const x=c.getContext('2d');x.scale(dp,dp);const w=r.width,h=r.height,P={l:54,r:10,t:10,b:30},N=v.length+H,pr=[];for(let t=1;t<=H;t++)pr.push(m.pb(t));
+/* ===== Etiqueta dinámica de tendencia por temporalidad ===== */
+function trendLabel(m, periodDays) {
+  if (!m || !m.last) return { label: '—', cls: 'neu', score: 0 };
+  const last = m.last;
+  let score = 0, weight = 0;
+  const add = (val, w) => { if (isFinite(val) && isFinite(w) && w > 0) { score += val * w; weight += w; } };
+
+  const s20  = m.s20  ? m.s20.at(-1)  : null;
+  const s50  = m.s50  ? m.s50.at(-1)  : null;
+  const s200 = m.s200 ? m.s200.at(-1) : null;
+
+  // Voto de la proyección, ponderado por la volatilidad esperada del período
+  let projBase = last;
+  try { const pr = m.pj(periodDays); if (pr && isFinite(pr.b)) projBase = pr.b; } catch(e) {}
+  const projChange  = (projBase / last - 1) * 100;            // %
+  const effDays     = Math.min(Math.max(1, periodDays), 365); // el fan se corta a 1 año
+  const periodVol   = ((m.vol || 30) / 100) * Math.sqrt(effDays / 365) * 100; // %
+  const projStrength = periodVol > 0 ? Math.abs(projChange) / periodVol : 0;
+  if (projStrength > 0.12) add(projChange > 0 ? 1 : -1, 2.5);
+
+  if (periodDays <= 7) {
+    // 24h — muy corto plazo
+    if (m.hist != null) add(m.hist > 0 ? 1 : -1, 2);
+    if (m.hist != null && m.hist1 != null) add(m.hist > m.hist1 ? 0.7 : -0.7, 1.3);
+    if (m.e10 != null) add(last > m.e10 ? 0.6 : -0.6, 1);
+    if (m.mom != null) add(m.mom > 0.5 ? 0.4 : m.mom < -0.5 ? -0.4 : 0, 0.8);
+    if (m.rsi != null) {
+      if (m.rsi >= 72) add(-0.5, 0.7);
+      else if (m.rsi <= 28) add(0.5, 0.7);
+      else if (m.rsi > 55) add(0.5, 0.8);
+      else if (m.rsi < 45) add(-0.5, 0.8);
+    }
+  } else if (periodDays <= 90) {
+    // 1M – 3M — tendencia media
+    if (s20) add(last > s20 ? 1 : -1, 1.5);
+    if (s50) add(last > s50 ? 1 : -1, 1.5);
+    if (m.hist != null) add(m.hist > 0 ? 0.8 : -0.8, 1.5);
+    if (m.mom != null) add(m.mom > 0 ? 0.8 : -0.8, 1);
+    if (m.rsi != null) { if (m.rsi > 55) add(0.3, 0.7); else if (m.rsi < 45) add(-0.3, 0.7); }
+  } else if (periodDays <= 365) {
+    // 6M – 1A — tendencia larga
+    if (s50)  add(last > s50  ? 1 : -1, 1.5);
+    if (s200) add(last > s200 ? 1 : -1, 2);
+    if (s50 && s200) add(s50 > s200 ? 0.8 : -0.8, 1.2);
+    if (m.mom90 != null) add(m.mom90 > 0 ? 0.6 : -0.6, 1);
+  } else {
+    // 5A+ — mega tendencia
+    if (s200) add(last > s200 ? 1 : -1, 2.5);
+    if (s50 && s200) add(s50 > s200 ? 1 : -1, 2.5);
+    if (m.mom90 != null) add(m.mom90 > 0 ? 0.5 : -0.5, 0.8);
+  }
+
+  const n = weight > 0 ? score / weight : 0;
+  if (n >= 0.20)  return { label: 'Alcista', cls: 'bull', score: n };
+  if (n <= -0.20) return { label: 'Bajista', cls: 'bear', score: n };
+  return { label: 'Lateral', cls: 'neu', score: n };
+}
+
+function renderTrendLabel() {
+  const el = $('trendlbl');
+  if (!el) return;
+  if (!cur || !cur.m) { el.textContent = '—'; el.className = 'tag neu'; el.title = ''; return; }
+  let pd = +($('period') ? $('period').value : 90);
+  if (!isFinite(pd) || pd <= 0) pd = 90;
+  if (pd > 1825) pd = 1825;
+  const t = trendLabel(cur.m, pd);
+  const lbl = pd <= 1 ? '24h' : pd <= 30 ? '1M' : pd <= 90 ? '3M' : pd <= 180 ? '6M' : pd <= 365 ? '1A' : '5A';
+  el.textContent = t.label;
+  el.className = 'tag ' + t.cls;
+  el.title = `Proyección ${lbl} · sesgo ${(t.score * 100).toFixed(0)}%`;
+}
+function chart(){if(!cur||!cur.m){renderTrendLabel();return}const m=cur.m,H0=+$('period').value,/* proyección siempre corta (máx 90 días) */H=TD(Math.min(90,H0<=1?7:H0>365?30:H0>90?60:30),cur.type),Wd=Math.min(H0>=99999?m.v.length:(H0<=1?Math.min(5,m.v.length):H0),m.v.length),v=m.v.slice(-Wd),off=m.v.length-Wd,s20=m.s20.slice(off),s50=m.s50.slice(off),s200=m.s200.slice(off),ts=(m.ts||[]).slice(off),c=$('cv'),r=c.getBoundingClientRect(),dp=devicePixelRatio||1;
+if(!r.width||!r.height){renderTrendLabel();return}c.width=r.width*dp;c.height=r.height*dp;const x=c.getContext('2d');x.scale(dp,dp);const w=r.width,h=r.height,P={l:54,r:10,t:10,b:30},N=v.length+H,pr=[];for(let t=1;t<=H;t++)pr.push(m.pb(t));
 const mn0=Math.min(...v,...pr.map(p=>p.lo)),mx0=Math.max(...v,...pr.map(p=>p.hi)),s2v=s200.filter(q=>q!=null),s2lo=s2v.length?Math.min(...s2v):null,s2hi=s2v.length?Math.max(...s2v):null,ext=s2v.length>0&&(Math.max(mx0,s2hi)-Math.min(mn0,s2lo))<=2.3*(mx0-mn0||1),mn=ext?Math.min(mn0,s2lo):mn0,mx=ext?Math.max(mx0,s2hi):mx0,Rg=mx-mn||1,X=i=>P.l+i*(w-P.l-P.r)/(N-1),Y=q=>P.t+(mx-q)*(h-P.t-P.b)/Rg,zn=zones(m,v);
 window._ch={v,pr,ts,s20,s50,s200,N,P,w,h,mn,mx,Rg,X,Y,H,Wd,last:v.at(-1),type:cur.type,H0};
 x.font='11px Segoe UI';x.fillStyle='#98a2ad';x.strokeStyle='#2c353e';
@@ -533,7 +604,7 @@ x.fillStyle='#2fd6a0';x.textAlign=xi>w-34?'right':'center';x.fillText(fmtD(fut),
 x.textAlign='left';
 $('zs').textContent=zoneState(m,Wd).t+' · La zona azul es el SOPORTE del período; «compra por rebote» exige además giro confirmado (MACD subiendo y precio sobre la EMA10). Zonas = soporte/resistencia ± volatilidad; no son garantía.';
 const histLabel=H0>=99999?'Vida completa':(H0>=3650?'10 años':(H0>=1825?'5 años':(H0<=1?'24 horas':(H0+' días'))));
-$('cr').textContent=`${Wd} sesiones · proyección ${H}`}
+$('cr').textContent=`${Wd} sesiones · proyección ${H}`;renderTrendLabel();}
 
 
 /* ===== v9: PERFIL DE RIESGO + FILOSOFÍA DE INVERSIÓN ===== */
