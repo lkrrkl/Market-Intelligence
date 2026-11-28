@@ -272,7 +272,7 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 <div class="lgd"><span><i style="background:#7db3e8"></i>Precio</span><span><i style="background:#e6b84a"></i>SMA 20</span><span><i style="background:#cd7f32"></i>SMA 50</span><span><i style="background:#d3dae2"></i>SMA 200</span><span><i style="background:#2fd6a0"></i>Proyección + banda 80%</span><span><i style="background:#ff5c6c"></i>Resistencia / venta</span><span><i style="background:#f2c94c"></i>Precaución</span><span><i style="background:#4aa3ff"></i>Soporte</span></div><div class="st" id="zs"></div></section><section class="card" id="divbox" hidden><div class="ch"><h2>Dividendos y reinversión</h2><span class="mu" id="dvs">—</span></div><div class="g4" id="dvg"></div><div class="note" id="dvn"></div></section><section class="card"><div class="ch"><h2>Diagnóstico combinado</h2><span class="mu">Técnico + noticias, ajustado por contexto</span></div>
 <div class="sc"><div class="gz"><div class="gauge" id="g1"><b id="n1">—</b></div><small>TÉCNICO</small></div><div class="gz"><div class="gauge" id="g2"><b id="n2">—</b></div><small id="nl">NOTICIAS</small></div><div class="gz"><div class="gauge" id="g3"><b id="n3">—</b></div><small>COMBINADO</small></div></div>
 <div class="g4" style="grid-template-columns:repeat(3,1fr)" id="pj"></div>
-<details class="nt"><summary>ℹ Cómo se calculan los escenarios</summary><div class="note">Escenarios = simulación con volatilidad dinámica (tipo GARCH, retornos históricos remuestreados, drift mínimo); la banda 10–90 % se ensancha antes de resultados trimestrales. En acciones se cuentan días bursátiles. No es una predicción ni asesoría financiera.</div></details></section><section class="card"><div class="ch"><h2 id="fxt">Contexto</h2><span class="mu">Fundamentales / derivados / social</span></div><div class="g4" id="fx"><div class="mu">Selecciona un activo.</div></div></section><section class="card"><div class="ch"><h2>Noticias y sentimiento</h2><span class="mu" id="nm">—</span></div><div class="news" id="nw"><div class="mu">Sin noticias aún.</div></div></section></div>
+<details class="nt"><summary>ℹ Cómo se calculan los escenarios</summary><div class="note">Escenarios = simulación con volatilidad dinámica (tipo GARCH, retornos históricos remuestreados, drift mínimo); la banda 10–90 % se ensancha antes de resultados trimestrales. En acciones se cuentan días bursátiles. No es una predicción ni asesoría financiera.</div></details></section><section class="card" id="confbox"><div class="ch"><h2>Calidad de los datos</h2><span class="mu" id="confsub">—</span></div><div id="confb" class="mu">Carga un activo para ver qué tan completos son sus datos.</div></section><section class="card"><div class="ch"><h2 id="fxt">Contexto</h2><span class="mu">Fundamentales / derivados / social</span></div><div class="g4" id="fx"><div class="mu">Selecciona un activo.</div></div></section><section class="card"><div class="ch"><h2>Noticias y sentimiento</h2><span class="mu" id="nm">—</span></div><div class="news" id="nw"><div class="mu">Sin noticias aún.</div></div></section></div>
 <div class="pn" id="pn-st"><section class="card" id="sthdr" style="padding:12px 14px"><div class="ah1" style="grid-template-columns:auto minmax(0,1fr)"><span id="stal"></span><div class="ahn"><div class="mu" id="stan">Carga un activo en Análisis</div><div class="mu" id="stsym" style="font-size:12px;margin-top:2px">La estrategia se calcula sobre el activo en análisis</div></div></div></section><section class="card" id="recbox"><div class="ch"><h2>Recomendación</h2><span class="mu" id="recsub">Integra todas las señales del análisis</span></div>
 <div id="rec" style="font-size:13px;line-height:1.55">Carga un activo para obtener la recomendación según indicadores y señales.</div>
 <details class="nt" open><summary>▾ Detalle de las señales</summary><div id="recsig" class="sgs"></div></details>
@@ -1079,37 +1079,18 @@ function pfSnap(x,p){const k=x.type+'|'+x.symbol,a=PFSNAP[k]||(PFSNAP[k]=[]),l=a
 const PFHC=new Map();
 async function pfHist(x){const k=x.type+'|'+x.symbol,c=PFHC.get(k);if(c&&Date.now()-c.t<9e5)return c.v;let v=null;try{const a=findAsset(x);const h=a.type==='crypto'?await hCrypto(a):(await xsSync(),await hStock(a));if(h&&h.v&&h.ts&&h.ts.length===h.v.length)v={v:h.v,ts:h.ts.map(t=>t<1e11?t*1000:t)}}catch(e){}PFHC.set(k,{t:Date.now(),v});return v}
 /* Serie de rendimiento ponderado por aportes: cada compra nueva se promedia con el costo previo */
-function pfSeries(lots,pts){return pts.map(([t,P])=>{const act=lots.filter(l=>l.t<=t&&l.price>0);let q=0,c=0;act.forEach(l=>{q+=l.qty;c+=l.qty*l.price});return c>0?[t,(q*P/c-1)*100,q*P,c]:null}).filter(Boolean)}
 function pfTotal(all){const ev=[...new Set(all.flatMap(a=>a.ser.map(p=>p[0])))].sort((a,b)=>a-b),idx=all.map(()=>-1),out=[];ev.forEach(t=>{let V=0,C=0;all.forEach((a,k)=>{while(idx[k]+1<a.ser.length&&a.ser[idx[k]+1][0]<=t)idx[k]++;if(idx[k]>=0){V+=a.ser[idx[k]][2];C+=a.ser[idx[k]][3]}});if(C>0)out.push([t,(V/C-1)*100])});return out}
 const PFCOL=['#e6b84a','#4aa3ff','#2fd6a0','#ff8a5e','#c792ea','#6ee7f9','#f2c94c','#ff5c6c','#9be564','#b0bec5'];
 function pfSvg(S){const W=640,H=250,l=46,r=14,t=12,b=26;let x0=Infinity,x1=-Infinity,y0=0,y1=0;S.forEach(s=>s.pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1])}));if(!isFinite(x0))return'';if(x1-x0<36e5)x0=x1-864e5;const pad=Math.max(1,(y1-y0)*.12);y0-=pad;y1+=pad;const X=v=>l+(v-x0)/(x1-x0)*(W-l-r),Y=v=>t+(y1-v)/(y1-y0)*(H-t-b);PFCH={x0,x1,W,l,r,S};let g='';for(let k=0;k<=4;k++){const v=y0+(y1-y0)*k/4;g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#2b343d" stroke-width="1"/><text x="${l-6}" y="${Y(v)+3}" text-anchor="end" fill="#8fa4b8" font-size="10">${v>=0?'+':''}${v.toFixed(1)}%</text>`}g+=`<line x1="${l}" x2="${W-r}" y1="${Y(0)}" y2="${Y(0)}" stroke="#8fa4b8" stroke-dasharray="3 3"/>`;const d=v=>fdate(v)||'';g+=`<text x="${l}" y="${H-8}" fill="#8fa4b8" font-size="10">${d(x0)}</text><text x="${W-r}" y="${H-8}" text-anchor="end" fill="#8fa4b8" font-size="10">${d(x1)}</text>`;S.forEach(s=>{if(!s.pts.length)return;const pl=s.pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ');g+=s.pts.length>1?`<polyline points="${pl}" fill="none" stroke="${s.color}" stroke-width="${s.total?2.6:1.8}" ${s.total?'stroke-dasharray="6 4"':''} stroke-linejoin="round"/>`:'';const e=s.pts.at(-1);g+=`<circle cx="${X(e[0])}" cy="${Y(e[1])}" r="${s.total?4:3}" fill="${s.color}"/>`});return`<svg id="pfsvg" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;touch-action:pan-y" onpointermove="pfTip(event)" onpointerdown="pfTip(event)" onpointerleave="pfTipOff()">${g}<line id="pfcross" x1="0" x2="0" y1="${t}" y2="${H-b}" stroke="#fff" stroke-opacity=".5" visibility="hidden"/></svg><div id="pftip" class="pftip" hidden></div>`}
 function pfTip(e){const c=PFCH,sv=$('pfsvg'),tp=$('pftip');if(!c||!sv||!tp)return;const rc=sv.getBoundingClientRect(),px=(e.clientX-rc.left)/rc.width*c.W;if(px<c.l||px>c.W-c.r){pfTipOff();return}const tm=c.x0+(px-c.l)/(c.W-c.l-c.r)*(c.x1-c.x0),cr=$('pfcross');cr.setAttribute('x1',px);cr.setAttribute('x2',px);cr.setAttribute('visibility','visible');let h=`<b>${fdate(tm)}</b>`;c.S.forEach(s=>{let v=null;for(const p of s.pts){if(p[0]<=tm)v=p[1];else break}if(v!=null)h+=`<div style="color:${s.color}">${E(s.sym)}: ${v>=0?'+':''}${v.toFixed(2)}%</div>`});tp.innerHTML=h;tp.hidden=false;tp.style.left=Math.min(Math.max(0,(e.clientX-rc.left)+10),Math.max(0,rc.width-130))+'px'}
 function pfTipOff(){const tp=$('pftip'),cr=$('pfcross');if(tp)tp.hidden=true;if(cr)cr.setAttribute('visibility','hidden')}
-async function pfPerf(){const tok=++PFPERFTOK,box=$('pfperf');if(!box)return;if(!PF.length){box.innerHTML='<span class="mu">Añade activos al portafolio para ver cuál se revaloriza mejor.</span>';return}
- const cur=PFCUR||[],all=[];
- await Promise.all(PF.map(async(x,k)=>{const lots=pfLots(x).slice().sort((a,b)=>a.t-b.t),H=await pfHist(x),cr=cur.find(c=>c.x===x),p=cr&&cr.p,snap=PFSNAP[x.type+'|'+x.symbol]||[];
-  const at=t=>{if(H){let j=-1;for(let q=0;q<H.ts.length;q++){if(H.ts[q]<=t)j=q;else break}return j>=0?H.v[j]:null}let b=null;for(const z of snap){if(z[0]<=t)b=z[1];else break}return b};
-  lots.forEach(l=>{if(!(l.price>0)){const q=at(l.t)||p;if(q>0){l.price=q;l.est=true}}});
-  const first=lots[0].t;let pts=[];if(H)H.ts.forEach((t,q)=>{if(t>first)pts.push([t,H.v[q]])});else snap.forEach(z=>{if(z[0]>first)pts.push([z[0],z[1]])});lots.forEach(l=>{if(l.price>0)pts.push([l.t,l.price])});if(p>0)pts.push([Date.now(),p]);pts.sort((a,b)=>a[0]-b[0]);
-  const ser=pfSeries(lots,pts);let inv=0,qp=0;lots.forEach(l=>{if(l.price>0){inv+=l.qty*l.price;qp+=l.qty}});const q=+x.qty||0,val=p>0?q*p:null;
-  all[k]={x,ser,inv,val,avg:qp?inv/qp:null,p,days:(Date.now()-first)/864e5,ret:inv>0&&val!=null?(val/inv-1)*100:(ser.length?ser.at(-1)[1]:null),est:lots.some(l=>l.est)}}));
- if(tok!==PFPERFTOK)return;sbSave();
- const A=all.filter(Boolean);A.forEach((a,k)=>{a.color=PFCOL[k%PFCOL.length]});
- const ranked=A.slice().sort((a,b)=>(b.ret??-1e9)-(a.ret??-1e9)),tot=pfTotal(A),S=A.map(a=>({sym:a.x.symbol.toUpperCase(),color:a.color,pts:a.ser.map(p=>[p[0],p[1]])}));
- if(A.length>1&&tot.length)S.push({sym:'PORTAFOLIO',color:'#ffffff',total:true,pts:tot});
- const best=ranked.find(a=>a.ret!=null),n=$('pfperf-note');if(n){const ti=A.reduce((s,a)=>s+(a.inv||0),0),tv=A.reduce((s,a)=>s+(a.val!=null?a.val:0),0),gr=ti>0&&A.some(a=>a.val!=null)?(tv/ti-1)*100:null;n.textContent=(gr!=null?'Global '+sg(gr)+'% · ':'')+(best?'Mejor: '+best.x.symbol.toUpperCase()+' '+sg(best.ret)+'%':'')||'';}
- const leg=S.map(s=>`<span class="pfleg"><i style="background:${s.color}"></i>${E(s.sym)}</span>`).join('');
- const rows=ranked.map((a,k)=>`<div class="pfrk"><div class="pfrk1"><span class="pfpos">${k===0&&a.ret!=null?'🏆':k+1}</span><i style="background:${a.color}"></i>${im(findAsset(a.x),'sm')}<b>${E(a.x.symbol.toUpperCase())}</b></div><div class="pfrk2 ${a.ret==null?'':a.ret>=0?'up':'down'}">${a.ret==null?'—':sg(a.ret)+'%'}<small>${a.val!=null&&a.inv>0?(a.val-a.inv>=0?'+':'−')+money(Math.abs(a.val-a.inv)):'—'}</small></div><div class="pfrk3">Invertido ${money(a.inv||null)} · costo prom. ${money(a.avg)} · ahora ${money(a.p)} · ${a.days<1?'hoy':Math.floor(a.days)+' d'}${a.est?' <span class="pxsrc stale" title="Activo registrado antes del historial de compras: la fecha y el precio de entrada se estimaron">entrada estimada</span>':''}</div></div>`).join('');
- const totInv=A.reduce((s,a)=>s+(a.inv||0),0),totVal=A.reduce((s,a)=>s+(a.val!=null?a.val:0),0),hasVal=A.some(a=>a.val!=null),globPnl=hasVal&&totInv>0?totVal-totInv:null,globRet=hasVal&&totInv>0?(totVal/totInv-1)*100:null;
- const globHtml=`<div class="g3" style="margin-bottom:10px"><div class="m"><div class="k">Invertido total</div><div class="v">${money(totInv||null)}</div><div class="h">Costo de tus aportes</div></div><div class="m"><div class="k">Valor actual</div><div class="v">${hasVal?money(totVal):'—'}</div><div class="h">Mark-to-market</div></div><div class="m"><div class="k">Rendimiento global</div><div class="v" style="color:${globRet==null?'':globRet>=0?'var(--gr)':'var(--rd)'}">${globRet==null?'—':sg(globRet)}</div><div class="h">${globPnl==null?'Sin precios':(globPnl>=0?'+':'−')+money(Math.abs(globPnl||0))+' P&amp;L'}</div></div></div>`;
- box.innerHTML=globHtml+`<div class="pfchart">${pfSvg(S)}</div><div class="pfleg-w">${leg}</div><div class="pfrank">${rows}</div><div class="mu pfnote">Rendimiento ponderado por aportes: cada compra nueva se promedia con el costo anterior, así el rendimiento refleja el momento y el monto en que entró cada dinero. El historial se guarda en este navegador.</div>`}
 function sigFeat(m){const n=m.v.length-1,z=zoneState(m,120);return{rsi:m.rsi,pb:m.bb?m.bb.pb:null,trend:!!(m.s200&&m.s200[n]!=null&&m.last>m.s200[n]),above50:!!(m.s50&&m.s50[n]!=null&&m.last>m.s50[n]),dd:m.dd,vol:m.vol,mom90:m.mom90,macdUp:m.hist>m.hist1,zone:z.k}}
 function buyScore(sig,share,n){const f=sig&&sig.f;if(!f||sig.kind==='na')return null;const p=prof(),ph=phil(),cons=p==='cons',agg=p==='agr';let s=50;const dip=cons?.7:agg?1.2:1;s+=(50-f.rsi)*.5*dip;if(f.pb!=null)s+=(.5-f.pb)*16*dip;s+=f.zone==='buy'?14:f.zone==='sell'?-30:f.zone==='caut'?-8:0;const tw=cons?1.5:agg?.8:1;s+=((f.trend?6:-6)+(f.macdUp?4:-3))*tw;const vp=f.vol||0;s-=vp*(cons?.12:p==='mod'?.06:.02)+(ph==='income'||ph==='index'?vp*.05:0);if(ph==='value')s+=Math.max(0,Math.min(15,-(f.dd||0)*.25));if(ph==='growth')s+=Math.max(-12,Math.min(12,(f.mom90||0)*.2))+(f.trend?4:0);s+=(1/n-share)*((ph==='index'||cons)?50:30);if(sig.kind==='sell')s-=12;return Math.max(0,Math.min(100,s))}
 function buyWhy(f,share,n){const w=[];if(f.rsi<=35)w.push('RSI '+fmt(f.rsi,0)+' (sobreventa)');else if(f.rsi>=70)w.push('RSI '+fmt(f.rsi,0)+' (sobrecompra)');if(f.zone==='buy')w.push('en zona de soporte');else if(f.zone==='sell')w.push('en zona de techo');else if(f.zone==='caut')w.push('zona de precaución');w.push(f.trend?'tendencia alcista (sobre SMA200)':'bajo la SMA200');w.push(f.macdUp?'MACD al alza':'MACD a la baja');if(f.dd<=-20)w.push(fmt(Math.abs(f.dd),0)+'% bajo su máximo anual');if(share<1/n*.8)w.push('infraponderado ('+fmt(share*100,0)+'% de tu portafolio)');else if(share>1/n*1.3)w.push('ya pesa '+fmt(share*100,0)+'% del portafolio');return w.slice(0,5)}
 function pfAllocate(rows,amount){let el=rows.filter(r=>r.sc!=null&&r.sc>=45&&r.sig.kind!=='sell');if(!el.length||!(amount>0))return[];let w=el.map(r=>Math.pow(r.sc-40,1.6)),tot=w.reduce((a,b)=>a+b,0),k=el.map((r,i)=>({r,s:w[i]/tot})).filter(o=>o.s>=.08);if(!k.length)k=[{r:el.slice().sort((a,b)=>b.sc-a.sc)[0],s:1}];const t2=k.reduce((a,o)=>a+o.s,0);k.forEach(o=>o.s/=t2);const unit=amount>=30?1:.01,U=Math.round(amount/unit),base=k.map(o=>Math.floor(o.s*U));let rest=U-base.reduce((a,b)=>a+b,0);k.map((o,i)=>[i,o.s*U-base[i]]).sort((a,b)=>b[1]-a[1]).forEach(([i])=>{if(rest>0){base[i]++;rest--}});return k.map((o,i)=>({r:o.r,s:o.s,amt:base[i]*unit})).filter(o=>o.amt>0).sort((a,b)=>b.amt-a.amt)}
 let pfAT=0;function pfAllocSoon(){LS('mi_pfinv',$('pfinv').value);clearTimeout(pfAT);pfAT=setTimeout(pfAlloc,200)}
 function pfAfter(){pfPerf();pfAlloc()}
-function pfAlloc(){const box=$('pfalloc');if(!box)return;if(!PF.length||!PFCUR){box.innerHTML='<span class="mu">Añade activos al portafolio para recibir una prioridad de compra.</span>';return}const amount=+($('pfinv')&&$('pfinv').value)||0,n=PFCUR.length;let tv=0;PFCUR.forEach(c=>{if(c.p)tv+=c.p*c.q});const rows=PFCUR.map(c=>{const share=tv>0&&c.p?c.p*c.q/tv:1/n;return{...c,share,sc:buyScore(c.sig,share,n)}}).sort((a,b)=>(b.sc??-1)-(a.sc??-1));
+function pfAlloc(){const box=$('pfalloc');if(!box)return;if(!PF.length||!PFCUR||!PFCUR.length){box.innerHTML='<span class="mu">Añade activos al portafolio para recibir una prioridad de compra.</span>';return}const amount=+($('pfinv')&&$('pfinv').value)||0,n=PFCUR.length;let tv=0;PFCUR.forEach(c=>{if(c.p)tv+=c.p*c.q});const rows=PFCUR.map(c=>{const share=tv>0&&c.p?c.p*c.q/tv:1/n;return{...c,share,sc:buyScore(c.sig,share,n)}}).sort((a,b)=>(b.sc??-1)-(a.sc??-1));
  const tier=sc=>sc==null?['na','Sin datos']:sc>=65?['t1','Alta prioridad']:sc>=55?['t2','Prioridad media']:sc>=45?['t3','Prioridad baja']:['t4','No comprar ahora'];
  const al=pfAllocate(rows,amount),map=new Map(al.map(o=>[o.r.x,o]));
  const head=`<div class="mu" style="margin-bottom:8px">Perfil <b>${PROF[prof()].n}</b> · filosofía <b>${PHIL[phil()].n}</b>. Puntaje 0–100 según RSI, Bollinger, soporte/techo, tendencia, MACD, volatilidad, descuento o momentum (según tu filosofía) y el peso actual de cada activo en tu portafolio.</div>`;
@@ -1119,7 +1100,7 @@ function pfAlloc(){const box=$('pfalloc');if(!box)return;if(!PF.length||!PFCUR){
 let PFSEL=null,PFMT='crypto',PFMODE='pf',PFLIST=[],PFON=[],PFONQ='',PFOT=0,PFPX=null;
 function pfToggleRemove(){const el=$('pfremove-panel');if(!el)return;const open=!el.classList.contains('open');el.classList.toggle('open',open);if(open)pfRenderRemoveList()}
 function pfRenderRemoveList(){const el=$('pfremove-panel');if(!el)return;if(!PF.length){el.innerHTML='<span class="mu">No hay activos en el portafolio.</span>';return}el.innerHTML=PF.map((x,i)=>`<div class="pfremove-item">${im(findAsset(x),'sm')}<b>${E(x.symbol.toUpperCase())} · ${E(x.name||x.symbol)}</b><button class="btn s sm" onclick="pfRemoveAsset(${i})">Eliminar</button></div>`).join('')}
-function pfRemoveAsset(i){if(i<0||i>=PF.length)return;PF.splice(i,1);sbSave();pfr();pfRenderRemoveList()}
+function pfRemoveAsset(i){if(i<0||i>=PF.length)return;if(!confirm('¿Eliminar '+PF[i].symbol.toUpperCase()+' y todo su historial de operaciones (incluido el P&L realizado)?'))return;PF.splice(i,1);sbSave();pfr();pfRenderRemoveList()}
 function pfModalMode(m){PFMODE=m;PFPX=null;PFCOLL=false;const wl=m==='wl';$('pfmtitle').textContent=wl?'Añadir activo a seguimiento':'Añadir activo al portafolio';$('pfmsub').textContent=wl?'Busca una criptomoneda o xStock para seguir su precio, rendimiento y señal.':'Selecciona el mercado y el activo que deseas incorporar.';$('pfqtybox').style.display=wl?'none':'';$('pfsubmit').textContent=wl?'Añadir a seguimiento':'Añadir al portafolio';$('pfpreview').innerHTML=''}
 function pfNew(){PFSEL=null;PFMT='crypto';pfModalMode('pf');$('pfmodal').hidden=false;$('pfsearch').value='';$('pfqty').value='';pfModalType('crypto')}
 function wlNew(){PFSEL=null;PFMT='crypto';pfModalMode('wl');$('pfmodal').hidden=false;$('pfsearch').value='';$('pfqty').value='';pfModalType('crypto')}
@@ -1135,9 +1116,7 @@ async function pfOnline(q){PFONQ=q;try{const j=await jget(CG+'search?query='+enc
 function pfPick(i){PFSEL=PFLIST[i]||null;PFCOLL=!!PFSEL;try{$('pfsearch').blur()}catch(e){}pfRenderAssets();pfPreview(true)}
 function pfSelect(t,s){PFSEL=(U[t]||[]).find(a=>a.symbol===s)||null;if(PFSEL){pfRenderAssets();pfPreview(true)}}
 async function pfPreview(force){const el=$('pfpreview');if(!el)return;if(!PFSEL){el.innerHTML='';return}const sel=PFSEL;if(force||!PFPX||PFPX.f!==sel){el.innerHTML='<span class="mu">Buscando precio…</span>';const r=await pxInfo(sel).catch(()=>null);if(sel!==PFSEL)return;PFPX={f:sel,r}}if(sel!==PFSEL)return;const r=PFPX.r;if(!r||!r.price){el.innerHTML='<span class="mu">No se pudo obtener el precio ahora. Puedes añadir el activo igualmente; se reintentará solo.</span>';return}const q=+$('pfqty').value,val=PFMODE==='pf'&&q>0?` · Valor de ${fmt(q,q<1?6:4)} u.: <b>${money(q*r.price)}</b>`:'';el.innerHTML=`Precio actual: <b>${money(r.price)}</b> <small>(${E(r.src)}${r.stale?' · dato guardado':''})</small>${val}`}
-async function pfSubmit(){if(!PFSEL){st('Selecciona una criptomoneda o xStock');return}if(PFMODE==='wl'){wlAddAsset(PFSEL);return}const q=+$('pfqty').value;if(!(q>0)){st('Indica una cantidad válida');return}if(PF.length>=free().pos&&!PF.some(x=>x.type===PFSEL.type&&x.symbol===PFSEL.symbol)){st('Límite de posiciones de tu plan: '+free().pos);return}const sel=PFSEL;if(sel.type==='stock'){try{await xsSync()}catch(e){}}let price=PFPX&&PFPX.f===sel&&PFPX.r&&!PFPX.r.stale?PFPX.r.price:null;if(!price){const r=await pxInfo(sel).catch(()=>null);if(r&&!r.stale)price=r.price}pfAddAsset(sel,q,price);pfClose()}
 function pfLots(x){if(!Array.isArray(x.lots)||!x.lots.length){const t=+String(x.id||'').replace(/\D/g,'');x.lots=[{t:t>1e12?t:Date.now(),qty:+x.qty||0,price:+x.lastPrice>0?+x.lastPrice:null,est:true}]}return x.lots}
-function pfAddAsset(a,q,price){const old=PF.find(x=>x.type===a.type&&x.symbol===a.symbol),pr=price>0?price:null;if(old){pfLots(old);old.lots.push({t:Date.now(),qty:q,price:pr});old.qty=(+old.qty||0)+q}else PF.push({id:'p'+Date.now(),type:a.type,assetId:a.id,symbol:a.symbol,name:a.name,img:a.img,qty:q,lots:[{t:Date.now(),qty:q,price:pr}]});sbSave();pfr()}
 function findAsset(x){return(U[x.type]||[]).find(a=>a.symbol===x.symbol)||{type:x.type,id:x.assetId||x.id||x.symbol,symbol:x.symbol,name:x.name||x.symbol,img:x.img}}
 const SIGCACHE=new Map();
 function makeSignal(a,m){const pr=PROF[prof()],ph=phil(),rsi=m.rsi,pb=m.bb&&m.bb.pb,trend=m.s200&&m.last>m.s200[nLast(m)],zone=zoneState(m,120);let buyR=prof()==='cons'?27:prof()==='mod'?30:35,sellR=prof()==='cons'?68:prof()==='mod'?72:75;if(ph==='growth')sellR+=3;if(ph==='income')sellR+=5;if(ph==='index')sellR+=7;if(ph==='value')sellR+=1;const oversold=zone.k==='buy'||(rsi<=buyR&&(pb<.28||m.dd<=-12)&&(!trend||m.last<m.s50[nLast(m)]*1.03)),overbought=zone.k==='sell'||(rsi>=sellR&&(pb>.72||m.last>m.s20[nLast(m)]*1.07));if(overbought)return{kind:'sell',label:'ATENCIÓN · SOBRECOMPRA',desc:`${zone.k==='sell'?zone.t:'RSI '+fmt(rsi,1)+' y bandas de Bollinger en zona alta.'} Zona técnica de resistencia/venta. ${ph==='index'||ph==='income'?'No implica vender automáticamente: respeta el rebalanceo o la tesis de ingresos.':'Evalúa reducir exposición o asegurar ganancias.'}`};if(oversold)return{kind:'buy',label:'COMPRA · SOBREVENTA',desc:`${zone.k==='buy'?zone.t:'RSI '+fmt(rsi,1)+' y bandas de Bollinger en zona baja.'} Zona de soporte. ${prof()==='cons'?'Espera confirmación de giro y limita el tamaño.':'Considera una entrada gradual y confirma el rebote.'}`};return{kind:'hold',label:'MANTENER',desc:`RSI ${fmt(rsi,1)}; no hay una condición clara de sobrecompra ni sobreventa para el perfil ${pr.n} y la filosofía ${PHIL[ph].n}.`}}
@@ -1150,7 +1129,7 @@ function watchRows(){const el=$('wl');if(!el)return;el.innerHTML=W.length?'<div 
 function rw(){watchRows();if(W.length)refreshWatchSignals()}
 async function refreshWatchSignals(){const list=[...W];await Promise.all(list.map(async(a)=>{const [sig,h]=await Promise.all([signalFor(a),watchHistory(a)]);const x=W.find(w=>w.type===a.type&&(w.id===a.id||w.symbol===a.symbol));if(x){x.signal=sig;x.watchRet=h.ret;x.spark=h.v;x.price=h.price??x.price;if(!x.id)x.id=a.id||a.symbol}}));watchRows();sbSave()}
 function rwNoRefresh(){watchRows()}
-async function pfr(){if(!PF.length){$('pfb').innerHTML='<span class="mu">Sin activos. Pulsa «＋ Añadir activo» para registrar las cantidades que tienes.</span>';return}const [P,S]=await Promise.all([Promise.all(PF.map(x=>pxInfo(x).catch(()=>null))),Promise.all(PF.map(signalFor))]);let tv=0,miss=0;const rows=PF.map((x,i)=>{const r=P[i],p=r&&r.price,sig=S[i],q=+x.qty||0;x.signal=sig;pfLots(x);if(p&&!r.stale){x.lastPrice=p;pfSnap(x,p)}if(p)tv+=p*q;else miss++;const src=r?`<span class="pxsrc${r.stale?' stale':''}">${E(r.src)}</span>`:'';return `<div class="pfrow"><div class="pfa"><span class="sigbadge ${sig.kind}" title="${E(sig.desc||'')}">${E(sig.label)}</span>${im(findAsset(x),'sm')}<div><b>${E(x.symbol.toUpperCase())}</b><small>${fmt(q,q<1?6:4)} unidades · ${p?money(p)+' c/u':'precio no disponible'} ${src}</small></div></div><div class="pfv">${money(p?q*p:null)}<small>Valor actual</small></div>${sigRefHtml(sig)}</div>`}).join('');$('pfb').innerHTML=`<div class="g3"><div class="m" style="grid-column:1/-1"><div class="k">Valor total del portafolio</div><div class="v">${money(tv)}</div>${miss?`<small class="mu">⚠ ${miss} activo(s) sin precio. Pulsa ↻ para reintentar.</small>`:''}</div></div><div class="pfl">${rows}</div>`;PFCUR=PF.map((x,i)=>({x,r:P[i],sig:S[i],p:P[i]&&P[i].price,q:+x.qty||0}));sbSave();pfAfter();if($('pfremove-panel')?.classList.contains('open'))pfRenderRemoveList()}
+async function pfr(){if(!PF.length){$('pfb').innerHTML='<span class="mu">Sin activos. Pulsa «＋ Añadir activo» para registrar las cantidades que tienes.</span>';return}const [P,S]=await Promise.all([Promise.all(PF.map(x=>pxInfo(x).catch(()=>null))),Promise.all(PF.map(signalFor))]);let tv=0,miss=0;const rows=PF.map((x,i)=>{const r=P[i],p=r&&r.price,sig=S[i],q=+x.qty||0;x.signal=sig;pfLots(x);if(p&&!r.stale){x.lastPrice=p;pfSnap(x,p)}if(p)tv+=p*q;else miss++;const src=r?`<span class="pxsrc${r.stale?' stale':''}">${E(r.src)}</span>`:'';return `<div class="pfrow"><div class="pfa"><span class="sigbadge ${sig.kind}" title="${E(sig.desc||'')}">${E(sig.label)}</span>${im(findAsset(x),'sm')}<div><b>${E(x.symbol.toUpperCase())}</b><small>${fmt(q,q<1?6:4)} unidades · ${p?money(p)+' c/u':'precio no disponible'} ${src}</small></div></div><div class="pfv">${money(p?q*p:null)}<small>Valor actual</small></div>${opLine(x,p,q,i)}${sigRefHtml(sig)}</div>`}).join('');$('pfb').innerHTML=`<div class="g3"><div class="m" style="grid-column:1/-1"><div class="k">Valor total del portafolio</div><div class="v">${money(tv)}</div>${miss?`<small class="mu">⚠ ${miss} activo(s) sin precio. Pulsa ↻ para reintentar.</small>`:''}</div></div><div class="pfl">${rows}</div>`;PFCUR=PF.map((x,i)=>({x,r:P[i],sig:S[i],p:P[i]&&P[i].price,q:+x.qty||0})).filter(c=>c.q>1e-9);sbSave();pfAfter();if($('pfremove-panel')?.classList.contains('open'))pfRenderRemoveList()}
 function csv(){const t='tipo,simbolo,cantidad\n'+PF.map(x=>[x.type,x.symbol,x.qty].join(',')).join('\n'),l=document.createElement('a');l.href=URL.createObjectURL(new Blob([t],{type:'text/csv'}));l.download='portafolio.csv';l.click()}
 function alAdd(){const a=cur,v=+$('alpx').value;if(!a||!(v>0)){st('Carga un activo e indica el precio');return}if(AL.length>=free().al){st('Límite de alertas de tu plan: '+free().al);return}AL.push({id:'a'+Date.now(),type:a.type,symbol:a.symbol,op:$('alop').value,px:v,f:0});$('alpx').value='';sbSave();alr()}
 async function alr(){$('aln').textContent='Las alertas se revisan cada 2 min mientras esta página esté abierta (acepta las notificaciones del navegador). Sin servidor no hay avisos con la página cerrada.';
@@ -1222,11 +1201,15 @@ function bkAsset(x){
 function bkClean(d){
   if(!d||d.app!=='market-intelligence'||!Array.isArray(d.pf)||!Array.isArray(d.watch))throw new Error('El archivo no es un respaldo válido de Market Intelligence.');
   const seen=new Set(),pf=[];
-  d.pf.forEach(x=>{
-    const a=bkAsset(x),q=bkNum(x&&x.qty,0),k=a&&a.type+'|'+a.symbol;
-    if(!a||!(q>0)||seen.has(k))return;seen.add(k);
-    a.qty=q;const lp=bkNum(x.lastPrice,0);if(lp>0)a.lastPrice=lp;
-    const lots=(Array.isArray(x.lots)?x.lots:[]).map(l=>({t:bkNum(l&&l.t,0),qty:bkNum(l&&l.qty,0),price:bkNum(l&&l.price,0)||null,est:!!(l&&l.est)})).filter(l=>l.t&&l.qty>0);
+    d.pf.forEach(x=>{
+    const a=bkAsset(x),k=a&&a.type+'|'+a.symbol;
+    if(!a||seen.has(k))return;
+    const lots=(Array.isArray(x.lots)?x.lots:[]).map(l=>({t:bkNum(l&&l.t,0),qty:bkNum(l&&l.qty,0),price:bkNum(l&&l.price,0)||null,est:!!(l&&l.est),...(l&&l.side==='sell'?{side:'sell'}:{})})).filter(l=>l.t&&l.qty>0);
+    const q=lots.length?pfQty(lots):bkNum(x.qty,0);
+    if(!(q>0)&&!lots.some(l=>l.side==='sell'))return;
+    if(lots.length&&!pfFeasible(lots))return;
+    seen.add(k);a.qty=q;
+    const lp=bkNum(x.lastPrice,0);if(lp>0)a.lastPrice=lp;
     if(lots.length)a.lots=lots;
     pf.push(a)});
   const wseen=new Set(),watch=[];
@@ -1267,6 +1250,213 @@ function bkImport(inp){
   r.onerror=()=>bkMsg('No se pudo leer el archivo.',1);
   r.readAsText(f);
 }
+/* ===== PASO 2 · operaciones reales, calidad de datos, aviso Finnhub ===== */
+const lotCmp=(a,b)=>a.t-b.t||(a.side==='sell'?1:0)-(b.side==='sell'?1:0);
+const pfQty=lots=>Math.max(0,Math.round(lots.reduce((s,l)=>s+(l.side==='sell'?-l.qty:l.qty),0)*1e10)/1e10);
+function pfFeasible(lots){let q=0;for(const l of lots.slice().sort(lotCmp)){q+=l.side==='sell'?-l.qty:l.qty;if(q<-1e-9)return false}return true}
+/* costo promedio: al vender, el costo de lo que queda no cambia */
+function pfCalc(lots){
+  let q=0,c=0,real=0,proceeds=0,sells=0;
+  lots.filter(l=>l.price>0&&l.qty>0).sort(lotCmp).forEach(l=>{
+    if(l.side==='sell'){const s=Math.min(l.qty,q);if(s>0){const avg=c/q;real+=s*(l.price-avg);proceeds+=s*l.price;c-=s*avg;q-=s;sells++}}
+    else{q+=l.qty;c+=l.qty*l.price}
+  });
+  if(q<1e-9){q=0;c=0}
+  return{qty:q,cost:c,avg:q>0?c/q:null,real,proceeds,sells};
+}
+function pfSeries(lots,pts){
+  const L=lots.filter(l=>l.price>0&&l.qty>0).sort(lotCmp);
+  return pts.map(([t,P])=>{
+    let q=0,c=0,seen=false;
+    for(const l of L){
+      if(l.t>t)break;seen=true;
+      if(l.side==='sell'){const s=Math.min(l.qty,q);if(s>0){const avg=c/q;c-=s*avg;q-=s}}
+      else{q+=l.qty;c+=l.qty*l.price}
+    }
+    if(!seen)return null;
+    return q>1e-9&&c>0?[t,(q*P/c-1)*100,q*P,c]:[t,0,0,0];
+  }).filter(Boolean);
+}
+const opToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function opDate(v){if(!v||v===opToday())return Date.now();const d=new Date(v+'T12:00:00');if(isNaN(d))return null;return d.getTime()>Date.now()?null:d.getTime()}
+
+/* --- compras con precio y fecha reales --- */
+function pfAddAsset(a,q,price,t){
+  const old=PF.find(x=>x.type===a.type&&x.symbol===a.symbol),pr=price>0?price:null,T=t>0?t:Date.now();
+  if(old){pfLots(old).push({t:T,qty:q,price:pr});old.qty=pfQty(old.lots)}
+  else PF.push({id:'p'+Date.now(),type:a.type,assetId:a.id,symbol:a.symbol,name:a.name,img:a.img,qty:q,lots:[{t:T,qty:q,price:pr}]});
+  sbSave();pfr();
+}
+async function pfSubmit(){
+  if(!PFSEL){st('Selecciona una criptomoneda o xStock');return}
+  if(PFMODE==='wl'){wlAddAsset(PFSEL);return}
+  const q=+$('pfqty').value;if(!(q>0)){st('Indica una cantidad válida');return}
+  if(PF.length>=free().pos&&!PF.some(x=>x.type===PFSEL.type&&x.symbol===PFSEL.symbol)){st('Límite de posiciones de tu plan: '+free().pos);return}
+  const dv=$('pfdate').value,t=opDate(dv);if(t==null){st('La fecha no es válida (no puede ser futura).');return}
+  const pv=$('pfprice').value.trim();let price=pv===''?null:+pv;
+  if(price!==null&&!(price>0)){st('El precio de compra debe ser mayor que 0.');return}
+  const sel=PFSEL;
+  if(price==null&&(!dv||dv===opToday())){
+    if(sel.type==='stock'){try{await xsSync()}catch(e){}}
+    price=PFPX&&PFPX.f===sel&&PFPX.r&&!PFPX.r.stale?PFPX.r.price:null;
+    if(!price){const r=await pxInfo(sel).catch(()=>null);if(r&&!r.stale)price=r.price}
+  }
+  pfAddAsset(sel,q,price,t);pfClose();
+  if(price==null)st('Compra registrada sin precio: se estimará con el histórico del día.');
+}
+function opResetAdd(){const p=$('pfprice'),d=$('pfdate');if(p)p.value='';if(d){d.value=opToday();d.max=opToday()}}
+const _pfNew=pfNew;pfNew=function(){_pfNew();opResetAdd()};
+
+/* --- fila de cada activo en Cartera --- */
+function opLine(x,p,q,i){
+  const lots=pfLots(x),c=pfCalc(lots),miss=lots.some(l=>!(l.price>0)),col=n=>n>=0?'var(--gr)':'var(--rd)',sm=n=>(n>=0?'+':'−')+money(Math.abs(n));
+  let info='';
+  if(q<=1e-9)info='Posición cerrada · realizado <b style="color:'+col(c.real)+'">'+sm(c.real)+'</b>';
+  else if(miss)info='<span class="pxsrc stale">Falta el precio de alguna compra</span> se estimará con el histórico';
+  else{
+    const pnl=p>0?q*p-c.cost:null;
+    info='Costo prom. <b>'+money(c.avg)+'</b>'+(pnl!=null?' · No realizado <b style="color:'+col(pnl)+'">'+sm(pnl)+' ('+sg(pnl/c.cost*100)+')</b>':'')+(c.sells?' · Realizado <b style="color:'+col(c.real)+'">'+sm(c.real)+'</b>':'');
+  }
+  return '<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mu)"><span style="flex:1;min-width:0">'+info+'</span><button class="btn s sm" onclick="opOpen('+i+')">Operaciones</button></div>';
+}
+
+/* --- modal de operaciones: vender, editar precio/fecha, eliminar --- */
+let OPI=-1;
+function opOpen(i){OPI=i;opRender();$('opmodal').hidden=false}
+function opClose(){$('opmodal').hidden=true;OPI=-1}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('opmodal')&&!$('opmodal').hidden)opClose()});
+function opRender(){
+  const x=PF[OPI];if(!x){opClose();return}
+  const lots=pfLots(x),q=pfQty(lots),cr=PFCUR&&PFCUR.find(z=>z.x===x),p=cr&&cr.p,t0=opToday();
+  $('optitle').textContent=x.symbol.toUpperCase()+' · operaciones';
+  $('opsub').innerHTML='En cartera: <b>'+fmt(q,q<1?6:4)+'</b> u.'+(p?' · precio actual <b>'+money(p)+'</b>':'');
+  $('opsell').innerHTML=q>1e-9?`<div class="pgh">Registrar venta</div><div class="pfinputs" style="grid-template-columns:1fr 1fr"><label>Cantidad vendida<input id="opqty" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00"></label><label>Precio de venta (USD)<input id="opprice" type="number" min="0" step="any" inputmode="decimal" placeholder="${p?fmt(p,p<1?4:2):'Opcional'}"></label><label style="grid-column:1/-1">Fecha<input id="opdate" type="date" value="${t0}" max="${t0}"></label></div><div class="pfactions" style="justify-content:space-between"><button class="btn s sm" onclick="$('opqty').value=${q}">Vender todo</button><button class="btn" onclick="opSell()">Registrar venta</button></div>`:'<div class="mu" style="margin:8px 0">Posición cerrada.</div>';
+  $('oplist').innerHTML=lots.map((l,j)=>({l,j})).sort((a,b)=>b.l.t-a.l.t).map(({l,j})=>{
+    const sell=l.side==='sell',d=new Date(l.t),ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    return `<div class="pfremove-item" style="flex-wrap:wrap"><span class="altag ${sell?'t4':'t1'}">${sell?'VENTA':'COMPRA'}</span><b style="flex:1;min-width:90px">${fmt(l.qty,l.qty<1?6:4)} u.${l.est?' <span class="pxsrc stale" title="Precio estimado con el histórico: corrígelo si conoces el real">estimado</span>':''}</b><input type="date" value="${ds}" max="${t0}" style="width:auto;min-height:36px;padding:4px 8px" onchange="opSet(${j},'t',this.value)"><input type="number" min="0" step="any" inputmode="decimal" value="${l.price>0?l.price:''}" placeholder="precio" style="width:110px;min-height:36px;padding:4px 8px" onchange="opSet(${j},'price',this.value)"><button class="btn s sm" onclick="opDel(${j})" aria-label="Eliminar operación">×</button></div>`}).join('');
+}
+async function opSell(){
+  const x=PF[OPI];if(!x)return;const lots=pfLots(x),q=pfQty(lots),s=+$('opqty').value;
+  if(!(s>0)){st('Indica la cantidad vendida.');return}
+  if(s>q+1e-9){st('No puedes vender más de lo que tienes ('+fmt(q,q<1?6:4)+').');return}
+  const dv=$('opdate').value,t=opDate(dv);if(t==null){st('La fecha no es válida (no puede ser futura).');return}
+  const pv=$('opprice').value.trim();let price=pv===''?null:+pv;
+  if(price!==null&&!(price>0)){st('El precio de venta debe ser mayor que 0.');return}
+  if(price==null&&(!dv||dv===opToday())){const r=await pxInfo(x).catch(()=>null);if(r&&!r.stale)price=r.price}
+  const nl=[...lots,{t,qty:Math.min(s,q),price,side:'sell'}];
+  if(!pfFeasible(nl)){st('En esa fecha no tenías suficientes unidades para vender.');return}
+  x.lots=nl;x.qty=pfQty(nl);sbSave();opRender();pfr();
+  st('Venta registrada'+(price==null?' sin precio: se estimará con el histórico del día.':'.'));
+}
+function opSet(j,f,v){
+  const x=PF[OPI];if(!x)return;const lots=pfLots(x),l=lots[j];if(!l)return;const bak={...l};
+  if(f==='price'){
+    const n=String(v).trim()===''?null:+v;
+    if(n!==null&&!(n>0)){st('El precio debe ser mayor que 0.');opRender();return}
+    l.price=n;if(n!==null)delete l.est;
+  }else{
+    if(!v){opRender();return}
+    if(new Date(l.t).toDateString()===new Date(v+'T12:00:00').toDateString())return;
+    const t=opDate(v);if(t==null){st('Fecha no válida (no puede ser futura).');opRender();return}
+    l.t=t;if(l.est)l.price=null;
+  }
+  if(!pfFeasible(lots)){Object.keys(l).forEach(k=>delete l[k]);Object.assign(l,bak);st('Ese cambio dejaría la posición en negativo en esa fecha.');opRender();return}
+  x.qty=pfQty(lots);sbSave();opRender();pfr();
+}
+function opDel(j){
+  const x=PF[OPI];if(!x)return;const lots=pfLots(x),l=lots[j];if(!l)return;
+  if(!confirm('¿Eliminar esta '+(l.side==='sell'?'venta':'compra')+' de '+fmt(l.qty,l.qty<1?6:4)+' u.?'+(lots.length===1?' Es la única operación: se quitará el activo de la cartera.':'')))return;
+  const rest=lots.filter((_,k)=>k!==j);
+  if(!rest.length){PF.splice(OPI,1);sbSave();opClose();pfr();return}
+  if(!pfFeasible(rest)){st('No se puede eliminar: las ventas posteriores quedarían sin unidades suficientes.');return}
+  x.lots=rest;x.qty=pfQty(rest);sbSave();opRender();pfr();
+}
+
+/* --- rendimiento: no realizado + realizado --- */
+async function pfPerf(){
+ const tok=++PFPERFTOK,box=$('pfperf');if(!box)return;
+ if(!PF.length){box.innerHTML='<span class="mu">Añade activos al portafolio para ver cuál se revaloriza mejor.</span>';return}
+ const cur=PFCUR||[],all=[];
+ await Promise.all(PF.map(async(x,k)=>{
+  const lots=pfLots(x).slice().sort(lotCmp),qn=pfQty(lots),isClosed=qn<=1e-9&&lots.some(l=>l.side==='sell'),
+   H=(!isClosed||lots.some(l=>!(l.price>0)))?await pfHist(x):null,cr=cur.find(c=>c.x===x),p=cr&&cr.p,snap=PFSNAP[x.type+'|'+x.symbol]||[];
+  const at=t=>{if(H){let j=-1;for(let q=0;q<H.ts.length;q++){if(H.ts[q]<=t)j=q;else break}return j>=0?H.v[j]:null}let b=null;for(const z of snap){if(z[0]<=t)b=z[1];else break}return b};
+  lots.forEach(l=>{if(!(l.price>0)){const q=at(l.t)||p;if(q>0){l.price=q;l.est=true}}});
+  const first=lots[0].t;let pts=[];
+  if(H)H.ts.forEach((t,q)=>{if(t>first)pts.push([t,H.v[q]])});else snap.forEach(z=>{if(z[0]>first)pts.push([z[0],z[1]])});
+  lots.forEach(l=>{if(l.price>0)pts.push([l.t,l.price])});
+  if(p>0)pts.push([Date.now(),p]);
+  pts.sort((a,b)=>a[0]-b[0]);
+  const ser=pfSeries(lots,pts),c=pfCalc(lots),q=c.qty,val=p>0&&q>1e-9?q*p:null,closed=q<=1e-9&&c.sells>0,soldCost=c.proceeds-c.real;
+  all[k]={x,ser,inv:c.cost,val,avg:c.avg,p,days:(Date.now()-first)/864e5,ret:c.cost>0&&val!=null?(val/c.cost-1)*100:null,real:c.real,realPct:soldCost>0?c.real/soldCost*100:null,sells:c.sells,closed,est:lots.some(l=>l.est)}}));
+ if(tok!==PFPERFTOK)return;sbSave();
+ const A=all.filter(Boolean);A.forEach((a,k)=>{a.color=PFCOL[k%PFCOL.length]});
+ const sm=n=>n==null?'—':(n>=0?'+':'−')+money(Math.abs(n)),cc=n=>n==null?'':n>=0?'var(--gr)':'var(--rd)';
+ const open=A.filter(a=>!a.closed),done=A.filter(a=>a.closed),ranked=open.slice().sort((a,b)=>(b.ret??-1e9)-(a.ret??-1e9)),tot=pfTotal(A);
+ const S=A.map(a=>({sym:a.x.symbol.toUpperCase(),color:a.color,pts:a.ser.filter(p=>p[3]>0).map(p=>[p[0],p[1]])}));
+ if(A.length>1&&tot.length)S.push({sym:'PORTAFOLIO',color:'#ffffff',total:true,pts:tot});
+ const ti=open.reduce((s,a)=>s+(a.inv||0),0),tv=open.reduce((s,a)=>s+(a.val||0),0),hasVal=open.some(a=>a.val!=null),
+  unr=hasVal&&ti>0?tv-ti:null,unrPct=unr!=null?(tv/ti-1)*100:null,real=A.reduce((s,a)=>s+(a.real||0),0),nSells=A.reduce((s,a)=>s+a.sells,0),total=unr!=null||nSells?(unr||0)+real:null;
+ const best=ranked.find(a=>a.ret!=null),n=$('pfperf-note');
+ if(n)n.textContent=(unrPct!=null?'No realizado '+sg(unrPct)+' · ':'')+(best?'Mejor: '+best.x.symbol.toUpperCase()+' '+sg(best.ret):'');
+ const kp=(k,v,h,col)=>`<div class="m"><div class="k">${k}</div><div class="v" style="color:${col||''}">${v}</div><div class="h">${h}</div></div>`;
+ const kpis=`<div class="g3" style="margin-bottom:8px">${kp('Invertido (abierto)',money(ti||null),'Costo de lo que tienes')}${kp('Valor actual',hasVal?money(tv):'—','A precio de mercado')}${kp('No realizado',unr==null?'—':sg(unrPct),sm(unr),cc(unr))}</div>`+(nSells?`<div class="g3" style="margin-bottom:10px">${kp('Realizado',sm(real),'Ventas cerradas',cc(real))}${kp('P&amp;L total',sm(total),'Realizado + no realizado',cc(total))}${kp('Ventas',String(nSells),'Costo promedio')}</div>`:'');
+ const estTag=' <span class="pxsrc stale" title="Falta el precio real de alguna compra: se estimó con el histórico. Corrígelo en Operaciones.">entrada estimada</span>';
+ const rows=ranked.map((a,k)=>`<div class="pfrk"><div class="pfrk1"><span class="pfpos">${k===0&&a.ret!=null?'🏆':k+1}</span><i style="background:${a.color}"></i>${im(findAsset(a.x),'sm')}<b>${E(a.x.symbol.toUpperCase())}</b></div><div class="pfrk2 ${a.ret==null?'':a.ret>=0?'up':'down'}">${a.ret==null?'—':sg(a.ret)}<small>${a.val!=null&&a.inv>0?sm(a.val-a.inv):'—'}</small></div><div class="pfrk3">Invertido ${money(a.inv||null)} · costo prom. ${money(a.avg)} · ahora ${money(a.p)} · ${a.days<1?'hoy':Math.floor(a.days)+' d'}${a.sells?' · realizado '+sm(a.real):''}${a.est?estTag:''}</div></div>`).join('');
+ const rowsDone=done.map(a=>`<div class="pfrk"><div class="pfrk1"><span class="pfpos">✓</span><i style="background:${a.color}"></i>${im(findAsset(a.x),'sm')}<b>${E(a.x.symbol.toUpperCase())}</b></div><div class="pfrk2 ${a.real>=0?'up':'down'}">${sm(a.real)}<small>${a.realPct!=null?sg(a.realPct):'—'}</small></div><div class="pfrk3">Posición cerrada · P&amp;L realizado${a.est?estTag:''}</div></div>`).join('');
+ const leg=S.map(s=>`<span class="pfleg"><i style="background:${s.color}"></i>${E(s.sym)}</span>`).join('');
+ box.innerHTML=kpis+`<div class="pfchart">${pfSvg(S)}</div><div class="pfleg-w">${leg}</div><div class="pfrank">${rows}${rowsDone?'<div class="pgh" style="margin:10px 0 2px">Cerradas</div>'+rowsDone:''}</div><div class="mu pfnote">Costo promedio: cada compra nueva se promedia con el costo anterior; al vender, el costo de lo que queda no cambia y el P&amp;L realizado se mide contra ese promedio. El rendimiento del gráfico es el de lo que sigues teniendo. El historial se guarda en este navegador.</div>`}
+
+/* --- calidad de los datos --- */
+function hasFx(a){return !!(a.fx&&['pe','pb','rg','eg','de','dy'].some(k=>a.fx[k]!=null))}
+function dataConf(a){
+  const m=a.m;if(!m)return null;
+  const n=m.v.length,it=[],xs=a.type==='stock'&&XS.has(a.symbol);let sc=0;
+  const add=(k,w,s,t)=>{sc+=w*s;it.push({k,s,t})};
+  add('Histórico',30,n>=400?1:n>=250?.8:n>=200?.6:n>=90?.3:.1,n+' sesiones'+(n<200?' · sin SMA200: las señales de tendencia larga no votan':n<400?' · SMA200 con pocos puntos':'')+(xs&&n<400?' · los xStocks tienen poco histórico en Kraken':''));
+  const lt=m.ts&&m.ts.length?m.ts[m.ts.length-1]:null,age=lt?(Date.now()-lt)/864e5:null;
+  add('Frescura del precio',10,age==null?.5:age<=4?1:age<=10?.5:0,age==null?'Sin fecha del último dato':age<1?'Dato de hoy':'Último dato hace '+Math.floor(age)+' d');
+  add('Volumen',10,m.rvol!=null?1:0,m.rvol!=null?'Disponible (flujo y volumen relativo)':'Sin volumen: la señal de volumen no vota');
+  const nn=a.ns?a.ns.n:0;
+  add('Noticias',15,nn>=5?1:nn>=1?.5:0,nn?nn+' titulares (léxico en inglés)':'Sin titulares: el puntaje es solo técnico');
+  if(a.type==='stock'){
+    const f=a.fx,c=f?['pe','pb','rg','eg','de','dy'].filter(k=>f[k]!=null).length+(f&&f.an?1:0):0;
+    add('Fundamentales',20,c>=4?1:c>=1?.5:0,c?c+' indicadores de Finnhub':(fk?'Finnhub no devolvió datos para este activo':'Sin clave de Finnhub: encaje estimado por sector'));
+  }else{
+    const d=a.dv,c=d?[d.fr,d.oi,d.ls].filter(v=>v!=null).length:0;
+    add('Derivados y sentimiento',20,c>=2?1:c===1?.6:a.fg?.4:0,c?c+' de 3 métricas de futuros':(a.fg?'Solo Fear & Greed: el activo no tiene futuros en Binance':'Sin derivados ni Fear & Greed'));
+  }
+  const so=a.so,hs=so&&(so.s!=null||so.tw!=null);
+  add('Sentimiento social',5,hs?1:0,hs?'Reddit/StockTwits disponibles':'No disponible (CORS o sin menciones)');
+  const bt=a.bt;
+  add('Validación histórica',10,bt&&bt.edge!=null?1:bt&&bt.alc&&bt.alc.n>0?.5:0,bt?(bt.edge!=null?bt.alc.n+' casos alcistas en el backtest':'Pocos casos alcistas: no se puede validar'):'Calculando…');
+  return{score:Math.round(sc),it};
+}
+function renderConf(a){
+  const box=$('confb');if(!box||!a||!a.m)return;
+  const c=dataConf(a);if(!c)return;
+  const col=c.score>=75?'var(--gr)':c.score>=50?'var(--au)':'var(--rd)',lv=c.score>=75?'Alta':c.score>=50?'Media':'Baja';
+  const S=(a.rcm&&a.rcm.S)||[],vot=S.filter(s=>s.w>0).length,nd=S.filter(s=>s.w===0&&s.g!=='Riesgo').length;
+  $('confsub').innerHTML='<b style="color:'+col+'">'+lv+' · '+c.score+'/100</b>';
+  box.innerHTML=`<div class="bar" style="height:8px"><i style="width:${c.score}%;background:${col}"></i></div>`+
+    (S.length?`<div class="mu" style="margin:8px 0">${vot} señales con voto · ${nd} sin dato (no suman al veredicto).</div>`:'')+
+    '<div class="sgs" style="grid-template-columns:1fr">'+c.it.map(z=>{const ic=z.s>=.8?['✔','var(--gr)']:z.s>=.4?['◐','var(--au)']:['✖','var(--rd)'];return`<div class="sgi"><span class="ic" style="color:${ic[1]}">${ic[0]}</span><div><b>${E(z.k)}</b><span class="mu">${E(z.t)}</span></div></div>`}).join('')+'</div>'+
+    (c.score<50?'<div class="almsg warn" style="margin-top:10px">⚠ Confianza baja: toma la recomendación como orientativa y evita decisiones de tamaño grande con este activo hasta que mejoren los datos.</div>':'');
+  const row=$('rec')&&$('rec').firstElementChild;
+  if(row){const o=row.querySelector('.cfchip');if(o)o.remove();row.insertAdjacentHTML('beforeend',`<span class="pill cfchip" style="color:${col};border-color:${col}" title="Calidad de los datos disponibles para este activo">Datos: ${lv} (${c.score})</span>`)}
+}
+const _recommend=recommend;
+recommend=function(a){_recommend(a);try{renderConf(a)}catch(e){console.error(e)}};
+
+/* --- aviso de la clave Finnhub en la tarjeta de estrategia --- */
+function fkNotice(a){
+  if(!a||a.type!=='stock'||a.idx||phil()==='index'||(fk&&hasFx(a)))return'';
+  const why=!fk?'Sin clave de Finnhub, el encaje con tu filosofía ('+PHIL[phil()].n+') se estima por sector y por la caída desde máximos, no con datos reales de P/E, deuda, crecimiento o dividendos.':'Finnhub no devolvió datos para este activo (clave inválida, límite de consultas o símbolo no cubierto): el encaje se estima por sector.';
+  return`<div class="almsg warn" style="margin-top:10px">⚠ ${why}${!fk?'<br><button class="btn s sm" style="margin-top:6px" onclick="fkGo()">Añadir clave gratis</button>':''}</div>`;
+}
+function fkGo(){goTab('cf');setTimeout(()=>{const e=$('fk');if(e){e.scrollIntoView({block:'center'});e.focus()}},120)}
+const _renderStrat=renderStrat;
+renderStrat=function(a,V0,V){_renderStrat(a,V0,V);const b=$('stb');if(b)b.insertAdjacentHTML('beforeend',fkNotice(a))};
 addEventListener('resize',()=>chart());$('period').addEventListener('change',()=>{
   const need=+$('period').value;
   if(cur&&cur.m&&(need>(cur.need||0)&&(need>=99999||TD(need,cur.type)>cur.m.v.length+10))){st('Cargando más historial…');load(cur)}
@@ -1394,5 +1584,6 @@ chips();
 
 </script>
 
-<div class="pfmodal" id="pfmodal" hidden><div class="pfshade" onclick="pfClose()"></div><section class="pfbox"><h3 id="pfmtitle">Añadir activo al portafolio</h3><div class="muted" id="pfmsub">Selecciona el mercado y el activo que deseas incorporar.</div><div class="pftypes"><button class="btn s on" data-kind="crypto" onclick="pfModalType('crypto')">₿ Criptomonedas</button><button class="btn s" data-kind="stock" onclick="pfModalType('stock')">◈ xStocks</button></div><input id="pfsearch" placeholder="Buscar por símbolo o nombre…" oninput="PFCOLL=false;pfRenderAssets()"><div class="pfassets" id="pfassets"></div><div class="pfpreview" id="pfpreview"></div><div class="pfinputs" id="pfqtybox"><label>Cantidad que tienes<input id="pfqty" type="number" min="0" step="any" placeholder="0.00" oninput="pfPreview()"></label></div><div class="pfactions"><button class="btn s" onclick="pfClose()">Cancelar</button><button class="btn" id="pfsubmit" onclick="pfSubmit()">Añadir al portafolio</button></div></section></div>
+<div class="pfmodal" id="pfmodal" hidden><div class="pfshade" onclick="pfClose()"></div><section class="pfbox"><h3 id="pfmtitle">Añadir activo al portafolio</h3><div class="muted" id="pfmsub">Selecciona el mercado y el activo que deseas incorporar.</div><div class="pftypes"><button class="btn s on" data-kind="crypto" onclick="pfModalType('crypto')">₿ Criptomonedas</button><button class="btn s" data-kind="stock" onclick="pfModalType('stock')">◈ xStocks</button></div><input id="pfsearch" placeholder="Buscar por símbolo o nombre…" oninput="PFCOLL=false;pfRenderAssets()"><div class="pfassets" id="pfassets"></div><div class="pfpreview" id="pfpreview"></div><div class="pfinputs" id="pfqtybox" style="grid-template-columns:1fr 1fr"><label>Cantidad<input id="pfqty" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00" oninput="pfPreview()"></label><label>Precio de compra (USD)<input id="pfprice" type="number" min="0" step="any" inputmode="decimal" placeholder="Opcional"></label><label style="grid-column:1/-1">Fecha de compra<input id="pfdate" type="date"></label><div class="mu" style="grid-column:1/-1;font-size:11px">Si dejas el precio vacío: con fecha de hoy se usa el precio actual; con una fecha pasada se estima con el histórico (luego puedes corregirlo en «Operaciones»).</div></div><div class="pfactions"><button class="btn s" onclick="pfClose()">Cancelar</button><button class="btn" id="pfsubmit" onclick="pfSubmit()">Añadir al portafolio</button></div></section></div>
+<div class="pfmodal" id="opmodal" hidden><div class="pfshade" onclick="opClose()"></div><section class="pfbox"><h3 id="optitle">Operaciones</h3><div class="muted" id="opsub"></div><div id="opsell"></div><div class="pgh">Historial</div><div id="oplist"></div><div class="pfactions"><button class="btn s" onclick="opClose()">Cerrar</button></div></section></div>
 </body></html>
