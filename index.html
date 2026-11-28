@@ -279,7 +279,7 @@ details.nt summary::-webkit-details-marker{display:none}details.nt[open] summary
 <div id="recexp" style="margin-top:12px;padding-top:10px;border-top:1px solid #2b343d;font-size:12px;line-height:1.6;color:#98a2ad">La explicación aparecerá aquí cuando cargues un activo.</div>
 <details class="nt"><summary>ℹ Cómo se calcula la recomendación</summary><div class="note">Cada señal vota de −1 a +1 con un peso: tendencia, momentum, RSI/Bollinger, volumen, zonas, proyección, rebote, noticias, fundamentales o derivados, social y validación histórica. La recomendación combina ese voto con el puntaje combinado y reglas de seguridad (resultados próximos, sobrecompra, noticias negativas) y se ajusta a tu perfil y filosofía: puede convertir una compra en «no encaja» o una venta técnica en «mantener». ○ = dato informativo o no disponible (no vota). No es asesoría financiera.</div></details></section><section class="card" id="stratbox"><div class="ch"><h2>Encaje con tu estrategia</h2><span class="mu" id="stsub">—</span></div><div id="stb" style="font-size:12px;line-height:1.6">Carga un activo para ver si encaja con tu perfil y tu filosofía, y qué haría tu estrategia a corto y largo plazo.</div><div id="sts" class="sgs"></div></section><section class="card"><div class="ch"><h2>Rangos de compra</h2><span class="mu" id="rgt">—</span></div><label class="mu">Capital disponible (USD) para calcular tamaños</label><input id="cap" type="number" inputmode="decimal" min="0" oninput="LS('mi_cap',this.value);rg()" style="margin-bottom:8px"><div class="rgs" id="rgb"><div class="mu">Carga un activo.</div></div><details class="nt"><summary>ℹ Cómo se calculan los rangos</summary><div class="note">Zonas = retrocesos medidos en oscilaciones semanales del activo (volatilidad reciente); stop bajo la zona; objetivo según la relación riesgo/beneficio indicada. La probabilidad de llegar a la zona es una aproximación estadística (sin tendencia) a 30 días. No es asesoría financiera.</div></details></section><section class="card"><div class="ch"><h2>Validación de la señal</h2><span class="mu" id="bth">—</span><select id="bhz" style="width:auto" onchange="cur&&cur.m&&extras(cur,{v:cur.m.v,ts:cur.m.ts})"><option>7</option><option selected>30</option><option>90</option></select></div><div class="g4" id="btg"></div><div class="st" id="bvd"></div><div class="note" id="plog">Registro de predicciones: sin datos aún.</div><details class="nt"><summary>ℹ Cómo se valida la señal</summary><div class="note">Backtest: el puntaje técnico recalculado día a día sobre el histórico y lo que pasó 30 días después. Las observaciones se solapan y la muestra es limitada: es una guía de confianza, no una garantía.</div></details></section></div>
 <div class="pn" id="pn-pf"><section class="card"><div class="ch"><h2>Portafolio</h2><span><button class="btn s sm" onclick="pfRefresh()" title="Actualizar precios y señales">↻</button> <button class="btn s sm" id="pfremove-toggle" onclick="pfToggleRemove()">− Eliminar activo</button> <button class="btn s sm" onclick="pfNew()">＋ Añadir activo</button> <button class="btn s sm" id="csv" onclick="csv()">CSV</button></span></div><div id="pfremove-panel" class="pfremove-panel"></div><div id="pfb"></div></section><section class="card"><div class="ch"><h2>Rendimiento desde la compra</h2><span class="mu" id="pfperf-note"></span></div><div id="pfperf"><span class="mu">Añade activos al portafolio para ver cuál se revaloriza mejor.</span></div></section><section class="card"><div class="ch"><h2>Prioridad de compra</h2></div><label class="pfinv">Monto a invertir (USD)<input id="pfinv" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 100" oninput="pfAllocSoon()"></label><div id="pfalloc"><span class="mu">Añade activos al portafolio para recibir una prioridad de compra.</span></div></section><section class="card"><div class="ch"><h2>Seguimiento</h2><span><button class="btn s sm" id="wlremove-toggle" onclick="wlToggleRemove()">− Eliminar activo</button> <button class="btn s sm" onclick="wlNew()">＋ Añadir activo</button></span></div><div id="wlremove-panel" class="pfremove-panel"></div><div id="wl"><span class="mu">Vacío</span></div></section></div>
-<div class="pn" id="pn-cf"><section class="card" id="pfcard"><div class="ch"><h2>Perfil de inversor</h2><span class="mu" id="pfhz">—</span></div><div class="ctl2"><div><label class="mu">Perfil de riesgo</label><select id="selp" onchange="setPref(this.value,null)"></select></div><div><label class="mu">Filosofía de inversión</label><select id="self" onchange="setPref(null,this.value)"></select></div></div><div class="note" id="pfd"></div></section><section class="card"><div class="ch"><h2>Herramientas</h2></div><div class="tl"><button class="btn s" onclick="xls()">⬇ Exportar a Excel</button><button class="btn s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button><button class="btn b" id="inb" onclick="instApp()" hidden>📲 Instalar app</button></div></section><section class="card"><div class="ch"><h2>Datos</h2></div><label class="mu">Alpha Vantage (respaldo de acciones, opcional)</label><input id="ak" type="password" placeholder="Opcional" oninput="key=this.value.trim();LS('mi_ak',key)"><label class="mu" style="display:block;margin-top:8px">Finnhub (fundamentales y resultados, gratis)</label><input id="fk" type="password" placeholder="Opcional" oninput="fk=this.value.trim();LS('mi_fk',fk)"><label class="mu" style="display:block;margin-top:8px">Proxy propio (Cloudflare Worker, opcional; recarga después)</label><input id="pxy" placeholder="https://tu-worker.workers.dev/?u=" oninput="LS('mi_px',this.value.trim())">
+<div class="pn" id="pn-cf"><section class="card" id="pfcard"><div class="ch"><h2>Perfil de inversor</h2><span class="mu" id="pfhz">—</span></div><div class="ctl2"><div><label class="mu">Perfil de riesgo</label><select id="selp" onchange="setPref(this.value,null)"></select></div><div><label class="mu">Filosofía de inversión</label><select id="self" onchange="setPref(null,this.value)"></select></div></div><div class="note" id="pfd"></div></section><section class="card"><div class="ch"><h2>Herramientas</h2></div><div class="tl"><button class="btn s" onclick="xls()">⬇ Exportar a Excel</button><button class="btn s" id="fsb" onclick="goFS()" hidden>⛶ Pantalla completa</button><button class="btn b" id="inb" onclick="instApp()" hidden>📲 Instalar app</button></div></section><section class="card"><div class="ch"><h2>Respaldo</h2></div><div class="tl"><button class="btn s" onclick="bkExport()">⬇ Exportar respaldo (JSON)</button><button class="btn s" onclick="$('bkfile').click()">⬆ Importar respaldo</button><input type="file" id="bkfile" accept="application/json,.json" hidden onchange="bkImport(this)"></div><div class="st" id="bkmsg"></div><div class="note">Incluye tu cartera (con cada compra), seguimiento, perfil, capital y registro de predicciones. No incluye tus claves de API. Todo se guarda solo en este navegador: haz un respaldo antes de limpiar datos o cambiar de teléfono.</div></section><section class="card"><div class="ch"><h2>Datos</h2></div><label class="mu">Alpha Vantage (respaldo de acciones, opcional)</label><input id="ak" type="password" placeholder="Opcional" oninput="key=this.value.trim();LS('mi_ak',key)"><label class="mu" style="display:block;margin-top:8px">Finnhub (fundamentales y resultados, gratis)</label><input id="fk" type="password" placeholder="Opcional" oninput="fk=this.value.trim();LS('mi_fk',fk)"><label class="mu" style="display:block;margin-top:8px">Proxy propio (Cloudflare Worker, opcional; recarga después)</label><input id="pxy" placeholder="https://tu-worker.workers.dev/?u=" oninput="LS('mi_px',this.value.trim())">
 <details class="nt"><summary>ℹ Fuentes de datos</summary><div class="note">Cripto: CoinGecko, CryptoCompare, Binance Futures (funding/OI), alternative.me (Fear &amp; Greed). xStocks: precios e histórico diario de Kraken (pares tokenizados). Acciones tradicionales: Yahoo Finance (directo o proxy), Finnhub (con clave). Social: Reddit y StockTwits (pueden bloquearse por CORS); X y flujos a exchanges requieren APIs de pago. Claves guardadas solo en este navegador. Logos: CoinGecko/FMP/Parqet. Herramienta informativa, no asesoría financiera.</div></details></section><div class="foot">Market Intelligence · versión móvil<br>Herramienta informativa; no constituye asesoría financiera.</div></div>
 </main></div><nav class="bn" id="bn"><button data-t="mk" class="on" onclick="goTab('mk')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/></svg><span>Mercado</span></button><button data-t="an" onclick="goTab('an')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 3 8-9"/><path d="M3 21h18"/></svg><span>Análisis</span></button><button data-t="st" onclick="goTab('st')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>Estrategia</span></button><button data-t="pf" onclick="goTab('pf')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 13h18"/></svg><span>Cartera</span></button><button data-t="cf" onclick="goTab('cf')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Ajustes</span></button></nav>
 
@@ -367,7 +367,7 @@ const U={crypto:[],stock:SL.split('*').map((x,i)=>{const[s,...n]=x.split(':');co
 const LS=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}};
 let cur=null,key=LS('mi_ak')||'',fk=LS('mi_fk')||'',tb='crypto',W=[],dt,SC=[],LG=[];
 /* CONFIGURACIÓN: acceso libre (sin pago ni código) */
-const CFG={pay:'',codes:[],proxy:LS('mi_px')||''}; // codes vacío = acceso libre
+const CFG={proxy:LS('mi_px')||''}; // codes vacío = acceso libre
 const PX=[...(CFG.proxy?[u=>CFG.proxy+encodeURIComponent(u)]:[]),u=>u,u=>'https://corsproxy.io/?'+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)];
 const JC=new Map();
 const HS={},INF=new Map(),SOFT=/reddit\.com|stocktwits\.com/;
@@ -961,9 +961,6 @@ let ddi=-1;$('q').addEventListener('keydown',e=>{const n=ddl.length;if(!n||$('dd
 document.addEventListener('click',e=>{if(!e.target.closest('#dd,#q'))$('dd').hidden=true});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('pfmodal').hidden)pfClose()});
 /* ---- seguimiento ---- */
 function addW(){if(!cur)return;const id=cur.id||cur.symbol;if(!W.some(w=>w.type===cur.type&&(w.id===id||w.symbol===cur.symbol))){W.push({...cur,id});rw();sbSave();st((cur.symbol||'').toUpperCase()+(cur.type==='stock'?' (xStock)':'')+' añadido a seguimiento')}}
-function rw(){const el=$('wl');if(!el)return;el.innerHTML=W.length?'<div class="wlgrid">'+W.map((a,i)=>{const sig=a.signal||{kind:'na',label:'ANALIZANDO'};return`<div class="wlrow" onclick="load(W[${i}])"><div class="wlname"><span class="sigbadge ${sig.kind}" title="${E(sig.desc||'Calculando indicadores')} ">${E(sig.label)}</span><b>${im(a,'sm')}${E(a.symbol.toUpperCase())}</b><small>${E(a.name||'')}</small></div><div class="wlprice">${money(a.price)}<small style="color:${a.chg>=0?'var(--gr)':'var(--rd)'}">${a.chg!=null?sg(a.chg):'—'}</small></div><button class="wlremove" onclick="event.stopPropagation();W.splice(${i},1);rw();sbSave()" aria-label="Quitar">×</button></div>`}).join('')+'</div>':'<span class="mu">Vacío. Añade un activo desde Análisis con ★.</span>';if(W.length)refreshWatchSignals()}
-async function refreshWatchSignals(){const list=[...W];const [S,P]=await Promise.all([Promise.all(list.map(signalFor)),Promise.all(list.map(px))]);list.forEach((a,i)=>{const x=W.find(w=>w.type===a.type&&w.id===a.id);if(x){x.signal=S[i];if(P[i]!=null)x.price=P[i];const src=findAsset(x);if(src.chg!=null)x.chg=src.chg;if(src.img)x.img=src.img}});rwNoRefresh()}
-function rwNoRefresh(){const el=$('wl');if(!el)return;el.innerHTML=W.length?'<div class="wlgrid">'+W.map((a,i)=>{const sig=a.signal||{kind:'na',label:'SEÑAL N/D'};return`<div class="wlrow" onclick="load(W[${i}])"><div class="wlname"><span class="sigbadge ${sig.kind}" title="${E(sig.desc||'')} ">${E(sig.label)}</span><b>${im(a,'sm')}${E(a.symbol.toUpperCase())}</b><small>${E(a.name||'')}</small></div><div class="wlprice">${money(a.price)}<small style="color:${a.chg>=0?'var(--gr)':'var(--rd)'}">${a.chg!=null?sg(a.chg):'—'}</small></div><button class="wlremove" onclick="event.stopPropagation();W.splice(${i},1);rw();sbSave()">×</button></div>`}).join('')+'</div>':'<span class="mu">Vacío. Añade un activo desde Análisis con ★.</span>'}
 const updW=rw;
 /* ---- contexto: fundamentales, derivados, social ---- */
 const FH='https://finnhub.io/api/v1/',STB='usdt usdc dai usde usds busd tusd fdusd usdd pyusd usd1 usdtb susds susde steth wsteth weth wbtc weeth cbbtc wbeth reth bsc-usd'.split(' ');
@@ -1024,9 +1021,9 @@ logPred(a);evalLog(a,h);lgSum()}catch(e){$('bth').textContent='Validación no di
 let PF=[],AL=[],PFSNAP={},PFCUR=null,PFPERFTOK=0,PFCH=null,PFCOLL=false;
 function free(){return{pos:100,al:50}}
 async function sbSave(){LS('mi_state',JSON.stringify({watch:W.map(a=>({type:a.type,id:a.id,symbol:a.symbol,name:a.name,img:a.img,lastPrice:a.price})),scan:SC,log:LG,pf:PF,al:AL,ph:PFSNAP}))}
-async function sbLoad(){let d=null;try{d=JSON.parse(LS('mi_state'))}catch(e){}W=(d&&d.watch||[]).map(a=>({...a,price:a.lastPrice}));PFSNAP=d&&d.ph||{};SC=d&&d.scan||[];LG=d&&d.log||[];PF=d&&d.pf||[];AL=d&&d.al||[];$('cap').value=LS('mi_cap')||1000;$('pxy').value=LS('mi_px')||'';if($('pfinv'))$('pfinv').value=LS('mi_pfinv')||'';rw();rr();lgSum();rg();pfr();alr();gate()}
+async function sbLoad(){let d=null;try{d=JSON.parse(LS('mi_state'))}catch(e){}W=(d&&d.watch||[]).map(a=>({...a,price:a.lastPrice}));PFSNAP=d&&d.ph||{};SC=d&&d.scan||[];LG=d&&d.log||[];PF=d&&d.pf||[];AL=d&&d.al||[];$('cap').value=LS('mi_cap')||1000;$('pxy').value=LS('mi_px')||'';if($('pfinv'))$('pfinv').value=LS('mi_pfinv')||'';rw();rr();lgSum();rg();pfr()}
 function ntf(t){st('🔔 '+t);try{if(Notification.permission==='granted')new Notification('Market Intelligence',{body:t});else if(Notification.permission==='default')Notification.requestPermission()}catch(e){}}
-setInterval(()=>{if(PF.length||AL.length){pfr();alr()}},12e4);
+setInterval(()=>{if(PF.length)pfr()},12e4);
 const KRMAP={btc:'XBT',doge:'XDG'};
 const CPXSRC=[
 ['Binance',s=>'https://api.binance.com/api/v3/ticker/price?symbol='+s+'USDT',j=>+j.price],
@@ -1163,19 +1160,13 @@ const BR={t:0,d:0,p:0,h:0};
 function bar(){const e=$('ld');clearTimeout(BR.h);if(BR.t===BR.d){e.style.width='100%';BR.h=setTimeout(()=>{e.style.opacity=0;BR.h=setTimeout(()=>{e.style.width='0';BR.t=BR.d=BR.p=0},300)},400);return}e.style.opacity=1;BR.p=Math.max(BR.p,Math.min(.92,.08+.84*BR.d/BR.t));e.style.width=BR.p*100+'%'}
 const bz=f=>async function(...x){BR.t++;bar();try{return await f.apply(this,x)}finally{BR.d++;bar()}};
 load=bz(load);scan=bz(scan);initCrypto=bz(initCrypto);
-async function sha(t){return[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t.trim())))].map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function gate(){
-  // Acceso premium eliminado - siempre libre
-  return;
-}
-async function gateGo(){ /* premium eliminado */ }
 const Phi=x=>{const t=1/(1+.2316419*Math.abs(x)),p=.3989423*Math.exp(-x*x/2)*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p};
 let RGS=[];
 function ranges(a){const m=a.m,P=a.price||m.last,w=Math.max(.01,Math.min(.2,m.sd*Math.sqrt(5))),T=TD(30,a.type),cap=+(LS('mi_cap')||1000),pz=h=>h>=P?1:Math.min(1,2*Phi(Math.log(h/P)/(m.sd*Math.sqrt(T))));
 return[['Más seguro','🛡',.5,1.5,3,.75,2.5,'var(--gr)'],['Moderado','⚖',1,.5,1.5,1.25,2,'var(--au)'],['Más arriesgado','🔥',1.5,0,.5,2,1.5,'var(--rd)']].map(([n,ic,rp,ha,la,sm,rr,col])=>{rp=rp*PROF[prof()].rk;const hi=P*(1-ha*w),lo=P*(1-la*w),e=(hi+lo)/2,stop=Math.max(lo*.2,lo*(1-sm*w)),rk0=e-stop,tg=e+rr*rk0,qty=Math.min(cap*rp/100/rk0,cap*PROF[prof()].maxPos/e);return{n,ic,lo,hi,e,stop,tg,rr,pz:pz(hi),qty,rp,col}})}
 function rg(){const a=cur;if(!a||!a.m)return;RGS=ranges(a);if(phil()==='index'){rgIdx(a);return}const rec=a.rcm?a.rcm.rg:((a.comb||0)>=60?1:0);
 $('rgt').textContent=`Precio ${money(a.price)} · oscilación semanal ±${fmt(Math.min(20,a.m.sd*Math.sqrt(5)*100),1)}%`;
-$('rgb').innerHTML=RGS.map((r,i)=>`<div class="rgc" style="border-color:${i===rec?r.col:''}"><h3 style="color:${r.col}">${r.ic} ${r.n}${i===rec?' · sugerido':''}</h3>Compra <b>${money(r.lo)} – ${money(r.hi)}</b><br><span class="mu">${sg(pct(r.lo,a.price))} a ${sg(pct(r.hi,a.price))} vs hoy</span><br>Stop <b>${money(r.stop)}</b> <span class="mu">(${sg(pct(r.stop,r.e))})</span><br>Objetivo <b>${money(r.tg)}</b> <span class="mu">(${sg(pct(r.tg,r.e))} · R:R 1:${r.rr})</span><br>Prob. de llegar a la zona (30 d): <b>${fmt(r.pz*100,0)}%</b><br>Tamaño: <b>${fmt(r.qty,r.qty<1?4:2)}</b> uds ≈ ${money(r.qty*r.e)} <span class="mu">(riesgo ${+r.rp.toFixed(2)}% del capital)</span><div style="margin-top:8px;display:flex;gap:6px"><button class="btn s sm" onclick="rgAdd(${i})">＋ Portafolio</button>${r.pz<1?`<button class="btn s sm" onclick="alB(${r.hi})">🔔 Alerta</button>`:''}</div></div>`)
+$('rgb').innerHTML=RGS.map((r,i)=>`<div class="rgc" style="border-color:${i===rec?r.col:''}"><h3 style="color:${r.col}">${r.ic} ${r.n}${i===rec?' · sugerido':''}</h3>Compra <b>${money(r.lo)} – ${money(r.hi)}</b><br><span class="mu">${sg(pct(r.lo,a.price))} a ${sg(pct(r.hi,a.price))} vs hoy</span><br>Stop <b>${money(r.stop)}</b> <span class="mu">(${sg(pct(r.stop,r.e))})</span><br>Objetivo <b>${money(r.tg)}</b> <span class="mu">(${sg(pct(r.tg,r.e))} · R:R 1:${r.rr})</span><br>Prob. de llegar a la zona (30 d): <b>${fmt(r.pz*100,0)}%</b><br>Tamaño: <b>${fmt(r.qty,r.qty<1?4:2)}</b> uds ≈ ${money(r.qty*r.e)} <span class="mu">(riesgo ${+r.rp.toFixed(2)}% del capital)</span><div style="margin-top:8px;display:flex;gap:6px"><button class="btn s sm" onclick="rgAdd(${i})">＋ Portafolio</button></div></div>`)
 .join('')+'<div class="mu" style="grid-column:1/-1">'+PROF[prof()].ic+' Perfil '+PROF[prof()].n.toLowerCase()+': riesgo por operación ×'+PROF[prof()].rk+' y máximo '+Math.round(PROF[prof()].maxPos*100)+'% del capital por activo.</div>'+((a.comb||0)<45?'<div class="mu" style="grid-column:1/-1;color:var(--rd)">Señal combinada débil: evita el rango más arriesgado hasta que haya confirmación.</div>':'')}
 function rgAdd(i){const r=RGS[i];if(r)pfAdd(r.qty,r.stop,r.e)}
 function alB(v){const a=cur;if(!a)return;AL.push({id:'a'+Date.now(),type:a.type,symbol:a.symbol,op:'<',px:v,f:0});sbSave();alr();st('Alerta creada: '+a.symbol.toUpperCase()+' ≤ '+money(v))}
@@ -1192,6 +1183,90 @@ if(PF.length)sh.push(sheet('Portafolio',['Tipo','Simbolo','Cantidad'],PF.map(x=>
 if(sh.length)sh.push(sheet('Perfil',['Dato','Valor'],[['Perfil de riesgo',PROF[prof()].n],['Filosofia',PHIL[phil()].n],['Horizonte',PROF[prof()].hz]].concat(a&&a.rcm?[['Lectura tecnica (corto plazo)',a.rcm.base],['Veredicto segun tu estrategia',a.rcm.title]]:[]).concat(a&&a.dvd&&a.dvd.n?[['Dividendo TTM por accion (USD)',+a.dvd.ttm.toFixed(4)],['Rendimiento por dividendo TTM (%)',+a.dvd.yld.toFixed(2)],['Frecuencia de pago',a.dvd.freq||''],['Retorno por precio en el periodo (%)',+a.dvd.pr.toFixed(2)],['Retorno con dividendos reinvertidos (%)',+a.dvd.tr.toFixed(2)]]:[])));if(!sh.length){st('Carga un activo o ejecuta el escáner antes de descargar el Excel.');return}
 const x=`<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Styles><Style ss:ID="h"><Font ss:Bold="1"/><Interior ss:Color="#E6B84A" ss:Pattern="Solid"/></Style></Styles>${sh.join('')}</Workbook>`,l=document.createElement('a');
 l.href=URL.createObjectURL(new Blob([x],{type:'application/vnd.ms-excel'}));l.download='market_intelligence_'+new Date().toISOString().slice(0,10)+'.xls';l.click();st('Excel descargado ('+sh.length+' hojas).')}
+/* ===== Añadir al portafolio desde Rangos de compra ===== */
+function pfAdd(qty){
+  const a=cur,q=+qty;
+  if(!a){st('Carga un activo primero.');return}
+  if(!(q>0)){st('La cantidad sugerida no es válida.');return}
+  if(PF.length>=free().pos&&!PF.some(x=>x.type===a.type&&x.symbol===a.symbol)){st('Límite de posiciones de tu plan: '+free().pos);return}
+  const price=a.price>0?a.price:null;
+  pfAddAsset({type:a.type,id:a.id,symbol:a.symbol,name:a.name,img:a.img},q,price);
+  st(a.symbol.toUpperCase()+': '+fmt(q,q<1?6:4)+' u. añadidas al portafolio'+(price?' a '+money(price):'')+'. Míralo en Cartera.');
+}
+/* ===== Respaldo: exportar / importar ===== */
+const bkNum=(x,min=0)=>{x=+x;return Number.isFinite(x)&&x>=min?x:null};
+const bkStr=(s,n=80)=>String(s??'').slice(0,n);
+function bkMsg(t,bad){const e=$('bkmsg');if(e){e.textContent=t;e.style.color=bad?'var(--rd)':'var(--gr)'}st(t)}
+function bkExport(){
+  try{
+    sbSave();
+    const s=JSON.parse(LS('mi_state')||'{}');
+    const o={app:'market-intelligence',v:1,t:new Date().toISOString(),
+      prof:LS('mi_prof')||'',phil:LS('mi_phil')||'',cap:LS('mi_cap')||'',pfinv:LS('mi_pfinv')||'',
+      pf:s.pf||[],watch:s.watch||[],ph:s.ph||{},log:s.log||[]};
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(o)],{type:'application/json'}));
+    a.download='market_intelligence_respaldo_'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    bkMsg('Respaldo descargado: '+o.pf.length+' en cartera y '+o.watch.length+' en seguimiento.');
+  }catch(e){bkMsg('No se pudo exportar: '+e.message,1)}
+}
+function bkAsset(x){
+  if(!x||(x.type!=='crypto'&&x.type!=='stock'))return null;
+  const symbol=bkStr(x.symbol,20).trim();if(!symbol)return null;
+  const o={type:x.type,symbol,name:bkStr(x.name||symbol,80),id:bkStr(x.id||symbol,60)};
+  if(x.assetId!=null)o.assetId=bkStr(x.assetId,60);
+  if(typeof x.img==='string'&&/^https:\/\//.test(x.img))o.img=x.img.slice(0,300);
+  return o;
+}
+function bkClean(d){
+  if(!d||d.app!=='market-intelligence'||!Array.isArray(d.pf)||!Array.isArray(d.watch))throw new Error('El archivo no es un respaldo válido de Market Intelligence.');
+  const seen=new Set(),pf=[];
+  d.pf.forEach(x=>{
+    const a=bkAsset(x),q=bkNum(x&&x.qty,0),k=a&&a.type+'|'+a.symbol;
+    if(!a||!(q>0)||seen.has(k))return;seen.add(k);
+    a.qty=q;const lp=bkNum(x.lastPrice,0);if(lp>0)a.lastPrice=lp;
+    const lots=(Array.isArray(x.lots)?x.lots:[]).map(l=>({t:bkNum(l&&l.t,0),qty:bkNum(l&&l.qty,0),price:bkNum(l&&l.price,0)||null,est:!!(l&&l.est)})).filter(l=>l.t&&l.qty>0);
+    if(lots.length)a.lots=lots;
+    pf.push(a)});
+  const wseen=new Set(),watch=[];
+  d.watch.forEach(x=>{const a=bkAsset(x),k=a&&a.type+'|'+a.symbol;if(!a||wseen.has(k))return;wseen.add(k);const lp=bkNum(x.lastPrice,0);if(lp>0)a.lastPrice=lp;watch.push(a)});
+  const ph={};
+  if(d.ph&&typeof d.ph==='object')Object.keys(d.ph).slice(0,200).forEach(k=>{
+    if(!/^(crypto|stock)\|[^|]{1,20}$/.test(k)||!Array.isArray(d.ph[k]))return;
+    ph[k]=d.ph[k].slice(-500).filter(z=>Array.isArray(z)&&Number.isFinite(+z[0])&&+z[1]>0).map(z=>[+z[0],+z[1]])});
+  const log=(Array.isArray(d.log)?d.log:[]).slice(-600).map(x=>{
+    if(!x||typeof x.id!=='string'||typeof x.k!=='string'||!(+x.p>0)||!Array.isArray(x.pr))return null;
+    const pr=x.pr.slice(0,6).map(q=>q&&({d:+q.d,b:+q.b,lo:+q.lo,hi:+q.hi,...(+q.r>0?{r:+q.r}:{})})).filter(q=>q&&[q.d,q.b,q.lo,q.hi].every(Number.isFinite));
+    return{id:bkStr(x.id,80),k:bkStr(x.k,80),s:bkStr(x.s,20),date:bkStr(x.date,10),p:+x.p,c:Math.round(+x.c||0),pr}}).filter(Boolean);
+  return{pf,watch,ph,log,
+    prof:PROF[d.prof]?d.prof:'',phil:PHIL[d.phil]?d.phil:'',
+    cap:bkNum(d.cap,0),pfinv:bkNum(d.pfinv,0)};
+}
+function bkApply(c){
+  PF=c.pf;PFSNAP=c.ph;LG=c.log;
+  W=c.watch.map(a=>({...a,price:a.lastPrice}));
+  if(c.prof)PRF=c.prof;if(c.phil)PHL=c.phil;
+  LS('mi_prof',prof());LS('mi_phil',phil());
+  if(c.cap!=null){LS('mi_cap',String(c.cap));$('cap').value=c.cap}
+  if(c.pfinv!=null){LS('mi_pfinv',String(c.pfinv));$('pfinv').value=c.pfinv}
+  PFCUR=null;PFHC.clear();SIGCACHE.clear();WHCACHE.clear();
+  sbSave();applyPrefs(false);rw();pfr();lgSum();rg();
+}
+function bkImport(inp){
+  const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+  if(f.size>5e6){bkMsg('El archivo es demasiado grande (máx. 5 MB).',1);return}
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const c=bkClean(JSON.parse(r.result));
+      if(!confirm('Se reemplazarán tu cartera ('+PF.length+' activos), tu seguimiento ('+W.length+') y tu perfil por el respaldo ('+c.pf.length+' en cartera, '+c.watch.length+' en seguimiento). ¿Continuar?'))return;
+      bkApply(c);bkMsg('Respaldo importado: '+c.pf.length+' en cartera y '+c.watch.length+' en seguimiento.');
+    }catch(e){bkMsg(e instanceof SyntaxError?'El archivo no es un JSON válido.':'No se pudo importar: '+e.message,1)}
+  };
+  r.onerror=()=>bkMsg('No se pudo leer el archivo.',1);
+  r.readAsText(f);
+}
 addEventListener('resize',()=>chart());$('period').addEventListener('change',()=>{
   const need=+$('period').value;
   if(cur&&cur.m&&(need>(cur.need||0)&&(need>=99999||TD(need,cur.type)>cur.m.v.length+10))){st('Cargando más historial…');load(cur)}
